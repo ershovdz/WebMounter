@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebMounter", "WebMounter\WebMounter.vcxproj", "{46EF58A6-623A-4B70-9CF1-CBD96016654F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release_|Win32 = Release_|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{46EF58A6-623A-4B70-9CF1-CBD96016654F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{46EF58A6-623A-4B70-9CF1-CBD96016654F}.Debug|Win32.Build.0 = Debug|Win32
+		{46EF58A6-623A-4B70-9CF1-CBD96016654F}.Release_|Win32.ActiveCfg = Release_|Win32
+		{46EF58A6-623A-4B70-9CF1-CBD96016654F}.Release_|Win32.Build.0 = Release_|Win32
+		{46EF58A6-623A-4B70-9CF1-CBD96016654F}.Release|Win32.ActiveCfg = Release|Win32
+		{46EF58A6-623A-4B70-9CF1-CBD96016654F}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		QtVersion = 4.7.0
+	EndGlobalSection
+EndGlobal
