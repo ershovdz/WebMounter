@@ -218,9 +218,9 @@ namespace Connector
 		QString cookie_file		 = settings->getAppSettingStoragePath() + QDir::separator() + pluginName + QDir::separator() + "cookie.txt";
 
 		// Read cookies from a previous session, as stored in MyCookieFileName.
-		curl_easy_setopt( _curl, CURLOPT_COOKIEFILE, qPrintable(cookie_file) );
+		curl_easy_setopt( p_curl, CURLOPT_COOKIEFILE, qPrintable(cookie_file) );
 		// Save cookies from *this* session in MyCookieFileName
-		curl_easy_setopt( _curl, CURLOPT_COOKIEJAR, qPrintable(cookie_file) );
+		curl_easy_setopt( p_curl, CURLOPT_COOKIEJAR, qPrintable(cookie_file) );
 
 		curl_slist * chunk = NULL;
 		chunk = curl_slist_append(_chunk, "Cache-Control: no-store, no-cache, must-revalidate");
