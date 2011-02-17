@@ -1,4 +1,4 @@
-!define VERSION "0.1.4"
+!define VERSION "0.1 (build 106)"
 
 !define MULTIUSER_EXECUTIONLEVEL Highest
 ;!define MULTIUSER_NOUNINSTALL ;Uncomment if no uninstaller is created
@@ -133,7 +133,7 @@ Icon ".\drive.ico"
   DetailPrint "dokanctl returned $0"
   WriteUninstaller $PROGRAMFILES32\WebMounter\WebMounterUninstall.exe
 
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Run" "WebMounter" "$INSTDIR\WebMounter.exe"
+  ;WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Run" "WebMounter" "$INSTDIR\WebMounter.exe"
   ; Write the uninstall keys for Windows
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\WebMounter" "DisplayName" "WebMounter ${VERSION}"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\WebMounter" "UninstallString" '"$PROGRAMFILES32\WebMounter\WebMounterUninstall.exe"'
@@ -189,6 +189,9 @@ Section "WebMounter Files" section_webmounter
 	
 	SetOutPath $PROGRAMFILES32\WebMounter
 	CreateShortCut "$DESKTOP\WebMounter.lnk" "$INSTDIR\WebMounter.exe" "" "$INSTDIR\drive.ico"
+	
+	CreateShortCut "$SMSTARTUP\WebMounter.lnk" "$INSTDIR\WebMounter.exe" "" "$INSTDIR\drive.ico"
+	
 	
     !insertmacro MUI_STARTMENU_WRITE_END
 	
@@ -273,13 +276,16 @@ Section "Uninstall"
   ${EndIf}
 
   ; Remove registry keys
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\WebMounter"
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Run\WebMounter"
+ 
   
-  Delete "$SMPROGRAMS\$StartMenuFolder\WebMounter.lnk"
-  Delete "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk"
-  Delete "$DESKTOP\WebMounter.lnk"
-  RMDir  "$SMPROGRAMS\$StartMenuFolder"
+  Delete $SMPROGRAMS\$StartMenuFolder\WebMounter.lnk
+  Delete $SMPROGRAMS\$StartMenuFolder\Uninstall.lnk
+  Delete $DESKTOP\WebMounter.lnk
+  Delete $SMSTARTUP\WebMounter.lnk
+  RMDir /r $SMPROGRAMS\$StartMenuFolder
+  
+   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\WebMounter"
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Run\WebMounter"
 
   ;RMDir $SMPROGRAMS\WebMounter
 

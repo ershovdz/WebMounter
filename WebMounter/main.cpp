@@ -36,6 +36,10 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
 
+	QTranslator translator;
+	translator.load(QString("webmounter_" + QLocale::system().name()));
+	QApplication::installTranslator(&translator);
+
 	if(!Alone())
 	{
 		QMessageBox::information(0, QObject::tr("WebMounter"),
@@ -54,6 +58,7 @@ int main(int argc, char *argv[])
 
 	QApplication::setQuitOnLastWindowClosed(false);
 
+	QApplication::removeTranslator(&translator);
 	Common::WebMounter MainApp;
 	MainApp.startApp();
 
