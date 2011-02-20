@@ -71,7 +71,7 @@ namespace Connector
 		, const QString& proxyLoginPwd
 		, bool isOAuth)
 	{
-		_login = login;
+		_login = login.left(login.lastIndexOf("@"));
 		_password = password;
 		_proxy = proxy;
 		_proxy_login_pwd = proxyLoginPwd;
@@ -198,10 +198,6 @@ namespace Connector
 				}
 
 				err = postCredentials();
-				if(err)
-				{
-					break;
-				}
 
 				isConnected = (_token.length() != 0);
 				reqCount++;
@@ -295,7 +291,7 @@ namespace Connector
 
 			QByteArray pathArray = path.toLocal8Bit();
 			
-			QString fileName = title + path.right(4);
+			QString fileName = title;
 			QByteArray titleArray = fileName.toUtf8();
 
 			curl_formadd(&post, &last, CURLFORM_COPYNAME, "image", CURLFORM_FILE, pathArray.constData(), CURLFORM_END);

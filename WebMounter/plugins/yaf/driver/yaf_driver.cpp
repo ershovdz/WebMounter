@@ -174,7 +174,7 @@ namespace RemoteDriver
 			if(id != "")
 			{
 				VFSCache* vfsCache = WebMounter::getCache();
-				elem = VFSElement(VFSElement::DIRECTORY
+				elem = VFSElement(VFSElement::FILE
 					, fInfo.absoluteFilePath()
 					, title
 					, ""
