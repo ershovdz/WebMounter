@@ -4,27 +4,51 @@
 
 namespace Ui
 {
-	PluginView::PluginView(const Data::PluginSettings& settings, const QString& title)
+	PluginView::PluginView(const Data::PluginSettings* settings, const QString& title)
 	{
 		_driver = 0;
+		
+		if(!settings)
+		{
+			
+			_dummyLabel = new QLabel(tr("<font size=\"5\" color=\"red\" align=\"right\">Not implemented yet</font>"));
+
+			_mainLayout = new QVBoxLayout;
+			_mainLayout->setAlignment(Qt::AlignHCenter);
+			_mainLayout->addWidget(_dummyLabel);
+			/*_mainLayout->addWidget(_syncGroup);
+			_mainLayout->addSpacing(12);
+			_mainLayout->addWidget(_progressGroup);
+			_mainLayout->addSpacing(12);
+			_mainLayout->addWidget(_buttonGroup);
+			_mainLayout->addStretch(1);*/
+			setLayout(_mainLayout);
+			return;
+		}
+
+		_oauthCheckBox = new QCheckBox(tr("Use OAuth"));
+		_oauthCheckBox->setChecked(settings->isOAuthUsing);
+		_oauthCheckBox->setVisible(false);
 
 		_urlLabel = new QLabel(tr("Server address:"));
 		_urlEdit = new QLineEdit;
-		_urlEdit->setText(settings.serverUrl);
+		_urlEdit->setText(settings->serverUrl);
 		
 		_nameLabel = new QLabel(tr("Login:"));
 		_nameLabel->setTextFormat(Qt::RichText);
 		_nameEdit = new QLineEdit;
-		_nameEdit->setText(settings.userName);
+		_nameEdit->setText(!settings->isOAuthUsing ? settings->userName : "");
+		_nameEdit->setEnabled(!settings->isOAuthUsing);
 
 		_passwordLabel = new QLabel(tr("Password:"));
 		_passwordEdit = new QLineEdit;
 
 		_passwordEdit->setEchoMode(QLineEdit::Password);
+		_passwordEdit->setEnabled(!settings->isOAuthUsing);
 
 		_keyLabel = new QLabel(tr("<b>Activation Key:</b>"));
 		_keyEdit = new QLineEdit;
-		_keyEdit->setText(settings.key);
+		_keyEdit->setText(settings->key);
 
 		_keyUrl = new QLabel(tr("<a href=\"http://jmediamanager.com/index.php?option=com_jcs&view=jcs&layout=form&Itemid=95&lang=ru\">Get activation key</a>"));
 		_keyUrl->setOpenExternalLinks(true);
@@ -37,14 +61,14 @@ namespace Ui
 		_fullSyncRadioButton = new QRadioButton(tr("Full sync (download all files)"));
 		_partSyncRadioButton = new QRadioButton(tr("Partial sync (sync list of elements only)"));
 
-		_partSyncRadioButton->setChecked(!settings.bFullSync);
-		_fullSyncRadioButton->setChecked(settings.bFullSync);
+		_partSyncRadioButton->setChecked(!settings->bFullSync);
+		_fullSyncRadioButton->setChecked(settings->bFullSync);
 
 		_autoSyncCheckBox  = new QCheckBox(tr("Auto Sync"));
 		_startSyncButton = new QPushButton(tr("Start sync"));
 		_stopSyncButton  = new QPushButton(tr("Stop sync"));
 
-		_autoSyncCheckBox->setChecked(settings.bAutoSync);
+		_autoSyncCheckBox->setChecked(settings->bAutoSync);
 
 		_startSyncButton->setEnabled(false);
 		_stopSyncButton->setEnabled(false);
@@ -64,49 +88,49 @@ namespace Ui
 		_syncPeriodBox->addItem(tr("12 hour"));
 		_syncPeriodBox->addItem(tr("24 hour"));
 
-		if(settings.syncPeriod == "30")
+		if(settings->syncPeriod == "30")
 		{
 			_syncPeriodBox->setCurrentIndex(0);
 		}
-		else if(settings.syncPeriod == "60")
+		else if(settings->syncPeriod == "60")
 		{
 			_syncPeriodBox->setCurrentIndex(1);
 		}
-		else if(settings.syncPeriod == "300")
+		else if(settings->syncPeriod == "300")
 		{
 			_syncPeriodBox->setCurrentIndex(2);
 		}
-		else if(settings.syncPeriod == "600")
+		else if(settings->syncPeriod == "600")
 		{
 			_syncPeriodBox->setCurrentIndex(3);
 		}
-		else if(settings.syncPeriod == "1800")
+		else if(settings->syncPeriod == "1800")
 		{
 			_syncPeriodBox->setCurrentIndex(4);
 		}
-		else if(settings.syncPeriod == "3600")
+		else if(settings->syncPeriod == "3600")
 		{
 			_syncPeriodBox->setCurrentIndex(5);
 		}
-		else if(settings.syncPeriod == "7200")
+		else if(settings->syncPeriod == "7200")
 		{
 			_syncPeriodBox->setCurrentIndex(6);
 		}
-		else if(settings.syncPeriod == "21600")
+		else if(settings->syncPeriod == "21600")
 		{
 			_syncPeriodBox->setCurrentIndex(7);
 		}
-		else if(settings.syncPeriod == "43200")
+		else if(settings->syncPeriod == "43200")
 		{
 			_syncPeriodBox->setCurrentIndex(8);
 		}
-		else if(settings.syncPeriod == "86400")
+		else if(settings->syncPeriod == "86400")
 		{
 			_syncPeriodBox->setCurrentIndex(9);
 		}
 
-		_syncPeriodLabel->setEnabled(settings.bAutoSync);
-		_syncPeriodBox->setEnabled(settings.bAutoSync);
+		_syncPeriodLabel->setEnabled(settings->bAutoSync);
+		_syncPeriodBox->setEnabled(settings->bAutoSync);
 
 		_syncPeriodBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
@@ -118,14 +142,14 @@ namespace Ui
 		_authLayout->addWidget(_nameEdit, 1, 1);
 		_authLayout->addWidget(_passwordLabel, 2, 0);
 		_authLayout->addWidget(_passwordEdit, 2, 1);
-		_authLayout->addWidget(_keyLabel, 3, 0);
-		_authLayout->addWidget(_keyEdit, 3, 1);
-		_authLayout->addWidget(_keyUrl, 4, 1);
+		_authLayout->addWidget(_oauthCheckBox, 3, 0);
+		_authLayout->addWidget(_keyLabel, 4, 0);
+		_authLayout->addWidget(_keyEdit, 4, 1);
+		_authLayout->addWidget(_keyUrl, 5, 1);
 		_authGroup->setLayout(_authLayout);
 
 		_syncGroup = new QGroupBox(tr("Sync"));
 		_syncLayout = new QGridLayout;
-
 
 		_syncLayout->addWidget(_fullSyncRadioButton, 0, 0);
 		_syncLayout->addWidget(_partSyncRadioButton, 0, 1);
@@ -169,10 +193,11 @@ namespace Ui
 		_mainLayout->addStretch(1);
 		setLayout(_mainLayout);
 
-		_pluginName = settings.pluginName;
+		_pluginName = settings->pluginName;
 		_driver = Common::WebMounter::getPlugin(_pluginName);
 
 		connect(_autoSyncCheckBox, SIGNAL(stateChanged(int)), this, SLOT(autoSyncClicked(int)));
+		connect(_oauthCheckBox, SIGNAL(stateChanged(int)), this, SLOT(oauthClicked(int)));
 
 		if(_driver)
 		{
@@ -217,6 +242,13 @@ namespace Ui
 
 	void PluginView::changeLang()
 	{
+		if(!_driver)
+		{
+			_dummyLabel->setText(tr("<font size=\"5\" color=\"red\" align=\"right\">Not implemented yet</font>"));
+			return;
+		}
+		_oauthCheckBox->setText(tr("Use OAuth"));
+		_urlLabel->setText(tr("Server address:"));
 		_nameLabel->setText(tr("Login:"));
 		_passwordLabel->setText(tr("Password:"));
 		_keyLabel->setText(tr("<b>Activation Key:</b>"));
@@ -263,6 +295,40 @@ namespace Ui
 			_statusValue->setText(tr("<font color=\"red\">Not available</font>"));
 		}
 
+		switch(_driver->getState())
+		{
+		case RemoteDriver::eAuthInProgress:
+			{
+				_statusValue->setText(tr("<font color=\"green\">Authorization...</font>"));
+				break;
+			}
+		case RemoteDriver::eAuthorized:
+			{
+				_statusValue->setText(tr("<font color=\"green\">Authorized</font>"));
+				break;
+			}
+		case RemoteDriver::eConnected:
+			{
+				_statusValue->setText(tr("<font color=\"green\">Connected</font>"));
+				break;
+			}
+		case RemoteDriver::eNotConnected:
+			{
+				_statusValue->setText(tr("<font color=\"red\">Not Connected</font>"));
+				break;
+			}
+		case RemoteDriver::eSyncStopping:
+			{
+				_statusValue->setText(tr("<font color=\"green\">Sync stopping...</font>"));
+				break;
+			}
+		case RemoteDriver::eSync:
+			{
+				_statusValue->setText(tr("<font color=\"green\">Synchronization...</font>"));
+				break;
+			}
+		};
+
 		_progressBarLabel->setText(tr("Progress:"));
 	}
 
@@ -279,6 +345,18 @@ namespace Ui
 	{
 		_syncPeriodLabel->setEnabled(state);
 		_syncPeriodBox->setEnabled(state);
+	}
+
+	void PluginView::oauthClicked(int state)
+	{
+		if(state)
+		{
+			_nameEdit->setText("");
+			_passwordEdit->setText("");
+		}
+		
+		_nameEdit->setEnabled(!state);
+		_passwordEdit->setEnabled(!state);
 	}
 
 	void PluginView::startSyncClicked(bool)
@@ -313,6 +391,7 @@ namespace Ui
 		pluginSettings.userName = _nameEdit->text();
 		pluginSettings.userPassword = _passwordEdit->text();
 		pluginSettings.key = _keyEdit->text();
+		pluginSettings.isOAuthUsing = _oauthCheckBox->isChecked();
 
 		if(pluginSettings.serverUrl == "")
 		{
@@ -320,13 +399,13 @@ namespace Ui
 				tr("Enter server address"), QMessageBox::Ok);
 			return;
 		}
-		else if(pluginSettings.userName == "")
+		else if(pluginSettings.userName == "" && !pluginSettings.isOAuthUsing)
 		{
 			QMessageBox::critical(0, tr("Error"),
 				tr("Enter login"), QMessageBox::Ok);
 			return;
 		}
-		else if(_passwordEdit->text() == "")
+		else if(_passwordEdit->text() == "" && !pluginSettings.isOAuthUsing)
 		{
 			QMessageBox::critical(0, tr("Error"),
 				tr("Enter password"), QMessageBox::Ok);
@@ -459,8 +538,8 @@ namespace Ui
 				_driverState = RemoteDriver::eNotConnected;
 
 				_urlEdit->setEnabled(true);
-				_nameEdit->setEnabled(true);
-				_passwordEdit->setEnabled(true);
+				_nameEdit->setEnabled(!_oauthCheckBox->isChecked());
+				_passwordEdit->setEnabled(!_oauthCheckBox->isChecked());
 				_keyEdit->setEnabled(true);
 
 				_startPluginButton->setEnabled(true);

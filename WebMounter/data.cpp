@@ -85,6 +85,7 @@ namespace Data
 		_settings.setValue("syncPeriod", settings.syncPeriod);
 		_settings.setValue("lastSync", settings.lastSync);
 		_settings.setValue("key", settings.key);
+		_settings.setValue("isOAuthUsing", settings.isOAuthUsing);
 		_settings.endGroup();
 	}
 
@@ -126,6 +127,8 @@ namespace Data
 		settings.bFullSync  = _settings.value("fullSync", true).toBool();
 		settings.bAutoSync  = _settings.value("autoSync", false).toBool();
 		settings.syncPeriod = _settings.value("syncPeriod", "86400").toString();
+		settings.isOAuthUsing = _settings.value("isOAuthUsing", false).toBool();
+
 		if(!settings.bAutoSync)
 		{
 			settings.syncPeriod = QString("86400");

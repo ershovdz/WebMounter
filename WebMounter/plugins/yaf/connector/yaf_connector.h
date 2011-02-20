@@ -20,7 +20,8 @@ namespace Connector
 		void setSettings(const QString& login
 			, const QString& password
 			, const QString& proxy
-			, const QString& proxyLoginPwd);
+			, const QString& proxyLoginPwd
+			, bool isOAuth);
 		RESULT auth();
 		RESULT getTreeElements(const QString& path, QString& response);
 		RESULT downloadFile(const QString& url, const QString& path);
@@ -30,6 +31,7 @@ namespace Connector
 		RESULT createDirectory(const QString& title, const QString& parentId, QString& response);
 		RESULT moveElement(const QString& id, const QString& oldParentId, const QString& newParentId, ElementType type, QString& response);
 		RESULT renameElement(const QString& id, ElementType type, const QString& newTitle, QString& response);
+		void setToken(const QString& token);
 	private:
 		static size_t writeStr(void *ptr, size_t size, size_t count, void *response);
 		static size_t fwrite_b(void *ptr, size_t size, size_t count, void *path); 
@@ -37,7 +39,7 @@ namespace Connector
 		RESULT getCredentials();
 		RESULT postCredentials();
 		std::string encrypt(const char* public_key, std::string text);
-		RESULT execQuery(const QString &url, const QString &header, const QString &postFields, QString* response);
+		int execQuery(const QString &url, const QString &header, const QString &postFields, QString* response);
 	private:
 		struct sPutData
 		{
@@ -51,6 +53,7 @@ namespace Connector
 		QString _password;
 		QString _proxy;
 		QString _proxy_login_pwd;
+		bool _isOAuth;
 
 		QString _token;
 		QString _requestId;

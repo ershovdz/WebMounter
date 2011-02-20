@@ -9,7 +9,7 @@ namespace Ui
 	{
 		Q_OBJECT
 	public:
-		VkView(const Data::PluginSettings& settings, const QString& title);
+		VkView(const Data::PluginSettings* settings, const QString& title);
 		virtual void changeLang();
 
 	public slots:

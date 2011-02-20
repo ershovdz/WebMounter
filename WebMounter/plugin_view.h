@@ -17,7 +17,7 @@ namespace Ui
 	{
 		Q_OBJECT
 	public:
-		PluginView(const Data::PluginSettings& settings, const QString& title);
+		PluginView(const Data::PluginSettings* settings, const QString& title);
 		virtual void changeLang();
 	protected:
 		void changeEvent ( QEvent * event );
@@ -26,6 +26,7 @@ namespace Ui
 
 	private slots:
 		void autoSyncClicked(int state);
+		void oauthClicked(int state);
 		void startSyncClicked(bool);
 		void stopSyncClicked(bool);
 		void startPluginClicked(bool);
@@ -35,6 +36,8 @@ namespace Ui
 		virtual void updateView(int progress, int state);
 	
 	protected:
+		QCheckBox* _oauthCheckBox;
+		QLabel* _dummyLabel;
 		QLabel *_urlLabel;
 		QLineEdit *_urlEdit;
 		QLabel *_nameLabel;

@@ -9,5 +9,7 @@
         <file>Resources/drive.ico</file>
         <file>Resources/Joomla.png</file>
         <file>Resources/drive.png</file>
+        <file>Resources/odnoklassniki.png</file>
+        <file>Resources/docs_logo_ru.png</file>
     </qresource>
 </RCC>

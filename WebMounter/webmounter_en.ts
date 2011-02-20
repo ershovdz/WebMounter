@@ -85,22 +85,22 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="main.cpp" line="41"/>
+        <location filename="main.cpp" line="45"/>
         <source>WebMounter</source>
         <translation>WebMounter</translation>
     </message>
     <message>
-        <location filename="main.cpp" line="42"/>
+        <location filename="main.cpp" line="46"/>
         <source>WebMounter is already running.</source>
         <translation>WebMounter is already running.</translation>
     </message>
     <message>
-        <location filename="main.cpp" line="49"/>
+        <location filename="main.cpp" line="53"/>
         <source>Systray</source>
         <translation>Systray</translation>
     </message>
     <message>
-        <location filename="main.cpp" line="50"/>
+        <location filename="main.cpp" line="54"/>
         <source>I couldn&apos;t detect any system tray on this system.</source>
         <translation>I couldn&apos;t detect any system tray on this system.</translation>
     </message>
@@ -377,7 +377,7 @@ Please check proxy settings on Configuration tab and check settings on correspon
     <message>
         <location filename="plugins/yaf/driver/yaf_driver.cpp" line="150"/>
         <location filename="plugins/yaf/driver/yaf_driver.cpp" line="155"/>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="791"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="828"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
@@ -407,14 +407,14 @@ Please check proxy settings on Configuration tab and check settings on correspon
         <translation>File upload failed (</translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="791"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="828"/>
         <source>Synchronization is stopped !
 </source>
         <translation>Synchronization is stopped !
 </translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="854"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="891"/>
         <source>Downloading failed  !
 </source>
         <translation>Downloading failed  !
@@ -423,8 +423,9 @@ Please check proxy settings on Configuration tab and check settings on correspon
     <message>
         <location filename="plugins/yaf/driver/yaf_driver.cpp" line="197"/>
         <location filename="plugins/yaf/driver/yaf_driver.cpp" line="678"/>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="772"/>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="854"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="775"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="810"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="891"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
@@ -446,7 +447,8 @@ Please check proxy settings on Configuration tab and check settings on correspon
 </translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="772"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="775"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="810"/>
         <source>Authorization failed !
 Please check proxy settings on Configuration tab and check settings on corresponding plugin tab...
 </source>
@@ -462,39 +464,53 @@ Please check proxy settings on Configuration tab and check settings on correspon
         <translation type="obsolete">Close</translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="130"/>
+        <location filename="control_panel.cpp" line="134"/>
         <source>WebMounter</source>
         <translation>WebMounter</translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="107"/>
-        <location filename="control_panel.cpp" line="147"/>
+        <location filename="control_panel.cpp" line="111"/>
+        <location filename="control_panel.cpp" line="151"/>
         <source>Minimize</source>
         <translation>Minimize</translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="157"/>
-        <location filename="control_panel.cpp" line="177"/>
+        <location filename="control_panel.cpp" line="100"/>
+        <location filename="control_panel.cpp" line="171"/>
+        <location filename="control_panel.cpp" line="202"/>
+        <source>Google Docs</source>
+        <translation>   Google Docs  </translation>
+    </message>
+    <message>
+        <location filename="control_panel.cpp" line="101"/>
+        <location filename="control_panel.cpp" line="172"/>
+        <location filename="control_panel.cpp" line="208"/>
+        <source>Odnoklassniki</source>
+        <translation>  Odnoklassniki</translation>
+    </message>
+    <message>
+        <location filename="control_panel.cpp" line="161"/>
+        <location filename="control_panel.cpp" line="184"/>
         <source>Configuration</source>
         <translation>Configuration</translation>
     </message>
     <message>
         <location filename="control_panel.cpp" line="96"/>
-        <location filename="control_panel.cpp" line="159"/>
-        <location filename="control_panel.cpp" line="183"/>
+        <location filename="control_panel.cpp" line="163"/>
+        <location filename="control_panel.cpp" line="190"/>
         <source>Vkontakte</source>
-        <translation>Vkontakte</translation>
+        <translation>    Vkontakte   </translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="161"/>
-        <location filename="control_panel.cpp" line="189"/>
+        <location filename="control_panel.cpp" line="165"/>
+        <location filename="control_panel.cpp" line="196"/>
         <source>Yandex Fotki</source>
-        <translation>Yandex Fotki</translation>
+        <translation>  Yandex Fotki  </translation>
     </message>
     <message>
         <location filename="control_panel.cpp" line="98"/>
-        <location filename="control_panel.cpp" line="163"/>
-        <location filename="control_panel.cpp" line="195"/>
+        <location filename="control_panel.cpp" line="167"/>
+        <location filename="control_panel.cpp" line="214"/>
         <source>Joomla (Gallery)</source>
         <translation>Joomla (Gallery)</translation>
     </message>
@@ -505,8 +521,8 @@ Please check proxy settings on Configuration tab and check settings on correspon
     </message>
     <message>
         <location filename="control_panel.cpp" line="99"/>
-        <location filename="control_panel.cpp" line="165"/>
-        <location filename="control_panel.cpp" line="201"/>
+        <location filename="control_panel.cpp" line="169"/>
+        <location filename="control_panel.cpp" line="220"/>
         <source>Joomla (Article)</source>
         <translation>Joomla (Article)</translation>
     </message>
@@ -569,26 +585,22 @@ Maybe you should try asking a human?</translation>
         <translation type="obsolete">Unmount disk</translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="149"/>
-        <location filename="control_panel.cpp" line="278"/>
         <source>Mi&amp;nimize</source>
-        <translation>Mi&amp;nimize</translation>
+        <translation type="obsolete">Mi&amp;nimize</translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="151"/>
-        <location filename="control_panel.cpp" line="281"/>
         <source>Ma&amp;ximize</source>
-        <translation>Ma&amp;ximize</translation>
+        <translation type="obsolete">Ma&amp;ximize</translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="153"/>
-        <location filename="control_panel.cpp" line="284"/>
+        <location filename="control_panel.cpp" line="157"/>
+        <location filename="control_panel.cpp" line="307"/>
         <source>&amp;Restore</source>
         <translation>&amp;Restore</translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="155"/>
-        <location filename="control_panel.cpp" line="287"/>
+        <location filename="control_panel.cpp" line="159"/>
+        <location filename="control_panel.cpp" line="310"/>
         <source>&amp;Quit</source>
         <translation>&amp;Quit</translation>
     </message>
@@ -932,26 +944,26 @@ Maybe you should try asking a human?</translation>
 <context>
     <name>Ui::PluginView</name>
     <message>
-        <location filename="plugin_view.cpp" line="15"/>
-        <location filename="plugin_view.cpp" line="220"/>
+        <location filename="plugin_view.cpp" line="37"/>
+        <location filename="plugin_view.cpp" line="252"/>
         <source>Login:</source>
         <translation>Login:</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="20"/>
-        <location filename="plugin_view.cpp" line="221"/>
+        <location filename="plugin_view.cpp" line="43"/>
+        <location filename="plugin_view.cpp" line="253"/>
         <source>Password:</source>
         <translation>Password:</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="32"/>
-        <location filename="plugin_view.cpp" line="224"/>
+        <location filename="plugin_view.cpp" line="56"/>
+        <location filename="plugin_view.cpp" line="256"/>
         <source>Connect</source>
         <translation>Connect</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="33"/>
-        <location filename="plugin_view.cpp" line="225"/>
+        <location filename="plugin_view.cpp" line="57"/>
+        <location filename="plugin_view.cpp" line="257"/>
         <source>Disconnect</source>
         <translation>Disconnect</translation>
     </message>
@@ -960,136 +972,137 @@ Maybe you should try asking a human?</translation>
         <translation type="obsolete">Full sync (download all articles)</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="38"/>
-        <location filename="plugin_view.cpp" line="228"/>
+        <location filename="plugin_view.cpp" line="62"/>
+        <location filename="plugin_view.cpp" line="260"/>
         <source>Partial sync (sync list of elements only)</source>
         <translation>Partial sync (sync list of elements only)</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="43"/>
-        <location filename="plugin_view.cpp" line="231"/>
+        <location filename="plugin_view.cpp" line="67"/>
+        <location filename="plugin_view.cpp" line="263"/>
         <source>Auto Sync</source>
         <translation>Auto Sync</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="44"/>
-        <location filename="plugin_view.cpp" line="232"/>
+        <location filename="plugin_view.cpp" line="68"/>
+        <location filename="plugin_view.cpp" line="264"/>
         <source>Start sync</source>
         <translation>Start sync</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="45"/>
-        <location filename="plugin_view.cpp" line="233"/>
+        <location filename="plugin_view.cpp" line="69"/>
+        <location filename="plugin_view.cpp" line="265"/>
         <source>Stop sync</source>
         <translation>Stop sync</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="52"/>
-        <location filename="plugin_view.cpp" line="235"/>
+        <location filename="plugin_view.cpp" line="76"/>
+        <location filename="plugin_view.cpp" line="267"/>
         <source>Frequency synchronization:</source>
         <translation>Frequency synchronization:</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="56"/>
-        <location filename="plugin_view.cpp" line="240"/>
+        <location filename="plugin_view.cpp" line="80"/>
+        <location filename="plugin_view.cpp" line="272"/>
         <source>30 sec</source>
         <translation>30 sec</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="57"/>
-        <location filename="plugin_view.cpp" line="241"/>
+        <location filename="plugin_view.cpp" line="81"/>
+        <location filename="plugin_view.cpp" line="273"/>
         <source>1 min</source>
         <translation>1 min</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="58"/>
-        <location filename="plugin_view.cpp" line="242"/>
+        <location filename="plugin_view.cpp" line="82"/>
+        <location filename="plugin_view.cpp" line="274"/>
         <source>5 min</source>
         <translation>5 min</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="59"/>
-        <location filename="plugin_view.cpp" line="243"/>
+        <location filename="plugin_view.cpp" line="83"/>
+        <location filename="plugin_view.cpp" line="275"/>
         <source>10 min</source>
         <translation>10 min</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="60"/>
-        <location filename="plugin_view.cpp" line="244"/>
+        <location filename="plugin_view.cpp" line="84"/>
+        <location filename="plugin_view.cpp" line="276"/>
         <source>30 min</source>
         <translation>30 min</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="61"/>
-        <location filename="plugin_view.cpp" line="245"/>
+        <location filename="plugin_view.cpp" line="85"/>
+        <location filename="plugin_view.cpp" line="277"/>
         <source>1 hour</source>
         <translation>1 hour</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="62"/>
-        <location filename="plugin_view.cpp" line="246"/>
+        <location filename="plugin_view.cpp" line="86"/>
+        <location filename="plugin_view.cpp" line="278"/>
         <source>2 hour</source>
         <translation>2 hour</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="63"/>
-        <location filename="plugin_view.cpp" line="247"/>
+        <location filename="plugin_view.cpp" line="87"/>
+        <location filename="plugin_view.cpp" line="279"/>
         <source>6 hour</source>
         <translation>6 hour</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="64"/>
-        <location filename="plugin_view.cpp" line="248"/>
+        <location filename="plugin_view.cpp" line="88"/>
+        <location filename="plugin_view.cpp" line="280"/>
         <source>12 hour</source>
         <translation>12 hour</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="65"/>
-        <location filename="plugin_view.cpp" line="249"/>
+        <location filename="plugin_view.cpp" line="89"/>
+        <location filename="plugin_view.cpp" line="281"/>
         <source>24 hour</source>
         <translation>24 hour</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="113"/>
-        <location filename="plugin_view.cpp" line="253"/>
+        <location filename="plugin_view.cpp" line="137"/>
+        <location filename="plugin_view.cpp" line="285"/>
         <source>Authorization</source>
         <translation>Authorization</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="126"/>
-        <location filename="plugin_view.cpp" line="255"/>
+        <location filename="plugin_view.cpp" line="151"/>
+        <location filename="plugin_view.cpp" line="287"/>
         <source>Sync</source>
         <translation>Sync</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="145"/>
+        <location filename="plugin_view.cpp" line="169"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="256"/>
+        <location filename="plugin_view.cpp" line="288"/>
         <source>Status:</source>
         <translation>Status:</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="147"/>
-        <location filename="plugin_view.cpp" line="257"/>
+        <location filename="plugin_view.cpp" line="171"/>
+        <location filename="plugin_view.cpp" line="289"/>
         <source>Plugin status:</source>
         <translation>Plugin status:</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="148"/>
+        <location filename="plugin_view.cpp" line="172"/>
         <source>&lt;font color=&quot;red&quot;&gt;Not connected&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;red&quot;&gt;Not connected&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="151"/>
-        <location filename="plugin_view.cpp" line="266"/>
+        <location filename="plugin_view.cpp" line="175"/>
+        <location filename="plugin_view.cpp" line="332"/>
         <source>Progress:</source>
         <translation>Progress:</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="495"/>
+        <location filename="plugin_view.cpp" line="322"/>
+        <location filename="plugin_view.cpp" line="574"/>
         <source>&lt;font color=&quot;green&quot;&gt;Sync stopping...&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;green&quot;&gt;Sync stopping...&lt;/font&gt;</translation>
     </message>
@@ -1098,95 +1111,113 @@ Maybe you should try asking a human?</translation>
         <translation type="obsolete">Full sync (download all articles)</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="289"/>
-        <location filename="plugin_view.cpp" line="509"/>
+        <location filename="plugin_view.cpp" line="327"/>
+        <location filename="plugin_view.cpp" line="367"/>
+        <location filename="plugin_view.cpp" line="588"/>
         <source>&lt;font color=&quot;green&quot;&gt;Synchronization...&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;green&quot;&gt;Synchronization...&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="450"/>
+        <location filename="plugin_view.cpp" line="312"/>
+        <location filename="plugin_view.cpp" line="529"/>
         <source>&lt;font color=&quot;green&quot;&gt;Connected&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;green&quot;&gt;Connected&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="357"/>
+        <location filename="plugin_view.cpp" line="436"/>
         <source>&lt;font color=&quot;green&quot;&gt;Connecting...&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;green&quot;&gt;Connecting...&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="11"/>
+        <location filename="plugin_view.cpp" line="33"/>
+        <location filename="plugin_view.cpp" line="251"/>
         <source>Server address:</source>
         <translation>Server address:</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="25"/>
-        <location filename="plugin_view.cpp" line="222"/>
+        <location filename="plugin_view.cpp" line="14"/>
+        <location filename="plugin_view.cpp" line="247"/>
+        <source>&lt;font size=&quot;5&quot; color=&quot;red&quot; align=&quot;right&quot;&gt;Not implemented yet&lt;/font&gt;</source>
+        <translation>&lt;font size=&quot;5&quot; color=&quot;red&quot; align=&quot;right&quot;&gt;Not implemented yet&lt;/font&gt;</translation>
+    </message>
+    <message>
+        <location filename="plugin_view.cpp" line="29"/>
+        <location filename="plugin_view.cpp" line="250"/>
+        <source>Use OAuth</source>
+        <translation>Use OAuth</translation>
+    </message>
+    <message>
+        <location filename="plugin_view.cpp" line="49"/>
+        <location filename="plugin_view.cpp" line="254"/>
         <source>&lt;b&gt;Activation Key:&lt;/b&gt;</source>
         <translation>&lt;b&gt;Activation Key:&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="29"/>
-        <location filename="plugin_view.cpp" line="259"/>
+        <location filename="plugin_view.cpp" line="53"/>
+        <location filename="plugin_view.cpp" line="291"/>
         <source>&lt;a href=&quot;http://jmediamanager.com/index.php?option=com_jcs&amp;view=jcs&amp;layout=form&amp;Itemid=95&amp;lang=ru&quot;&gt;Get activation key&lt;/a&gt;</source>
         <oldsource>&lt;a href=&quot;http://jmediamanager.com&quot;&gt;Get activation key&lt;/a&gt;</oldsource>
         <translation>&lt;a href=&quot;http://jmediamanager.com/index.php?option=com_jcs&amp;view=jcs&amp;layout=form&amp;Itemid=95&amp;lang=ru&quot;&gt;Get activation key&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="37"/>
-        <location filename="plugin_view.cpp" line="227"/>
+        <location filename="plugin_view.cpp" line="61"/>
+        <location filename="plugin_view.cpp" line="259"/>
         <source>Full sync (download all files)</source>
         <translation>Full sync (download all files)</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="214"/>
+        <location filename="plugin_view.cpp" line="239"/>
         <source>&lt;font color=&quot;red&quot;&gt;Plugin not available...&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;red&quot;&gt;Plugin not available...&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="263"/>
+        <location filename="plugin_view.cpp" line="295"/>
         <source>&lt;font color=&quot;red&quot;&gt;Not available&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;red&quot;&gt;Not available&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="319"/>
-        <location filename="plugin_view.cpp" line="325"/>
-        <location filename="plugin_view.cpp" line="331"/>
-        <location filename="plugin_view.cpp" line="520"/>
+        <location filename="plugin_view.cpp" line="398"/>
+        <location filename="plugin_view.cpp" line="404"/>
+        <location filename="plugin_view.cpp" line="410"/>
+        <location filename="plugin_view.cpp" line="599"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="320"/>
+        <location filename="plugin_view.cpp" line="399"/>
         <source>Enter server address</source>
         <translation>Enter server address</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="326"/>
+        <location filename="plugin_view.cpp" line="405"/>
         <source>Enter login</source>
         <translation>Enter login</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="332"/>
+        <location filename="plugin_view.cpp" line="411"/>
         <source>Enter password</source>
         <translation>Enter password</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="521"/>
+        <location filename="plugin_view.cpp" line="600"/>
         <source>Enter activation key</source>
         <translation>Enter activation key</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="426"/>
+        <location filename="plugin_view.cpp" line="302"/>
+        <location filename="plugin_view.cpp" line="505"/>
         <source>&lt;font color=&quot;green&quot;&gt;Authorization...&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;green&quot;&gt;Authorization...&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="436"/>
+        <location filename="plugin_view.cpp" line="307"/>
+        <location filename="plugin_view.cpp" line="515"/>
         <source>&lt;font color=&quot;green&quot;&gt;Authorized&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;green&quot;&gt;Authorized&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="plugin_view.cpp" line="481"/>
+        <location filename="plugin_view.cpp" line="317"/>
+        <location filename="plugin_view.cpp" line="560"/>
         <source>&lt;font color=&quot;red&quot;&gt;Not Connected&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;red&quot;&gt;Not Connected&lt;/font&gt;</translation>
     </message>
@@ -1336,6 +1367,14 @@ Maybe you should try asking a human?</translation>
         <location filename="plugins/vk/view/vk_view.cpp" line="23"/>
         <source>Activation key is not valid. The program is now working in demo mode.</source>
         <translation>Activation key is not valid. The program is now working in demo mode.</translation>
+    </message>
+</context>
+<context>
+    <name>Ui::YafOAuth</name>
+    <message>
+        <location filename="plugins/yaf/view/yaf_oauth.cpp" line="26"/>
+        <source>Yandex | Authentication</source>
+        <translation>Yandex | Authentication</translation>
     </message>
 </context>
 <context>

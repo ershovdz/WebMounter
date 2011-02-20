@@ -6,7 +6,7 @@ namespace Ui
 {
 	using namespace Common;
 
-	VkView::VkView(const Data::PluginSettings& settings, const QString& title)
+	VkView::VkView(const Data::PluginSettings* settings, const QString& title)
 		: PluginView(settings, title)
 	{
 		_urlEdit->setText("vkontakte.ru");

@@ -749,6 +749,7 @@ namespace RemoteDriver
 				, pluginSettings.userPassword
 				, generalSettings.proxyAddress
 				, generalSettings.proxyLogin + ":" + generalSettings.proxyPassword
+				, pluginSettings.isOAuthUsing
 				);
 
 			if(_state != eSyncStopping)
@@ -756,22 +757,58 @@ namespace RemoteDriver
 				updateState(0, eAuthInProgress);
 			}
 
-			if(_httpConnector->auth() == eNO_ERROR)
+			if(!pluginSettings.isOAuthUsing)
 			{
-				if(_state != eSyncStopping)
+				if(_httpConnector->auth() == eNO_ERROR)
 				{
-					updateState(100, eAuthorized);
+					if(_state != eSyncStopping)
+					{
+						updateState(100, eAuthorized);
+					}
+
+					start(); // run sync thread
 				}
+				else
+				{
+					updateState(100, eNotConnected);
 
-				start(); // run sync thread
-			}
-			else
+					notifyUser(Ui::Notification::eCRITICAL, tr("Error"), tr("Authorization failed !\n"
+						"Please check proxy settings on Configuration tab and check settings on corresponding plugin tab...\n"));
+				}
+			}		
+		}
+	}
+
+	void YafRVFSDriver::connectHandlerStage2(RESULT error, PluginSettings pluginSettings, const QString& token)
+	{
+		if(error == eNO_ERROR && _state == eAuthInProgress)
+		{
+			GeneralSettings generalSettings; 
+
+			WebMounter::getSettingStorage()->getData(generalSettings);
+			WebMounter::getSettingStorage()->addSettings(pluginSettings);
+
+			_httpConnector->setSettings(
+				pluginSettings.userName
+				, pluginSettings.userPassword
+				, generalSettings.proxyAddress
+				, generalSettings.proxyLogin + ":" + generalSettings.proxyPassword
+				, pluginSettings.isOAuthUsing
+				);
+			_httpConnector->setToken(token);
+			if(_state != eSyncStopping)
 			{
-				updateState(100, eNotConnected);
-
-				notifyUser(Ui::Notification::eCRITICAL, tr("Error"), tr("Authorization failed !\n"
-					"Please check proxy settings on Configuration tab and check settings on corresponding plugin tab...\n"));
+				updateState(100, eAuthorized);
 			}
+
+			start(); // run sync thread
+		}
+		else
+		{
+			updateState(100, eNotConnected);
+
+			notifyUser(Ui::Notification::eCRITICAL, tr("Error"), tr("Authorization failed !\n"
+				"Please check proxy settings on Configuration tab and check settings on corresponding plugin tab...\n"));
 		}
 	}
 
@@ -949,6 +986,9 @@ namespace RemoteDriver
 		foreach (QString entry, lstFiles)
 		{
 			QString entryAbsPath = dir.absolutePath() + "/" + entry;
+			QFile::Permissions permissions = QFile::permissions(entryAbsPath);
+			permissions |= (QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
+			bool err = QFile::setPermissions(entryAbsPath, permissions);
 			QFile::remove(entryAbsPath);
 		}
 

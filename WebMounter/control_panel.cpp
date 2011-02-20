@@ -82,28 +82,32 @@ namespace Ui
 		
 		_contentsWidget = new QListWidget;
 		_contentsWidget->setViewMode(QListView::IconMode);
-		_contentsWidget->setIconSize(QSize(80, 60));
+		_contentsWidget->setIconSize(QSize(60, 45));
 		_contentsWidget->setMovement(QListView::Static);
 		_contentsWidget->setMaximumWidth(120);
 		_contentsWidget->setMinimumWidth(120);
-		_contentsWidget->setMinimumHeight(470);
-		_contentsWidget->setMaximumHeight(470);
-		_contentsWidget->setSpacing(8);
+		_contentsWidget->setMinimumHeight(530);
+		_contentsWidget->setMaximumHeight(530);
+		_contentsWidget->setSpacing(10);
 
 		_pagesWidget = new QStackedWidget;
 		
 		_generalView = new GeneralView(generalSettings, this);
-		_vkView		 = new VkView(vkSettings,  QString(tr("Vkontakte")));
-		_yafView	 = new YafView(yafSettings,  QString(tr("Yandex.Fotki")));
-		_jmmgView	 = new PluginView(jmmgSettings, QString(tr("Joomla (Gallery)")));
-		_jmmaView	 = new PluginView(jmmaSettings,  QString(tr("Joomla (Article)")));
+		_vkView		 = new VkView(&vkSettings,  QString(tr("Vkontakte")));
+		_yafView	 = new YafView(&yafSettings,  QString(tr("Yandex.Fotki")));
+		_jmmgView	 = new PluginView(&jmmgSettings, QString(tr("Joomla (Gallery)")));
+		_jmmaView	 = new PluginView(&jmmaSettings,  QString(tr("Joomla (Article)")));
+		_googleView	 = new PluginView(0,  QString(tr("Google Docs")));
+		_odnView	 = new PluginView(0,  QString(tr("Odnoklassniki")));
 
 		_pagesWidget->addWidget(_generalView);
 		_pagesWidget->addWidget(_vkView);
 		_pagesWidget->addWidget(_yafView);
+		_pagesWidget->addWidget(_googleView);
+		_pagesWidget->addWidget(_odnView);
 		_pagesWidget->addWidget(_jmmgView);
 		_pagesWidget->addWidget(_jmmaView);
-
+		
 		_closeButton = new QPushButton(tr("Minimize"));
 
 		createIcons();
@@ -146,9 +150,9 @@ namespace Ui
 
 		_closeButton->setText(tr("Minimize"));
 
-		_minimizeAction->setText(tr("Mi&nimize"));
+		//_minimizeAction->setText(tr("Mi&nimize"));
 		
-		_maximizeAction->setText(tr("Ma&ximize"));
+		//_maximizeAction->setText(tr("Ma&ximize"));
 		
 		_restoreAction->setText(tr("&Restore"));
 		
@@ -163,6 +167,9 @@ namespace Ui
 		_jmmgButton->setText(tr("Joomla (Gallery)"));
 		
 		_jmmaButton->setText(tr("Joomla (Article)"));
+
+		_googleButton->setText(QString(tr("Google Docs")));
+		_odnButton->setText(QString(tr("Odnoklassniki")));
 	}
 
 	void ControlPanel::showNotification(const Notification& msg)
@@ -190,6 +197,18 @@ namespace Ui
 		_yafButton->setTextAlignment(Qt::AlignHCenter);
 		_yafButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
+		_googleButton = new QListWidgetItem(_contentsWidget);
+		_googleButton->setIcon(QIcon(":/Resources/docs_logo_ru.png"));
+		_googleButton->setText(tr("Google Docs"));
+		_googleButton->setTextAlignment(Qt::AlignHCenter);
+		_googleButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+		_odnButton = new QListWidgetItem(_contentsWidget);
+		_odnButton->setIcon(QIcon(":/Resources/odnoklassniki.png"));
+		_odnButton->setText(tr("Odnoklassniki"));
+		_odnButton->setTextAlignment(Qt::AlignHCenter);
+		_odnButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
 		_jmmgButton = new QListWidgetItem(_contentsWidget);
 		_jmmgButton->setIcon(QIcon(":/Resources/Joomla.png"));
 		_jmmgButton->setText(tr("Joomla (Gallery)"));
@@ -201,6 +220,10 @@ namespace Ui
 		_jmmaButton->setText(tr("Joomla (Article)"));
 		_jmmaButton->setTextAlignment(Qt::AlignHCenter);
 		_jmmaButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+		
+
+
 
 		connect(_contentsWidget,
 			SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
@@ -217,8 +240,8 @@ namespace Ui
 
 	void ControlPanel::setVisible(bool visible)
 	{
-		_minimizeAction->setEnabled(visible);
-		_maximizeAction->setEnabled(!isMaximized());
+		//_minimizeAction->setEnabled(visible);
+		//_maximizeAction->setEnabled(!isMaximized());
 		_restoreAction->setEnabled(isMaximized() || !visible);
 		QDialog::setVisible(visible);
 	}
@@ -275,11 +298,11 @@ namespace Ui
 	
 	void ControlPanel::createActions()
 	{
-		_minimizeAction = new QAction(tr("Mi&nimize"), this);
-		connect(_minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
+		//_minimizeAction = new QAction(tr("Mi&nimize"), this);
+		//connect(_minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
 
-		_maximizeAction = new QAction(tr("Ma&ximize"), this);
-		connect(_maximizeAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
+		//_maximizeAction = new QAction(tr("Ma&ximize"), this);
+		//connect(_maximizeAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
 
 		_restoreAction = new QAction(tr("&Restore"), this);
 		connect(_restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
@@ -291,8 +314,8 @@ namespace Ui
 	void ControlPanel::createTrayIcon()
 	{
 		trayIconMenu = new QMenu(this);
-		trayIconMenu->addAction(_minimizeAction);
-		trayIconMenu->addAction(_maximizeAction);
+		//trayIconMenu->addAction(_minimizeAction);
+		//trayIconMenu->addAction(_maximizeAction);
 		trayIconMenu->addAction(_restoreAction);
 		trayIconMenu->addSeparator();
 		trayIconMenu->addAction(_quitAction);

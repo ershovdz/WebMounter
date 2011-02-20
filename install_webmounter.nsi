@@ -1,4 +1,4 @@
-!define VERSION "0.1 (build 106)"
+!define VERSION "0.2 (build 109)"
 
 !define MULTIUSER_EXECUTIONLEVEL Highest
 ;!define MULTIUSER_NOUNINSTALL ;Uncomment if no uninstaller is created
@@ -54,6 +54,9 @@ Icon ".\drive.ico"
     File .\WebMounter\QtCored4.dll
     File .\WebMounter\QtGuid4.dll
     File .\WebMounter\QtSqld4.dll
+	File .\WebMounter\QtNetworkd4.dll
+	File .\WebMounter\QtWebKitd4.dll
+	File .\WebMounter\phonond4.dll
     File .\WebMounter\ssleay32.dll
     File .\WebMounter\WebMounter.exe
     File .\WebMounter\webmounter_en.qm
@@ -183,9 +186,9 @@ Section "WebMounter Files" section_webmounter
 	!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     
     ;Create shortcuts
-    CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
-    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\WebMounter.lnk" "$PROGRAMFILES32\WebMounter\WebMounter.exe" "" "$PROGRAMFILES32\WebMounter\drive.ico"
-	CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$PROGRAMFILES32\WebMounter\WebMounterUninstall.exe"
+    CreateDirectory "$SMPROGRAMS\WebMounter"
+    CreateShortCut "$SMPROGRAMS\WebMounter\WebMounter.lnk" "$PROGRAMFILES32\WebMounter\WebMounter.exe" "" "$PROGRAMFILES32\WebMounter\drive.ico"
+	;CreateShortCut "$SMPROGRAMS\WebMounter\Uninstall.lnk" "$PROGRAMFILES32\WebMounter\WebMounterUninstall.exe"
 	
 	SetOutPath $PROGRAMFILES32\WebMounter
 	CreateShortCut "$DESKTOP\WebMounter.lnk" "$INSTDIR\WebMounter.exe" "" "$INSTDIR\drive.ico"
@@ -277,15 +280,14 @@ Section "Uninstall"
 
   ; Remove registry keys
  
+  Delete "$SMPROGRAMS\WebMounter\WebMounter.lnk"
+  Delete "$SMPROGRAMS\WebMounter\Uninstall.lnk"
+  Delete "$DESKTOP\WebMounter.lnk"
+  Delete "$SMSTARTUP\WebMounter.lnk"
+  RMDir /r "$SMPROGRAMS\WebMounter"
   
-  Delete $SMPROGRAMS\$StartMenuFolder\WebMounter.lnk
-  Delete $SMPROGRAMS\$StartMenuFolder\Uninstall.lnk
-  Delete $DESKTOP\WebMounter.lnk
-  Delete $SMSTARTUP\WebMounter.lnk
-  RMDir /r $SMPROGRAMS\$StartMenuFolder
-  
-   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\WebMounter"
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Run\WebMounter"
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\WebMounter"
+  ;DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Run\WebMounter"
 
   ;RMDir $SMPROGRAMS\WebMounter
 

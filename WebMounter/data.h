@@ -31,7 +31,7 @@ namespace Data
 		bool bAutoSync;
 		QString syncPeriod;
 		QString lastSync;
-
+        bool isOAuthUsing;
 		QString key;
 	};
 
