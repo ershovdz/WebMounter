@@ -68,8 +68,35 @@ namespace Common
 			uNotUploaded++;
 		}
 
+		static UINT getNotDeletedCounter()
+		{
+			QMutexLocker locker(&_FileProxyMutex);
+			return _uNotDeleted;
+		}
+		static UINT getDeletedCounter()
+		{
+			QMutexLocker locker(&_FileProxyMutex);
+			return _uDeleted;
+		}
+		static void increaseDeletedCounter()
+		{
+			QMutexLocker locker(&_FileProxyMutex);
+			_uDeleted++;
+		}
+		static void increaseNotDeletedCounter()
+		{
+			if(_uNotDeleted == 0)
+			{
+				notifyUser(Ui::Notification::eINFO
+					, QObject::tr("Info")
+					, QObject::tr("Deletion has been started !"));
+			}
+			_uNotDeleted++;
+		}
+
  public:
 	 void fileUploaded(QString filePath, RESULT result);
+	 void fileDeleted(const QString& filePath, RESULT result);
 
 	private:
 		static void notifyUser(Ui::Notification::_Types type, QString title, QString description);
@@ -84,6 +111,9 @@ namespace Common
 
 		static QList<QString> _uploadQueue;
 
+		static UINT _uDeleted;
+		static UINT _uNotDeleted;
+		static QList<QString> _deleteQueue;
 	public:
 		static FileProxy* _pFileProxyInstance;
 	};

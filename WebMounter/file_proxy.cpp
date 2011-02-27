@@ -21,6 +21,10 @@ namespace Common
 	QList<QString> FileProxy::_uploadQueue;
 	//JmmRVFSDriver rvfsDriver;
 
+	UINT FileProxy::_uNotDeleted = 0;
+	UINT FileProxy::_uDeleted = 0;
+	QList<QString> FileProxy::_deleteQueue;
+
 	FileProxy::FileProxy(void)
 	{
 	}
@@ -388,13 +392,17 @@ namespace Common
 				return eERROR;
 			}
 
-			if(driver->deleteFile(elem->getId()) == eNO_ERROR)
-			{
-				cache->erase(elem);
-				return eNO_ERROR;
-			}
+			QFileInfo fInfo(elem->getPath());
+			increaseNotDeletedCounter();
+			_deleteQueue.append(fInfo.absoluteFilePath());
+
+			QFile::Permissions permissions = QFile::permissions(fInfo.absoluteFilePath());
+			permissions |= (QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
+			bool err = QFile::setPermissions(fInfo.absoluteFilePath(), permissions);
+
+			QtConcurrent::run(boost::bind(&RemoteDriver::RVFSDriver::deleteFile, _1, _2), driver, elem->getId());
 		}
-		return eERROR;
+		return eNO_ERROR;
 	}
 
 	void FileProxy::notifyUser(Ui::Notification::_Types type, QString title, QString description)
@@ -508,4 +516,54 @@ namespace Common
 							+ " ) !");
 		 }
 	 }
+
+	void FileProxy::fileDeleted(const QString& filePath, RESULT result)
+	{
+		QList<QString>::iterator iter;
+		for(iter = _deleteQueue.begin(); iter != _deleteQueue.end(); iter++)
+		{
+			if(*iter == filePath)
+			{
+				_deleteQueue.erase(iter);
+				if(result == eNO_ERROR)
+				{
+					VFSCache* cache = WebMounter::getCache();
+					VFSCache::iterator elem = cache->find(filePath);
+					if(elem != cache->end())
+						cache->erase(elem);
+				}
+				break;
+			}
+		}
+
+		if(_deleteQueue.empty())
+		{
+			_uDeleted = 0;
+			_uNotDeleted = 0;
+
+			if(result == eNO_ERROR)
+			{
+				notifyUser(Ui::Notification::eINFO
+					, QObject::tr("Info")
+					, QObject::tr("Deletion completed !"));
+			}
+			else
+			{
+				notifyUser(Ui::Notification::eINFO
+					, QObject::tr("Info")
+					, QObject::tr("Deletion completed, but some files has been not deleted !"));
+			}		
+		}
+		else
+		{
+			IncreaseUploadedCounter();
+			notifyUser(Ui::Notification::eINFO
+				, QObject::tr("Info")
+				, QObject::tr("Deleting progress (") 
+				+ QString::number(getDeletedCounter()) 
+				+ QObject::tr(" of ") 
+				+ QString::number(getNotDeletedCounter())
+				+ " ) !");
+		}
+	}
 }

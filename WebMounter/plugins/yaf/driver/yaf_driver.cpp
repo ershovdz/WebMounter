@@ -35,6 +35,9 @@ namespace RemoteDriver
 
 			if(vfsCache->find(entryAbsPath) == vfsCache->end())
 			{
+				QFile::Permissions permissions = QFile::permissions(entryAbsPath);
+				permissions |= (QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
+				bool err = QFile::setPermissions(entryAbsPath, permissions);
 				QFile::remove(entryAbsPath);
 			}
 		}
@@ -223,10 +226,10 @@ namespace RemoteDriver
 	{
 		QString response;
 		RESULT res = _httpConnector->deleteFile("photo/" + id + "/", response);
+		VFSCache* vfsCache = WebMounter::getCache();
+		VFSCache::iterator iter = vfsCache->begin();
 		if(res == eNO_ERROR)
 		{
-			VFSCache* vfsCache = WebMounter::getCache();
-			VFSCache::iterator iter = vfsCache->begin();
 			for(iter; iter != vfsCache->end(); ++iter)
 			{
 				if(iter->getId() == id)
@@ -239,6 +242,8 @@ namespace RemoteDriver
 				}
 			}
 		}
+
+		WebMounter::getProxy()->fileDeleted(iter->getPath(), res);
 		return res;
 	}
 
