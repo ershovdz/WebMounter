@@ -91,7 +91,7 @@ namespace Ui
 		PluginView*   _jmmgView;
 		PluginView*   _jmmaView;
 		PluginView*   _googleView;
-		PluginView*   _odnView;
+		//PluginView*   _odnView;
 
 
 		QVBoxLayout *_mainLayout;
@@ -126,7 +126,7 @@ namespace Ui
 		QListWidgetItem *_yafButton;
 		QListWidgetItem *_jmmgButton;
 		QListWidgetItem *_jmmaButton;
-		QListWidgetItem *_odnButton;
+		//QListWidgetItem *_odnButton;
 		QListWidgetItem *_googleButton;
 
 		bool _bShowOnCloseMessage;

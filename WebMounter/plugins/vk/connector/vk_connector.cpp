@@ -433,7 +433,7 @@ namespace Connector
 		return res;
 	}
 
-	RESULT VkHTTPConnector::downloadFile(const QList <QString>& urlList, const QList <QString>& pathList)
+	RESULT VkHTTPConnector::downloadFiles(QList <QString>& urlList, QList <QString>& pathList)
 	{
 		QMutexLocker locker(&_connectorMutex);
 		

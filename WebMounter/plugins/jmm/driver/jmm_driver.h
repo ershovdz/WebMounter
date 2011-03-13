@@ -37,7 +37,7 @@ namespace RemoteDriver
 		~JmmRVFSDriver(void);
 
 	public:
-		virtual RESULT downloadFile(const QString& url, const QString& path);
+		virtual RESULT downloadFiles(QList <QString>& urlList, QList <QString>& pathList);
 		virtual RESULT uploadFile(const QString& path, const QString& title, const QString& id, const QString& parentid);
 		virtual RESULT modifyFile(const QString&);
 		virtual RESULT renameElement( const QString& id, ElementType type, const QString& newTitle);

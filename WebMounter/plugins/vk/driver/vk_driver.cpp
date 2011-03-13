@@ -19,11 +19,9 @@ namespace RemoteDriver
 			QFileInfo fInfo(rootPath);
 			//syncCacheWithFileSystem(fInfo.absoluteFilePath());
 		}
-
-		//connect(this, SIGNAL(fileUploaded(/*QString, RESULT*/)), WebMounter::getProxy(), SLOT(FileProxy::fileUploaded1(/*QString, RESULT*/)));
 	}
 
-	void VkRVFSDriver::syncCacheWithFileSystem(const QString& path)
+	/*void VkRVFSDriver::syncCacheWithFileSystem(const QString& path)
 	{
 		VFSCache* vfsCache = WebMounter::getCache();
 
@@ -71,45 +69,84 @@ namespace RemoteDriver
 				}
 			}
 		}
-	}
+	}*/
 
 	VkRVFSDriver::~VkRVFSDriver(void)
 	{
 		delete _httpConnector;
 	}
 
-	RESULT VkRVFSDriver::downloadFile(const QString& url, const QString& path)
+	RESULT VkRVFSDriver::downloadFiles(QList <QString>& urlList, QList <QString>& pathList)
 	{
-		RESULT res = _httpConnector->downloadFile(url, path);
-		if(res == eNO_ERROR)
-		{
-			QFile::Permissions permissions = QFile::permissions(path);
-			permissions &= ~(QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
-			QFile::setPermissions(path, permissions);
+		VFSCache* vfsCache = WebMounter::getCache();
+		int initialListSize = urlList.size();
+		
+		{ 	LOCK(_driverMutex)
+		
+			VFSCache::iterator iter = vfsCache->end();
+			for(int i = 0; i < pathList.size(); ++i)
+			{
+				iter = vfsCache->find(pathList.at(i));
+				if(iter != vfsCache->end()
+					&& !(iter->getFlags() & VFSElement::eFl_Downloading)
+					&& !(iter->getFlags() & VFSElement::eFl_Downloaded))
+				{	
+					vfsCache->setFlag(iter, VFSElement::eFl_Downloading, VFSElement::eFl_None);
+					QFile::remove(pathList.at(i));
+				}
+				else
+				{
+					urlList.removeAt(i);
+					pathList.removeAt(i);
+					i = 0;
+				}
+			}
+			
+			if(urlList.size() == 0) // there is nothing to download
+			{
+				if(initialListSize == 1
+					&& iter != vfsCache->end() 
+					&& iter->getFlags() & VFSElement::eFl_Downloaded) // download request has been recieved for one file, but file is already downloaded
+				{	
+					return eNO_ERROR;
+				}
+				else
+				{
+					return eERROR;
+				}
+			}
 		}
-		return res;
-	}
-
-	RESULT VkRVFSDriver::downloadFiles(const QList <QString>& urlList, const QList <QString>& pathList, UINT& uDownloaded, UINT& uNotDownloaded)
-	{
-		RESULT res = _httpConnector->downloadFile(urlList, pathList);
-		VFSCache* cache = WebMounter::getCache();
-		if(res == eNO_ERROR)
+		
+		RESULT res = _httpConnector->downloadFiles(urlList, pathList);
+		if(res == eERROR)
 		{
+			UINT retryDownloadCounter = 0;
+			while(res == eERROR && retryDownloadCounter < MAX_DOWNLOAD_RETRY)
+			{
+				res = _httpConnector->downloadFiles(urlList, pathList);
+				retryDownloadCounter++;
+			}
+		}
+		
+		{ 	LOCK(_driverMutex)
+		
 			for(int i = 0; i < pathList.size(); i++)
 			{
-				QFile::Permissions permissions = QFile::permissions(pathList.at(i));
-				permissions &= ~(QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
-				QFile::setPermissions(pathList.at(i), permissions);
-
 				QFileInfo fInfo(pathList.at(i));
-				VFSCache::iterator iter = cache->find(fInfo.absoluteFilePath());
+				VFSCache::iterator iter = vfsCache->find(fInfo.absoluteFilePath());
 
-				if(iter != cache->end())
+				if(iter != vfsCache->end())
 				{
-					if(!iter->isDownloaded())
+					if(res == eERROR)
 					{
-						cache->setDownloaded(iter, true);
+						vfsCache->setFlag(iter, VFSElement::eFl_None, VFSElement::eFl_Downloading);
+					}
+					else
+					{
+						QFile::Permissions permissions = QFile::permissions(pathList.at(i));
+						permissions &= ~(QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
+						QFile::setPermissions(pathList.at(i), permissions);
+						vfsCache->setFlag(iter, VFSElement::eFl_Downloaded, VFSElement::eFl_Downloading);
 					}
 				}
 			}
@@ -253,6 +290,7 @@ namespace RemoteDriver
 					permissions |= (QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
 					bool err = QFile::setPermissions(iter->getPath(), permissions);
 
+					vfsCache->erase(iter);
 					break;
 				}
 			}
@@ -444,14 +482,15 @@ namespace RemoteDriver
 		QList<VFSElement> elements;
 
 		VFSElement elem = VFSElement(VFSElement::DIRECTORY
-			, _pluginName
-			, "ROOT"
-			, ""
-			, ""
-			, ROOT_ID
-			, ROOT_ID
-			, ""
-			, _pluginName);
+									, _pluginName
+									, "ROOT"
+									, ""
+									, ""
+									, ""
+									, ROOT_ID
+									, ROOT_ID
+									, ""
+									, _pluginName);
 
 		elements.append(elem);
 
@@ -497,7 +536,7 @@ namespace RemoteDriver
 		elem.setId(rx.cap(1));
 		url += QString::fromAscii("_") + rx.cap(1);
 
-		elem.setOrigUrl(url);
+		elem.setSrcUrl(url);
 	}
 
 	void VkRVFSDriver::parsePhotoEntry(QString& xmlEntry, VFSElement& elem)
@@ -520,9 +559,9 @@ namespace RemoteDriver
 
 		rx.setPattern("<src_big>(.*)</src_big>");
 		rx.indexIn(xmlEntry);
-		elem.setOrigUrl(rx.cap(1));
+		elem.setSrcUrl(rx.cap(1));
 
-		QString url = elem.getOrigUrl();
+		QString url = elem.getSrcUrl();
 		int pos = url.lastIndexOf("/");
 		elem.setName(url.right(url.length() - pos - 1));
 	}
@@ -554,14 +593,15 @@ namespace RemoteDriver
 		QList<VFSElement> elements;
 
 		VFSElement elem = VFSElement(VFSElement::DIRECTORY
-			, fInfo.absoluteFilePath()
-			, "ROOT"
-			, ""
-			, ""
-			, ROOT_ID
-			, ROOT_ID
-			, ""
-			, _pluginName);
+										, fInfo.absoluteFilePath()
+										, "ROOT"
+										, ""
+										, ""
+										, ""
+										, ROOT_ID
+										, ROOT_ID
+										, ""
+										, _pluginName);
 
 		elements.append(elem);
 
@@ -629,7 +669,7 @@ namespace RemoteDriver
 				}
 
 				if(!_isDemo) 
-				{ // In demo mode there is no way to create elements outside the WebMounter 
+				{   // In demo mode there is no way to create elements outside the WebMounter 
 					// Add newly created elements
 					for(int i=0; i<elements.count(); i++)
 					{
@@ -711,67 +751,67 @@ namespace RemoteDriver
 		}
 	}
 
-	RESULT VkRVFSDriver::downloadFiles()
-	{
-		QList <QString> urlToDownload;
-		QList <QString> pathToDownload;
-		VFSCache* vfsCache = WebMounter::getCache();
-		VFSCache::iterator iter = vfsCache->begin();
-		UINT uNotDownloaded = countNotDownloaded();
-		UINT uDownloaded = 0;
-		RESULT err;
-		for(iter = vfsCache->begin(); iter != vfsCache->end(); ++iter)
-		{
-			if(this->_state == eSyncStopping)
-			{
-				notifyUser(Ui::Notification::eINFO, tr("Info"), tr("Synchronization is stopped !\n"));
-				//updateState(100, RemoteDriver::eConnected);
-				return eNO_ERROR;
-			}
+	//RESULT VkRVFSDriver::downloadFiles()
+	//{
+	//	QList <QString> urlToDownload;
+	//	QList <QString> pathToDownload;
+	//	VFSCache* vfsCache = WebMounter::getCache();
+	//	VFSCache::iterator iter = vfsCache->begin();
+	//	UINT uNotDownloaded = countNotDownloaded();
+	//	UINT uDownloaded = 0;
+	//	RESULT err = eERROR;
+	//	for(iter = vfsCache->begin(); iter != vfsCache->end(); ++iter)
+	//	{
+	//		if(this->_state == eSyncStopping)
+	//		{
+	//			notifyUser(Ui::Notification::eINFO, tr("Info"), tr("Synchronization is stopped !\n"));
+	//			//updateState(100, RemoteDriver::eConnected);
+	//			return eNO_ERROR;
+	//		}
 
-			if(iter->getPluginName() == _pluginName)
-			{
-				if(iter->getType() == VFSElement::FILE && !iter->isDownloaded())
-				{
-					QFile::remove(iter->getPath());
+	//		if(iter->getPluginName() == _pluginName)
+	//		{
+	//			if(iter->getType() == VFSElement::FILE && !iter->isDownloaded())
+	//			{
+	//				QFile::remove(iter->getPath());
 
-					urlToDownload.append(iter->getOrigUrl());
-					pathToDownload.append(iter->getPath());
+	//				urlToDownload.append(iter->getSrcUrl());
+	//				pathToDownload.append(iter->getPath());
 
-					if(urlToDownload.size() == DOWNLOAD_CHUNK_SIZE)
-					{
-						err = downloadFiles(urlToDownload, pathToDownload, uDownloaded, uNotDownloaded);
-						UINT retryDownloadCounter = 0;
-						while(err == eERROR && retryDownloadCounter < MAX_DOWNLOAD_RETRY)
-						{
-							err = downloadFiles(urlToDownload, pathToDownload, uDownloaded, uNotDownloaded);
-							retryDownloadCounter++;
-						}
+	//				if(urlToDownload.size() == DOWNLOAD_CHUNK_SIZE)
+	//				{
+	//					err = downloadFiles(urlToDownload, pathToDownload);
+	//					UINT retryDownloadCounter = 0;
+	//					while(err == eERROR && retryDownloadCounter < MAX_DOWNLOAD_RETRY)
+	//					{
+	//						err = downloadFiles(urlToDownload, pathToDownload);
+	//						retryDownloadCounter++;
+	//					}
 
-						if(err)
-						{
-							updateDownloadStatus(err, uDownloaded, uNotDownloaded);
-							return err;
-						}
-						else
-						{
-							uDownloaded += urlToDownload.size();
-							updateDownloadStatus(err, uDownloaded, uNotDownloaded);
-							urlToDownload.clear();
-							pathToDownload.clear();
-						}
-					}
-				}
-			}
-		}
+	//					if(err)
+	//					{
+	//						updateDownloadStatus(err, uDownloaded, uNotDownloaded);
+	//						return err;
+	//					}
+	//					else
+	//					{
+	//						uDownloaded += urlToDownload.size();
+	//						updateDownloadStatus(err, uDownloaded, uNotDownloaded);
+	//						urlToDownload.clear();
+	//						pathToDownload.clear();
+	//					}
+	//				}
+	//			}
+	//		}
+	//	}
 
-		if(urlToDownload.size() > 0)
-		{
-			return downloadFiles(urlToDownload, pathToDownload, uDownloaded, uNotDownloaded);
-		}
+	//	if(urlToDownload.size() > 0)
+	//	{
+	//		return downloadFiles(urlToDownload, pathToDownload);
+	//	}
 
-		return err;
-	}
+	//	return err;
+	//}
 
 	void VkRVFSDriver::updateDownloadStatus(RESULT downloadResult, const UINT uDownloaded, const UINT uNotDownloaded)
 	{
@@ -841,24 +881,6 @@ namespace RemoteDriver
 		}
 	}
 
-	UINT VkRVFSDriver::countNotDownloaded()
-	{
-		VFSCache* cache = WebMounter::getCache();
-		UINT counter = 0;
-
-		for(VFSCache::iterator iter = cache->begin(); 
-			iter != cache->end(); 
-			++iter)
-		{
-			if( iter->getPluginName() == _pluginName && !iter->isDownloaded() && iter->getType() == VFSElement::FILE)
-			{
-				counter++;
-			}
-		}
-
-		return counter;
-	}
-
 	void VkRVFSDriver::disconnectHandler()
 	{
 		_driverMutex.lock();
@@ -919,7 +941,7 @@ namespace RemoteDriver
 		start(); // start sync thread again
 	}
 
-	int VkRVFSDriver::removeFolder(QDir& dir)
+	/*int VkRVFSDriver::removeFolder(QDir& dir)
 	{
 		int res = 0;
 
@@ -943,7 +965,7 @@ namespace RemoteDriver
 			res = 1;
 		}
 		return res;
-	}
+	}*/
 
 	RESULT VkRVFSDriver::checkKey(const PluginSettings& pluginSettings)
 	{

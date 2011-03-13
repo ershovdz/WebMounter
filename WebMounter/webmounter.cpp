@@ -80,6 +80,11 @@ void WebMounter::startApp()
 			dir.mkdir(_globalSettings->getAppStoragePath() + "\\Vkontakte");
 		}
 
+		if(!dir.exists(_globalSettings->getAppStoragePath() + "\\Google.Docs"))
+		{
+			dir.mkdir(_globalSettings->getAppStoragePath() + "\\Google.Docs");
+		}
+
 		if(!dir.exists(_globalSettings->getAppStoragePath() + "\\Yandex.Fotki"))
 		{
 			dir.mkdir(_globalSettings->getAppStoragePath() + "\\Yandex.Fotki");
@@ -91,6 +96,7 @@ void WebMounter::startApp()
 		_pluginList.insert(PluginList_Pair("Joomla.Gallery", new RemoteDriver::JmmRVFSDriver("Joomla.Gallery")));
 		_pluginList.insert(PluginList_Pair(QString("Yandex.Fotki"), new RemoteDriver::YafRVFSDriver("Yandex.Fotki")));
 		_pluginList.insert(PluginList_Pair(QString("Vkontakte"), new RemoteDriver::VkRVFSDriver("Vkontakte")));
+		_pluginList.insert(PluginList_Pair(QString("Google.Docs"), new RemoteDriver::GoogleRVFSDriver("Google.Docs")));
 		
 		_fileProxy = FileProxy::CreateFileProxy();
 

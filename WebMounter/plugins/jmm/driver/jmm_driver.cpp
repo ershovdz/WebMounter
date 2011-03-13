@@ -9,6 +9,7 @@
 #include <QFile>
 #include <QTime>
 #include <QDir>
+#include <QList>
 
 namespace RemoteDriver
 {
@@ -126,7 +127,7 @@ namespace RemoteDriver
 				{
 					file.open(QIODevice::WriteOnly);
 					file.close();
-					vfsCache->setDownloaded(iter, false);
+					vfsCache->setFlag(iter, VFSElement::eFl_None, VFSElement::eFl_Downloaded);
 				}
 			}
 		}
@@ -179,6 +180,7 @@ namespace RemoteDriver
 						, title
 						, ""
 						, ""
+						, ""
 						, response_id
 						, parentId
 						, "0000-00-00 00:00:00"
@@ -209,8 +211,7 @@ namespace RemoteDriver
 			return eNO_ERROR;
 		}
 	}
-
-	RESULT JmmRVFSDriver::downloadFile(const QString& url, const QString& path)
+	RESULT JmmRVFSDriver::downloadFiles(QList <QString>& urlList, QList <QString>& pathList)
 	{
 		if(!isRunning())
 		{
@@ -220,27 +221,46 @@ namespace RemoteDriver
 		
 		if(_httpConnector.auth() != eNO_ERROR) // to be sure that session has not been expired
 		{
-			//stopPlugin();
-			//updateState(100, RemoteDriver::eNotConnected);
 			return eERROR;	
 		}
 		
 		VFSCache* cache = WebMounter::getCache();
-		QFileInfo fInfo(path);
+		QFileInfo fInfo(pathList.at(0));
 
 		VFSCache::iterator iter = cache->find(fInfo.absoluteFilePath());
 
 		if(iter != cache->end())
 		{
-			if(!iter->isDownloaded() && _httpConnector.downloadFile(url, path) == eNO_ERROR)
+			if(iter->getFlags() & VFSElement::eFl_Downloaded)
 			{
-				cache->setDownloaded(iter, true);
 				return eNO_ERROR;
+			}
+			
+			{ 	LOCK(_driverMutex)
+				
+				if(!(iter->getFlags() & VFSElement::eFl_Downloading))
+				{
+					cache->setFlag(iter, VFSElement::eFl_Downloading);
+				}
+				else
+				{
+					return eERROR;
+				}
+			}
+			
+			if(_httpConnector.downloadFile(urlList.at(0), pathList.at(0)) == eNO_ERROR)
+			{
+				cache->setFlag(iter, VFSElement::eFl_Downloaded, VFSElement::eFl_Downloading);
+				return eNO_ERROR;
+			}
+			else
+			{
+				cache->setFlag(iter, VFSElement::eFl_None, VFSElement::eFl_Downloading);
 			}
 		}
 		return eERROR;
-	};
-
+	}
+	
 	RESULT JmmRVFSDriver::uploadFile(const QString& path, const QString& title, const QString& id, const QString& parentid)
 	{
 		QString response;
@@ -305,6 +325,7 @@ namespace RemoteDriver
 					VFSElement elem (VFSElement::FILE
 									, fInfo.absoluteFilePath()
 									, title
+									, ""
 									, ""
 									, ""
 									, response_id
@@ -472,6 +493,7 @@ namespace RemoteDriver
 				VFSElement elem(VFSElement::DIRECTORY
 								, path
 								, title
+								, ""
 								, ""
 								, ""
 								, id
@@ -795,7 +817,12 @@ namespace RemoteDriver
 
 					if(settings.bFullSync)
 					{	
-						if(downloadFile(iter->getOrigUrl(), iter->getPath()) == eNO_ERROR)
+						QList<QString> url;
+						QList<QString> path;
+
+						url.append(iter->getSrcUrl());
+						path.append(iter->getPath());
+						if(downloadFiles(url, path) == eNO_ERROR)
 						{
 							QFile file(iter->getPath());
 							if(!file.exists())

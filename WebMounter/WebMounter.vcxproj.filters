@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="control_panel.cpp" />
+    <ClCompile Include="data.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_general_view.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_jmm_driver.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_vk_driver.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_yaf_oauth.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_vk_driver.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_lvfs_driver.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_plugin_view.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_plugin_view.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_tray_notification_device.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_view.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_vk_view.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_win_lvfs_driver.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_yaf_driver.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_yaf_view.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_lvfs_driver.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_general_view.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_jmm_driver.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_tray_notification_device.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_view.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_vk_view.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_win_lvfs_driver.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_yaf_oauth.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_yaf_view.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_yaf_driver.cpp" />
+    <ClCompile Include="GeneratedFiles\Release_\moc_yaf_oauth.cpp" />
+    <ClCompile Include="GeneratedFiles\Template\moc_jmm_driver.cpp" />
+    <ClCompile Include="GeneratedFiles\Template\moc_tray_notification_device.cpp" />
+    <ClCompile Include="GeneratedFiles\Template\moc_vk_view.cpp" />
+    <ClCompile Include="GeneratedFiles\Template\moc_win_lvfs_driver.cpp" />
+    <ClCompile Include="GeneratedFiles\Template\moc_yaf_oauth.cpp" />
+    <ClCompile Include="GeneratedFiles\Template\moc_yaf_view.cpp" />
+    <ClCompile Include="plugins\vk\view\vk_view.cpp" />
+    <ClCompile Include="plugins\yaf\connector\base64.cpp" />
+    <ClCompile Include="plugins\yaf\connector\cp_rsa.cpp" />
+    <ClCompile Include="plugins\yaf\view\yaf_oauth.cpp" />
+    <ClCompile Include="plugins\yaf\view\yaf_view.cpp" />
+    <ClCompile Include="plugin_view.cpp" />
+    <ClCompile Include="reg_exp.cpp" />
+    <ClCompile Include="win_lvfs_driver.cpp" />
+    <ClCompile Include="file_proxy.cpp" />
+    <ClCompile Include="linux_lvfs_driver.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_control_panel.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_rvfs_driver.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_control_panel.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_rvfs_driver.cpp" />
+    <ClCompile Include="GeneratedFiles\Template\moc_control_panel.cpp" />
+    <ClCompile Include="GeneratedFiles\Template\moc_rvfs_driver.cpp" />
+    <ClCompile Include="lvfs_driver.cpp" />
+    <ClCompile Include="plugins\jmm\connector\jmm_connector.cpp" />
+    <ClCompile Include="plugins\jmm\driver\jmm_driver.cpp" />
+    <ClCompile Include="plugins\jmm\xml\jmm_xml.cpp" />
+    <ClCompile Include="plugins\odnoklassniki\connector\odn_connector.cpp" />
+    <ClCompile Include="plugins\odnoklassniki\driver\odn_driver.cpp" />
+    <ClCompile Include="plugins\odnoklassniki\xml\odn_xml.cpp" />
+    <ClCompile Include="plugins\vk\connector\vk_connector.cpp" />
+    <ClCompile Include="plugins\vk\driver\vk_driver.cpp" />
+    <ClCompile Include="plugins\yaf\connector\yaf_connector.cpp" />
+    <ClCompile Include="plugins\yaf\driver\yaf_driver.cpp" />
+    <ClCompile Include="plugins\yaf\xml\yaf_xml.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="rvfs_driver.cpp" />
+    <ClCompile Include="general_view.cpp" />
+    <ClCompile Include="tray_notification_device.cpp" />
+    <ClCompile Include="vfs_cache.cpp" />
+    <ClCompile Include="vfs_element.cpp" />
+    <ClCompile Include="WebMounter.cpp" />
+    <ClCompile Include="GeneratedFiles\qrc_controlpanel.cpp" />
+    <ClCompile Include="plugins\google\xml\google_xml.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="plugins\google\view\google_view.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_google_view.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release_\moc_google_view.cpp">
+      <Filter>Generated Files\Release_</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_google_view.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Template\moc_google_view.cpp">
+      <Filter>Generated Files\Template</Filter>
+    </ClCompile>
+    <ClCompile Include="plugins\google\driver\google_driver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_google_driver.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release_\moc_google_driver.cpp">
+      <Filter>Generated Files\Release_</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_google_driver.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Template\moc_google_driver.cpp">
+      <Filter>Generated Files\Template</Filter>
+    </ClCompile>
+    <ClCompile Include="plugins\google\connector\google_connector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\dokan\dokan\dokanc.h" />
+    <ClInclude Include="..\..\dokan\dokan\list.h" />
+    <ClInclude Include="common_stuff.h" />
+    <ClInclude Include="data.h" />
+    <ClInclude Include="file_proxy.h" />
+    <ClInclude Include="linux_lvfs_driver.h" />
+    <ClInclude Include="plugins.h" />
+    <ClInclude Include="plugins\jmm\connector\jmm_connector.h" />
+    <ClInclude Include="plugins\jmm\xml\jmm_xml.h" />
+    <ClInclude Include="plugins\odnoklassniki\connector\odn_connector.h" />
+    <ClInclude Include="plugins\odnoklassniki\driver\odn_driver.h" />
+    <ClInclude Include="plugins\odnoklassniki\xml\odn_xml.h" />
+    <ClInclude Include="plugins\vk\connector\vk_connector.h" />
+    <ClInclude Include="plugins\yaf\connector\base64.h" />
+    <ClInclude Include="plugins\yaf\connector\cp_rsa.h" />
+    <ClInclude Include="plugins\yaf\connector\yaf_connector.h" />
+    <ClInclude Include="plugins\yaf\xml\yaf_xml.h" />
+    <ClInclude Include="reg_exp.h" />
+    <ClInclude Include="vfs_cache.h" />
+    <ClInclude Include="vfs_element.h" />
+    <ClInclude Include="WebMounter.h" />
+    <ClInclude Include="GeneratedFiles\ui_webmounter.h" />
+    <ClInclude Include="plugins\google\connector\google_connector.h" />
+    <ClInclude Include="plugins\google\xml\google_xml.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="webmounter.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="control_panel.h" />
+    <CustomBuild Include="win_lvfs_driver.h" />
+    <CustomBuild Include="notification_device.h" />
+    <CustomBuild Include="general_view.h" />
+    <CustomBuild Include="lvfs_driver.h" />
+    <CustomBuild Include="plugin_view.h" />
+    <CustomBuild Include="view.h" />
+    <CustomBuild Include="plugins\jmm\driver\jmm_driver.h" />
+    <CustomBuild Include="plugins\vk\view\vk_view.h" />
+    <CustomBuild Include="plugins\vk\driver\vk_driver.h" />
+    <CustomBuild Include="plugins\yaf\driver\yaf_driver.h" />
+    <CustomBuild Include="plugins\yaf\view\yaf_view.h" />
+    <CustomBuild Include="plugins\yaf\view\yaf_oauth.h" />
+    <CustomBuild Include="rvfs_driver.h" />
+    <CustomBuild Include="tray_notification_device.h" />
+    <CustomBuild Include="webmounter.ui" />
+    <CustomBuild Include="controlpanel.qrc" />
+    <CustomBuild Include="plugins\google\driver\google_driver.h" />
+    <CustomBuild Include="plugins\google\view\google_view.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\dokan\dokan\makefile" />
+    <None Include="webmounter_en.ts" />
+    <None Include="webmounter_ru.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;cxx;c;def</Extensions>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files\Debug">
+      <UniqueIdentifier>{19baf8e8-64d5-4293-b9a7-7bd198338227}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Release_">
+      <UniqueIdentifier>{55cc3b82-f538-45eb-9010-03ec42ba2c5f}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Release">
+      <UniqueIdentifier>{2aeac111-4066-4ed4-8f92-6a5ec05c1cd7}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Template">
+      <UniqueIdentifier>{7901512d-76fb-45ec-8d4e-398bd1238f1b}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -11,6 +11,7 @@
 #include "general_view.h"
 #include "plugins\yaf\view\yaf_view.h"
 #include "plugins\vk\view\vk_view.h"
+#include "plugins\google\view\google_view.h"
 
 namespace Ui
 {
@@ -41,12 +42,14 @@ namespace Ui
 
 	void ControlPanel::recreateAllWidgets()
 	{
+		PluginSettings googleSettings;
 		PluginSettings yafSettings;
 		PluginSettings vkSettings;
 		PluginSettings jmmgSettings;
 		PluginSettings jmmaSettings;
 		GeneralSettings generalSettings;
 
+		Common::WebMounter::getSettingStorage()->getData(googleSettings, "Google.Docs");
 		Common::WebMounter::getSettingStorage()->getData(yafSettings, "Yandex.Fotki");
 		Common::WebMounter::getSettingStorage()->getData(vkSettings, "Vkontakte");
 		Common::WebMounter::getSettingStorage()->getData(jmmgSettings, "Joomla.Gallery");
@@ -82,7 +85,7 @@ namespace Ui
 		
 		_contentsWidget = new QListWidget;
 		_contentsWidget->setViewMode(QListView::IconMode);
-		_contentsWidget->setIconSize(QSize(60, 45));
+		_contentsWidget->setIconSize(QSize(75, 55));
 		_contentsWidget->setMovement(QListView::Static);
 		_contentsWidget->setMaximumWidth(120);
 		_contentsWidget->setMinimumWidth(120);
@@ -97,14 +100,14 @@ namespace Ui
 		_yafView	 = new YafView(&yafSettings,  QString(tr("Yandex.Fotki")));
 		_jmmgView	 = new PluginView(&jmmgSettings, QString(tr("Joomla (Gallery)")));
 		_jmmaView	 = new PluginView(&jmmaSettings,  QString(tr("Joomla (Article)")));
-		_googleView	 = new PluginView(0,  QString(tr("Google Docs")));
-		_odnView	 = new PluginView(0,  QString(tr("Odnoklassniki")));
+		_googleView	 = new GoogleView(&googleSettings,  QString(tr("Google Docs")));
+		//_odnView	 = new PluginView(0,  QString(tr("Odnoklassniki")));
 
 		_pagesWidget->addWidget(_generalView);
 		_pagesWidget->addWidget(_vkView);
 		_pagesWidget->addWidget(_yafView);
 		_pagesWidget->addWidget(_googleView);
-		_pagesWidget->addWidget(_odnView);
+		//_pagesWidget->addWidget(_odnView);
 		_pagesWidget->addWidget(_jmmgView);
 		_pagesWidget->addWidget(_jmmaView);
 		
@@ -136,8 +139,8 @@ namespace Ui
 		this->setMinimumWidth(620);
 		this->setMinimumHeight(550);
 
-		//this->setMaximumWidth(620);
-		//this->setMaximumHeight(500);
+		this->setMaximumWidth(620);
+		this->setMaximumHeight(550);
 
 		resize(620, 550);
 	}
@@ -169,7 +172,7 @@ namespace Ui
 		_jmmaButton->setText(tr("Joomla (Article)"));
 
 		_googleButton->setText(QString(tr("Google Docs")));
-		_odnButton->setText(QString(tr("Odnoklassniki")));
+		//_odnButton->setText(QString(tr("Odnoklassniki")));
 	}
 
 	void ControlPanel::showNotification(const Notification& msg)
@@ -203,11 +206,11 @@ namespace Ui
 		_googleButton->setTextAlignment(Qt::AlignHCenter);
 		_googleButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
-		_odnButton = new QListWidgetItem(_contentsWidget);
+		/*_odnButton = new QListWidgetItem(_contentsWidget);
 		_odnButton->setIcon(QIcon(":/Resources/odnoklassniki.png"));
 		_odnButton->setText(tr("Odnoklassniki"));
 		_odnButton->setTextAlignment(Qt::AlignHCenter);
-		_odnButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+		_odnButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);*/
 
 		_jmmgButton = new QListWidgetItem(_contentsWidget);
 		_jmmgButton->setIcon(QIcon(":/Resources/Joomla.png"));

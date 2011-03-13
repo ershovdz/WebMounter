@@ -14,8 +14,7 @@ namespace RemoteDriver
 	#define DEMO_ALBUMS_LIMIT			2
 	#define DEMO_PHOTOS_PER_ALBUM_LIMIT	5
 
-	class VkRVFSDriver :
-		public RVFSDriver
+	class VkRVFSDriver : public RVFSDriver
 	{
 		Q_OBJECT 
 
@@ -24,9 +23,9 @@ namespace RemoteDriver
 		virtual ~VkRVFSDriver(void);
 	
 	public:
-		void updateDownloadStatus(RESULT downloadResult, const UINT uDownloaded, const UINT uNotDownloaded);
-		RESULT downloadFiles(const QList <QString>& urlList, const QList <QString>& pathList, UINT& uDownloaded, UINT& uNotDownloaded);
-		virtual RESULT downloadFile(const QString& url, const QString& path);
+		virtual RESULT downloadFiles() {return RVFSDriver::downloadFiles();};
+		virtual void updateDownloadStatus(RESULT downloadResult, const UINT uDownloaded, const UINT uNotDownloaded);
+		virtual RESULT downloadFiles(QList <QString>& urlList, QList <QString>& pathList);
 		virtual RESULT uploadFile(const QString& path, const QString& title,  const QString& id, const QString& parentId);
 		virtual RESULT modifyFile(const QString&);
 		virtual RESULT renameElement(const QString& id, ElementType type, const QString& newTitle);
@@ -46,9 +45,9 @@ namespace RemoteDriver
 
 		void notifyUser(Ui::Notification::_Types type, QString title, QString description) const;
 
-		RESULT downloadFiles();
+		//RESULT downloadFiles();
 
-		UINT countNotDownloaded();
+		//UINT countNotDownloaded();
 		void run();
 
 		virtual void connectHandler(PluginSettings& pluginSettings);
@@ -57,9 +56,9 @@ namespace RemoteDriver
 		virtual void stopSyncHandler();
 		virtual RESULT checkKey(const PluginSettings& pluginSettings);
 
-		int removeFolder(QDir& dir);
+		//int removeFolder(QDir& dir);
 		int findParentIndex(const QList<VFSElement>& elemList, const VFSElement& elem);
-		void syncCacheWithFileSystem(const QString& path);
+		//void syncCacheWithFileSystem(const QString& path);
 		void markNameDuplicates(QList<VFSElement>& elemList);
 		void handleNameDuplicates(QList<VFSElement>& elemList);
 		QString addPathSuffix(ElementType type, const QString& path, const QString& suffix);

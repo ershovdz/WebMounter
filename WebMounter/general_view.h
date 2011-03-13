@@ -1,15 +1,11 @@
-#ifndef GENERALVIEW_H
-#define GENERALVIEW_H
+#ifndef GENERAL_VIEW_H
+#define GENERAL_VIEW_H
 
-//#include "JmmRVFSDriver.h"
 #include <QWidget>
 #include <QtGui>
 #include "data.h"
 
 #include "control_panel.h"
-//#include "rvfs_driver.h"
-
-//using namespace RemoteDriver;
 
 namespace Ui
 {

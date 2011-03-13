@@ -25,7 +25,7 @@ namespace Connector
 		RESULT auth();
 		RESULT getTreeElements(const QString& path, QString& response);
 		RESULT downloadFile(const QString& url, const QString& path);
-		RESULT downloadFile(const QList <QString>& urlList, const QList <QString>& pathList);
+		RESULT downloadFiles(const QList <QString>& urlList, const QList <QString>& pathList);
 		RESULT uploadFile(const QString& path, const QString& title, const QString& parentId, QString& response);
 		RESULT deleteFile(const QString& path, QString& response);
 		RESULT createDirectory(const QString& title, const QString& parentId, QString& response);

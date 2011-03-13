@@ -19,8 +19,9 @@ VFSElement& VFSElement::operator=(const VFSElement& elem)
 	this->setDownloaded(elem.isDownloaded());
 	this->setId(elem.getId());
 	this->setModified(elem.getModified());
-	this->setOrigUrl(elem.getOrigUrl());
-	this->setSmallUrl(elem.getSmallUrl());
+	this->setSrcUrl(elem.getSrcUrl());
+	this->setEditMetaUrl(elem.getEditMetaUrl());
+	this->setEditMediaUrl(elem.getEditMediaUrl());
 	this->setName(elem.getName());
 	this->setParentId(elem.getParentId());
 	this->setType(elem.getType());
@@ -81,8 +82,9 @@ bool VFSElement::operator!=(const VFSElement& elem)
 VFSElement::VFSElement(VFSElementType type
 	, const QString &path
 	, const QString &name
-	, const QString &smallUrl
-	, const QString &origUrl
+	, const QString &editMetaUrl
+	, const QString &editMediaUrl
+	, const QString &srcUrl
 	, const QString& id
 	, const QString& parent_id
 	, const QString& modified
@@ -96,8 +98,9 @@ VFSElement::VFSElement(VFSElementType type
 	, m_parentID(parent_id)
 	, m_Path(path)
 	, m_Name(name)
-	, m_origUrl(origUrl)
-	, m_smallUrl(smallUrl)
+	, m_srcUrl(srcUrl)
+	, m_editMetaUrl(editMetaUrl)
+	, m_editMediaUrl(editMediaUrl)
 	, m_pluginName(pluginName)
 	, m_Modified(modified)
 {
@@ -110,8 +113,9 @@ VFSElement::VFSElement(const VFSElement& elem)
 	, m_parentID(elem.getParentId())
 	, m_Path(elem.getPath())
 	, m_Name(elem.getName())
-	, m_origUrl(elem.getOrigUrl())
-	, m_smallUrl(elem.getSmallUrl())
+	, m_srcUrl(elem.getSrcUrl())
+	, m_editMetaUrl(elem.getEditMetaUrl())
+	, m_editMediaUrl(elem.getEditMediaUrl())
 	, m_pluginName(elem.getPluginName())
 	, m_Modified(elem.getModified())
 {
@@ -144,13 +148,17 @@ const QString& VFSElement::getName() const
 {
 	return this->m_Name;
 }
-const QString& VFSElement::getSmallUrl() const
+const QString& VFSElement::getEditMetaUrl() const
 {
-	return this->m_smallUrl;
+	return this->m_editMetaUrl;
 }
-const QString& VFSElement::getOrigUrl() const
+const QString& VFSElement::getEditMediaUrl() const
 {
-	return this->m_origUrl;
+	return this->m_editMediaUrl;
+}
+const QString& VFSElement::getSrcUrl() const
+{
+	return this->m_srcUrl;
 }
 const QString& VFSElement::getParentId(void) const
 {
@@ -177,13 +185,17 @@ void VFSElement::setName(const QString& name)
 {
 	m_Name = name;
 }
-void VFSElement::setSmallUrl(const QString& smallUrl)
+void VFSElement::setEditMetaUrl(const QString& editMetaUrl)
 {
-	m_smallUrl = smallUrl;
+	m_editMetaUrl = editMetaUrl;
 }
-void VFSElement::setOrigUrl(const QString& origUrl)
+void VFSElement::setSrcUrl(const QString& srcUrl)
 {
-	m_origUrl = origUrl;
+	m_srcUrl = srcUrl;
+}
+void VFSElement::setEditMediaUrl(const QString& editMediaUrl)
+{
+	m_editMediaUrl = editMediaUrl;
 }
 void VFSElement::setParentId(const QString& parentId)
 {
@@ -231,8 +243,9 @@ void VFSElement::reset()
 	this->setDownloaded(false);
 	this->setId(0);
 	this->setModified("");
-	this->setOrigUrl("");
-	this->setSmallUrl("");
+	this->setSrcUrl("");
+	this->setEditMetaUrl("");
+	this->setEditMediaUrl("");
 	this->setName("");
 	this->setParentId(0);
 	this->setType(UNKNOWN);

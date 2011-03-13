@@ -9,13 +9,14 @@ namespace Data
 	{
 	public:
 		static enum VFSElementType {UNKNOWN, DIRECTORY, FILE};
-		enum eFlags
+		enum eVFSFlags
 		{
 			eFl_None		= 0x0,
 			eFl_Downloaded	= 0x1,
 			eFl_Dirty		= 0x2,
 			eFl_SelfMade	= 0x4,
 			eFl_NameDup		= 0x8,
+			eFl_Downloading	= 0x10,
 
 			eFl_All			= 0xffffff
 		};
@@ -25,16 +26,16 @@ namespace Data
 		VFSElement& operator=(const VFSElement& elem);
 		virtual ~VFSElement(void);
 		VFSElement(VFSElementType type
-			, const QString& path
-			, const QString& name
-			, const QString& smallURL
-			, const QString& origURL
-			, const QString& id
-			, const QString& parent_id
-			, const QString& modified
-			, const QString& pluginName
-			, int flags = eFl_None
-			);
+					, const QString& path
+					, const QString& name
+					, const QString& editMetaURL
+					, const QString& editMediaURL
+					, const QString& srcURL
+					, const QString& id
+					, const QString& parent_id
+					, const QString& modified
+					, const QString& pluginName
+					, int flags = eFl_None);
 
 	public:
 		bool operator==(const VFSElement& elem);
@@ -44,8 +45,9 @@ namespace Data
 		const QString& getParentId() const;
 		const QString& getPath() const;
 		const QString& getName() const;
-		const QString& getSmallUrl() const;
-		const QString& getOrigUrl() const;
+		const QString& getEditMetaUrl() const;
+		const QString& getEditMediaUrl() const;
+		const QString& getSrcUrl() const;
 		const QString& getPluginName() const;
 		uint getFlags() const;
 		bool isDirty() const;
@@ -60,8 +62,9 @@ namespace Data
 		void setType(VFSElementType);
 		void setPath(const QString&);
 		void setName(const QString&);
-		void setSmallUrl(const QString&);
-		void setOrigUrl(const QString&);
+		void setEditMediaUrl(const QString&);
+		void setEditMetaUrl(const QString&);
+		void setSrcUrl(const QString&);
 		void setPluginName(const QString& pluginName);
 		void setFlags(uint set, uint unset = eFl_None);
 
@@ -76,8 +79,9 @@ namespace Data
 		QString m_ID;
 		QString m_parentID;
 
-		QString m_smallUrl;
-		QString m_origUrl;
+		QString m_editMetaUrl;
+		QString m_editMediaUrl;
+		QString m_srcUrl;
 
 		QString m_Modified;
 		QString m_pluginName;

@@ -294,9 +294,11 @@ namespace Connector
 			QString fileName = title;
 			QByteArray titleArray = fileName.toUtf8();
 
+			QString access = "public";
 			curl_formadd(&post, &last, CURLFORM_COPYNAME, "image", CURLFORM_FILE, pathArray.constData(), CURLFORM_END);
 			curl_formadd(&post, &last, CURLFORM_COPYNAME, "title", CURLFORM_COPYCONTENTS, titleArray.constData(), CURLFORM_END);
 			curl_formadd(&post, &last, CURLFORM_COPYNAME, "album", CURLFORM_COPYCONTENTS, qPrintable(parentId), CURLFORM_END);
+			curl_formadd(&post, &last, CURLFORM_COPYNAME, "access_type", CURLFORM_COPYCONTENTS, qPrintable(access), CURLFORM_END);
 
 			headerlist = curl_slist_append(headerlist, qPrintable(expect));
 
@@ -311,7 +313,7 @@ namespace Connector
 			curl_easy_setopt(p_curl, CURLOPT_VERBOSE, 1L);
 			curl_easy_setopt(p_curl, CURLOPT_WRITEFUNCTION, writeStr);
 			curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, &response);
-
+			
 			CURLcode error = curl_easy_perform(p_curl);
 			long code;
 			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
@@ -358,10 +360,7 @@ namespace Connector
 		return res;
 	}
 
-
-
-
-	RESULT YafHTTPConnector::downloadFile(const QList <QString>& urlList, const QList <QString>& pathList)
+	RESULT YafHTTPConnector::downloadFiles(const QList <QString>& urlList, const QList <QString>& pathList)
 	{
 		QMutexLocker locker(&_connectorMutex);
 		

@@ -62,8 +62,9 @@ namespace Data
 				"type int,"
 				"flags int,"
 				"modified varchar(256),"
-				"smallurl varchar(1024),"
-				"origurl varchar(1024),"
+				"editMetaUrl varchar(1024),"
+				"editMediaUrl varchar(1024),"
+				"srcUrl varchar(1024),"
 				"pluginName varchar(256))");
 
 			if(!isOk)
@@ -136,8 +137,9 @@ namespace Data
 				iter.getNatureIter()->second->setDownloaded(false);
 				iter.getNatureIter()->second->setId(elem.getId());
 				iter.getNatureIter()->second->setModified(elem.getModified());
-				iter.getNatureIter()->second->setOrigUrl(elem.getOrigUrl());
-				iter.getNatureIter()->second->setSmallUrl(elem.getSmallUrl());
+				iter.getNatureIter()->second->setSrcUrl(elem.getSrcUrl());
+				iter.getNatureIter()->second->setEditMetaUrl(elem.getEditMetaUrl());
+				iter.getNatureIter()->second->setEditMediaUrl(elem.getEditMediaUrl());
 				iter.getNatureIter()->second->setName(elem.getName());
 				iter.getNatureIter()->second->setParentId(elem.getParentId());
 				iter.getNatureIter()->second->setType(elem.getType());
@@ -212,18 +214,18 @@ namespace Data
 			//{
 				QSqlQuery query(_DB);
 
-				query.prepare("INSERT INTO Elements(path, elemid, parentid, name, type, flags, modified, smallurl, origurl, pluginName) "
-					"VALUES(:path_elem, :elemid,"
-					":parentid,"
-					":name,"
-					":type,"
-					":flags,"
-					":modified,"
-					":smallurl,"
-					":origurl,"
-					":pluginName)");
+				query.prepare("INSERT INTO Elements(path, elemid, parentid, name, type, flags, modified, editMetaUrl, editMetaUrl, srcUrl, pluginName) "
+								"VALUES(:path_elem, :elemid,"
+								":parentid,"
+								":name,"
+								":type,"
+								":flags,"
+								":modified,"
+								":editMetaUrl,"
+								":editMediaUrl,"
+								":srcUrl,"
+								":pluginName)");
 
-				//query.bindValue(":path", QVariant(iter->getPath()));
 				query.bindValue(":path_elem", QVariant(elem.getPath()));
 				query.bindValue(":elemid", QVariant(elem.getId()));
 				query.bindValue(":parentid", QVariant(elem.getParentId()));
@@ -231,19 +233,20 @@ namespace Data
 				query.bindValue(":type", QVariant(elem.getType()));
 				query.bindValue(":flags", QVariant(elem.getFlags()));
 				query.bindValue(":modified", QVariant(elem.getModified()));
-				query.bindValue(":smallurl", QVariant(elem.getSmallUrl()));
-				query.bindValue(":origurl", QVariant(elem.getOrigUrl()));
+				query.bindValue(":editMetaUrl", QVariant(elem.getEditMetaUrl()));
+				query.bindValue(":editMediaUrl", QVariant(elem.getEditMediaUrl()));
+				query.bindValue(":srcUrl", QVariant(elem.getSrcUrl()));
 				query.bindValue(":pluginName", QVariant(elem.getPluginName()));
 
 				query.exec();
 			//}
 		}
 	}
-
-	void VFSCache::setDownloaded(iterator& iter, bool value)
+	
+	void VFSCache::setFlag(iterator& iter, uint set, uint unset)
 	{
 		iter.getNatureIter()->second->setDirty(true);
-		iter.getNatureIter()->second->setDownloaded(value);
+		iter.getNatureIter()->second->setFlags(set, unset);
 		flush();
 	}
 
@@ -282,69 +285,58 @@ namespace Data
 	{
 		//QMutexLocker locker(&_VFSCacheMutex);
 
-		QString rootPath = Common::WebMounter::getSettingStorage()->getAppStoragePath();
-		//vector<QString> plugins = WebMounter::getAllPluginsName();
-
-		_FileList.clear();
-
-		/*VFSElement elem(VFSElement(VFSElement::DIRECTORY
-		, rootPath
-		, "ROOT"
-		, ""
-		, ""
-		, 0
-		, 0
-		, ""
-		, "root"
-		, false
-		, true));*/
-
-		//VFSElementPtr elemPtr (new VFSElement(elem)); 
-
-		//_FileList.insert(VFSFileList_Pair(elem.getPath(), elemPtr));
-
-		QSqlQuery query(_DB);
-
-		//for(int i = 0; i < plugins.size(); i++) 
-		//{
-		bool isOk = query.exec("SELECT path, elemid, parentid, name, type, smallurl, origurl, flags, modified, pluginName FROM Elements WHERE 1");
-
-		//query.bindValue(":pluginName", QVariant(plugins[i]));
-		if(!isOk)
+		try
 		{
-			return eERROR;
-		}
+			QString rootPath = Common::WebMounter::getSettingStorage()->getAppStoragePath();
 
-		while (query.next()) 
+			_FileList.clear();
+
+			QSqlQuery query(_DB);
+
+			bool isOk = query.exec("SELECT path, elemid, parentid, name, type, editMetaUrl, editMediaUrl, srcUrl, flags, modified, pluginName FROM Elements WHERE 1");
+
+			if(!isOk)
+			{
+				return eERROR;
+			}
+
+			while (query.next()) 
+			{
+				QString path = query.value(0).toString();
+				QString elemid = query.value(1).toString()/*.toInt()*/;
+				QString parentid = query.value(2).toString()/*.toInt()*/;
+				QString name = query.value(3).toString();
+				VFSElement::VFSElementType type = (VFSElement::VFSElementType)query.value(4).toInt();
+				QString editMetaUrl = query.value(5).toString();
+				QString editMediaUrl = query.value(6).toString();
+				QString srcUrl = query.value(7).toString();
+				int flags = query.value(8).toInt();
+				QString modified = query.value(9).toString();
+				QString pluginName = query.value(10).toString();
+
+				flags &= ~VFSElement::eFl_Dirty; // we get it from database, thus it is not dirty
+				VFSElement elem(VFSElement(type
+					, path
+					, name
+					, editMetaUrl
+					, editMediaUrl
+					, srcUrl
+					, elemid
+					, parentid
+					, modified
+					, pluginName
+					, flags));
+
+				VFSElementPtr elemPtr (new VFSElement(elem)); 
+
+				_FileList.insert(VFSFileList_Pair(elem.getPath(), elemPtr));
+			}
+			return eNO_ERROR;
+		}
+		catch(...)
 		{
-			QString path = query.value(0).toString();
-			QString elemid = query.value(1).toString()/*.toInt()*/;
-			QString parentid = query.value(2).toString()/*.toInt()*/;
-			QString name = query.value(3).toString();
-			VFSElement::VFSElementType type = (VFSElement::VFSElementType)query.value(4).toInt();
-			QString smallurl = query.value(5).toString();
-			QString origurl = query.value(6).toString();
-			int flags = query.value(7).toInt();
-			QString modified = query.value(8).toString();
-			QString pluginName = query.value(9).toString();
-
-			flags &= ~VFSElement::eFl_Dirty; // we get it from database, thus it is not dirty
-			VFSElement elem(VFSElement(type
-				, path
-				, name
-				, smallurl
-				, origurl
-				, elemid
-				, parentid
-				, modified
-				, pluginName
-				, flags));
-
-			VFSElementPtr elemPtr (new VFSElement(elem)); 
-
-			_FileList.insert(VFSFileList_Pair(elem.getPath(), elemPtr));
 		}
-		return eNO_ERROR;
+		return eERROR;
 	}
 
 	RESULT VFSCache::flush()
@@ -363,11 +355,11 @@ namespace Data
 					"type=:type,"
 					"flags=:flags,"
 					"modified=:modified,"
-					"smallurl=:smallurl,"
-					"origurl=:origurl,"
+					"editMetaUrl=:editMetaUrl,"
+					"editMediaUrl=:editMediaUrl,"
+					"srcUrl=:srcUrl,"
 					"pluginName=:pluginName WHERE path=:path_elem");
 
-				//query.bindValue(":path", QVariant(iter->getPath()));
 				query.bindValue(":path_elem", QVariant(iter->getPath()));
 				query.bindValue(":elemid", QVariant(iter->getId()));
 				query.bindValue(":parentid", QVariant(iter->getParentId()));
@@ -375,8 +367,9 @@ namespace Data
 				query.bindValue(":type", QVariant(iter->getType()));
 				query.bindValue(":flags", QVariant(iter->getFlags()));
 				query.bindValue(":modified", QVariant(iter->getModified()));
-				query.bindValue(":smallurl", QVariant(iter->getSmallUrl()));
-				query.bindValue(":origurl", QVariant(iter->getOrigUrl()));
+				query.bindValue(":editMetaUrl", QVariant(iter->getEditMetaUrl()));
+				query.bindValue(":editMediaUrl", QVariant(iter->getEditMediaUrl()));
+				query.bindValue(":srcUrl", QVariant(iter->getSrcUrl()));
 				query.bindValue(":pluginName", QVariant(iter->getPluginName()));
 
 				if(!query.exec())

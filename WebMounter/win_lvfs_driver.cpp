@@ -30,12 +30,6 @@ namespace LocalDriver
 	LVFSDriver::LVFSDriver(FileProxy * pProxy)
 	{
 		_pFileProxy = pProxy;
-		
-		//_bDriverIsRunning = false;
-		//if(pDevice)
-		//{
-		//	connect(this, SIGNAL(showDriverMessage(const Notification&)), pDevice, SLOT(showNotification(const Notification&)));
-		//}
 	}
 
 	void LVFSDriver::mount(Data::GeneralSettings& generalSettings)
@@ -428,103 +422,113 @@ namespace LocalDriver
 		BOOL	opened = FALSE;
 
 		GetFilePath(filePath, MAX_PATH, FileName);
-
 		DbgPrint(L"ReadFile : %s\n", filePath);
 
-
-		//CloseHandle(handle);
-		//handle = INVALID_HANDLE_VALUE;
-
-		QMutexLocker locker(&_DriverMutex);
-		if(_pFileProxy->CheckFile(QString::fromWCharArray(filePath)))
-		{
-			CloseHandle(handle);
-			handle = INVALID_HANDLE_VALUE;
-			DokanFileInfo->Context = (ULONG64)handle;
-
-			Sleep(100); //hack. We need a time to close file 
-
-			_pFileProxy->ReadFile(QString::fromWCharArray(filePath));
-
-			Sleep(100); //hack. We need a time to close file 
-
-			handle = CreateFile(
-				filePath,
-				GENERIC_READ,
-				FILE_SHARE_READ,
-				NULL,
-				OPEN_EXISTING,
-				0,
-				NULL);
-			if (handle == INVALID_HANDLE_VALUE) 
-			{
-				DbgPrint(L"\tCreateFile error : %d\n\n", GetLastError());
-				return -1;
-			}
-			DbgPrint(L"\tNew handle = %d : %d\n\n", handle);
-			opened = TRUE;
-			DokanFileInfo->Context = (ULONG64)handle;
-		}
-
-		if (!handle || handle == INVALID_HANDLE_VALUE) 
-		{
-			DbgPrint(L"\tinvalid handle, cleanuped?\n");
-			handle = CreateFile(
-				filePath,
-				GENERIC_READ,
-				FILE_SHARE_READ,
-				NULL,
-				OPEN_EXISTING,
-				0,
-				NULL);
-			if (handle == INVALID_HANDLE_VALUE) 
-			{
-				DbgPrint(L"\tCreateFile error : %d\n\n", GetLastError());
-				return -1;
-			}
-			opened = TRUE;
-			DokanFileInfo->Context = (ULONG64)handle;
-		}
-
-
-		if (SetFilePointer(handle, offset, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER) 
-		{ 
-			DbgPrint(L"\tseek error, offset = %d, error = %d, handle = %d\n\n", offset, GetLastError(), handle);
-			if (opened)
-				CloseHandle(handle);
-			return -1;
-		}
-
-
-		if (!ReadFile(handle, Buffer, BufferLength, ReadLength,NULL)) {
-			DbgPrint(L"\tread error = %u, buffer length = %d, read length = %d\n\n",
-				GetLastError(), BufferLength, *ReadLength);
-			if (opened)
+		{ 	LOCK(_DriverMutex)
+		
+			uint fileState = _pFileProxy->CheckFile(QString::fromWCharArray(filePath));
+			
+			if(!(fileState & VFSElement::eFl_Downloading)
+					&& !(fileState & VFSElement::eFl_Downloaded))
 			{
 				CloseHandle(handle);
 				handle = INVALID_HANDLE_VALUE;
 				DokanFileInfo->Context = (ULONG64)handle;
+
+				Sleep(100); //hack. We need a time to close file 
+
+				if(_pFileProxy->ReadFile(QString::fromWCharArray(filePath)))
+				{
+					return -1;
+				}
+
+				Sleep(100); //hack. We need a time to close file 
+
+				handle = CreateFile(filePath
+									, GENERIC_READ
+									, FILE_SHARE_READ
+									, NULL
+									, OPEN_EXISTING
+									, 0
+									, NULL);
+									
+				if (handle == INVALID_HANDLE_VALUE) 
+				{
+					DbgPrint(L"\tCreateFile error : %d\n\n", GetLastError());
+					return -1;
+				}
+				
+				DbgPrint(L"\tNew handle = %d : %d\n\n", handle);
+				opened = TRUE;
+				DokanFileInfo->Context = (ULONG64)handle;
 			}
-			return -1;
+			else if(fileState &  VFSElement::eFl_Downloading)
+			{
+				sleep(1000);
+				return -1;
+			}
 
-		} else {
-			DbgPrint(L"\tread %d, offset %d\n\n", *ReadLength, offset);
+			if (!handle || handle == INVALID_HANDLE_VALUE) 
+			{
+				DbgPrint(L"\tinvalid handle, cleanuped?\n");
+				handle = CreateFile(filePath
+									, GENERIC_READ
+									, FILE_SHARE_READ
+									, NULL
+									, OPEN_EXISTING
+									, 0
+									, NULL);
+									
+				if (handle == INVALID_HANDLE_VALUE) 
+				{
+					DbgPrint(L"\tCreateFile error : %d\n\n", GetLastError());
+					return -1;
+				}
+				opened = TRUE;
+				DokanFileInfo->Context = (ULONG64)handle;
+			}
+
+			if (SetFilePointer(handle, offset, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER) 
+			{ 
+				DbgPrint(L"\tseek error, offset = %d, error = %d, handle = %d\n\n", offset, GetLastError(), handle);
+				if (opened)
+				CloseHandle(handle);
+				return -1;
+			}
+
+
+			if (!ReadFile(handle, Buffer, BufferLength, ReadLength, NULL)) 
+			{
+				DbgPrint(L"\tread error = %u, buffer length = %d, read length = %d\n\n",
+				GetLastError(), BufferLength, *ReadLength);
+				if (opened)
+				{
+					CloseHandle(handle);
+					handle = INVALID_HANDLE_VALUE;
+					DokanFileInfo->Context = (ULONG64)handle;
+				}
+				return -1;
+
+			} 
+			else 
+			{
+				DbgPrint(L"\tread %d, offset %d\n\n", *ReadLength, offset);
+			}
+
+			if((offset) == GetFileSize((HANDLE)DokanFileInfo->Context,  NULL))
+			{
+				_pFileProxy->UnCheckFile(QString::fromWCharArray(filePath));
+			}
+
+			if (opened)
+			{
+				DbgPrint(L"440 CloseHandle, handle = %d\n\n", (HANDLE)DokanFileInfo->Context);
+				CloseHandle(handle);
+				handle = INVALID_HANDLE_VALUE;
+				DokanFileInfo->Context = (ULONG64)handle;
+
+			}
 		}
-
-		if((offset) == GetFileSize((HANDLE)DokanFileInfo->Context,  NULL))
-		{
-			_pFileProxy->UnCheckFile(QString::fromWCharArray(filePath));
-		}
-
-		if (opened)
-		{
-			DbgPrint(L"440 CloseHandle, handle = %d\n\n", (HANDLE)DokanFileInfo->Context);
-			CloseHandle(handle);
-			handle = INVALID_HANDLE_VALUE;
-			DokanFileInfo->Context = (ULONG64)handle;
-
-		}
-
 		return 0;
 	}
 

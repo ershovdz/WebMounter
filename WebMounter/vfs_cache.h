@@ -169,7 +169,7 @@ namespace Data
 			
 		}
 
-		void setDownloaded(iterator& iter, bool value);
+		void setFlag(iterator& iter, uint set, uint unset = VFSElement::eFl_None);
 
 	private:
 		RESULT initDB();

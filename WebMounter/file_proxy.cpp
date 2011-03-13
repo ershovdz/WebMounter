@@ -21,6 +21,10 @@ namespace Common
 	QList<QString> FileProxy::_uploadQueue;
 	//JmmRVFSDriver rvfsDriver;
 
+	UINT FileProxy::_uNotDeleted = 0;
+	UINT FileProxy::_uDeleted = 0;
+	QList<QString> FileProxy::_deleteQueue;
+
 	FileProxy::FileProxy(void)
 	{
 	}
@@ -57,6 +61,11 @@ namespace Common
 		VFSCache* cache = WebMounter::getCache();
 		QFileInfo qFileInfo(path);
 
+		if(qFileInfo.baseName().mid(0, 2).toLower() == "~$") // temp file for MS Office - do nothing
+		{
+			return eNO_ERROR;
+		}
+		
 		VFSCache::iterator file		 = cache->find(qFileInfo.absoluteFilePath());
 		VFSCache::iterator parentDir = cache->find(qFileInfo.dir().absolutePath());
 
@@ -109,21 +118,14 @@ namespace Common
 		return eNO_ERROR;
 	}
 
-	RESULT FileProxy::CheckFile(QString path)
+	UINT FileProxy::CheckFile(QString path)
 	{
-		QMutexLocker locker(&_FileProxyMutex);
+		//QMutexLocker locker(&_FileProxyMutex);  // probably it's useless locker ???
 		QFileInfo fInfo(path);
-
-		if(_currentFiles.empty() || _currentFiles.find(fInfo.absoluteFilePath()) == _currentFiles.end()) 
-		{
-			_currentFiles.insert(fInfo.absoluteFilePath());
-			return eERROR;
-		}
-		else
-		{
-			//Sleep(2000);
-			return eNO_ERROR;
-		}
+		VFSCache* cache = WebMounter::getCache();
+		VFSCache::iterator iter = cache->find(fInfo.absoluteFilePath());
+		
+		return iter->getFlags(); 
 	}
 
 	RESULT FileProxy::UnCheckFile(QString path)
@@ -145,64 +147,45 @@ namespace Common
 
 	RESULT FileProxy::ReadFile(QString path)
 	{
-		QMutexLocker locker(&_FileProxyMutex);
+		//QMutexLocker locker(&_FileProxyMutex);  // probably it's useless locker ???
+		QList <QString> urlList;
+		QList <QString> pathList;
 		
 		QFileInfo fInfo(path);
 		VFSCache* cache = WebMounter::getCache();
 
-		//if(_currentFiles.empty() || _currentFiles.find(fInfo.absoluteFilePath()) == _currentFiles.end()) 
-		//{
-		//	_currentFiles.insert(fInfo.absoluteFilePath());
-		//}
-		//else
-		//{
-		//	//Sleep(2000);
-		//	return false;
-		//}
-
 		VFSCache::iterator iter = cache->find(fInfo.absoluteFilePath());
 		if(iter != cache->end())
 		{
-			if(iter->isDownloaded() == false)
+			if(iter->getFlags() &  VFSElement::eFl_Downloading)
 			{
-				RVFSDriver* driver = extractPlugin(path);
-
-				if(!driver)
-				{
-					return eERROR;
-				}
-
-				if(driver->getState() != RemoteDriver::eConnected)
-				{
-					notifyUser(Ui::Notification::eINFO, QObject::tr("Info"),QString(iter->getPluginName() + QObject::tr(" plugin is not connected !\nPlugin has to be in connected state.\n")));
-					return eERROR;
-				}
-
-				if(driver->downloadFile(iter->getOrigUrl(), iter->getPath()) == eNO_ERROR)
-				{
-					return eNO_ERROR;
-				}
-				else
-				{
-					if(_currentFiles.empty() || _currentFiles.find(fInfo.absoluteFilePath()) != _currentFiles.end()) 
-					{
-						//_currentFiles.erase(_currentFiles.find(fInfo.absoluteFilePath()));
-						//return eNO_ERROR;
-					}
-				}
+				return eERROR;
 			}
-			else
+			else if(iter->getFlags() &  VFSElement::eFl_Downloaded)
 			{
 				return eNO_ERROR;
 			}
+			
+			RVFSDriver* driver = extractPlugin(path);
+
+			if(!driver)
+			{
+				return eERROR;
+			}
+
+			if(driver->getState() != RemoteDriver::eConnected)
+			{
+				notifyUser(Ui::Notification::eINFO, QObject::tr("Info"), QString(iter->getPluginName() + QObject::tr(" plugin is not connected !\nPlugin has to be in connected state.\n")));
+				return eERROR;
+			}
+			
+			urlList.append(iter->getSrcUrl());
+			pathList.append(iter->getPath());
+			
+			return driver->downloadFiles(urlList, pathList);
 		}
 		return eERROR;
 	}
-
-	/*void FileProxy::Sync(QString path, bool bFullSync)
-	{
-		
-	}*/
 
 	RESULT FileProxy::CreateDirectoryW(QString path)
 	{
@@ -261,13 +244,6 @@ namespace Common
 		
 		
 		VFSCache::iterator it_element = cache->find(fInfoFrom.absoluteFilePath());
-// 		if(it_dir_to != cache->end() &&
-//			(((it_dir_to->getId() == "0")&&(it_dir_from->getId() != "0")) ||
-//			((it_dir_to->getId() != "0")&&(it_dir_from->getId() == "0"))))
-// 		{
-// 			return eERROR;
-// 		}
-
 		if(from != to && it_dir_from == it_dir_to && it_element != cache->end()) //rename element
 		{
 			RVFSDriver* driver = extractPlugin(from);
@@ -283,34 +259,10 @@ namespace Common
 				return eERROR;
 			}
 
-			if(!driver->renameElement(it_element->getId()
-				, it_element->getType()
-				, fInfoTo.fileName()))
-			{
-
-				VFSElement elem(it_element->getType()
-					, fInfoTo.absoluteFilePath()
-					, fInfoTo.fileName()
-					, it_element->getSmallUrl()
-					, it_element->getOrigUrl()
-					, it_element->getId()
-					, it_element->getParentId()
-					, it_element->getModified()
-					, it_element->getPluginName());
-
-				cache->erase(it_element);
-				cache->insert(elem);
-				return eNO_ERROR;
-			}
-
+			return driver->renameElement(it_element->getId()
+										, it_element->getType()
+										, fInfoTo.fileName());
 		}
-
-		//if(it_dir_from == _FileList.end() && it_dir_to != _FileList.end()) //From without, on the inside. 
-		//Thus we have to upload a photo 
-		//{
-		//if()
-		//	_pRVFSDriver->uploadFile(from, fInfoFrom.fileName(), it_dir_to->second->getId(), _FileList);
-		//}
 		else if(//it_dir_from != cache->end() 
 			it_dir_to != cache->end() 
 			&& it_element != cache->end()) //From the inside, on the inside.
@@ -335,35 +287,11 @@ namespace Common
 				return eERROR;
 			}
 
-			if(!plugin_to->moveElement(it_element->getId()
+			return plugin_to->moveElement(it_element->getId()
 				, it_element->getParentId()
 				, it_dir_to->getId()
-				, it_element->getType()))
-			{
-				QString str = fInfoTo.absoluteFilePath();
-				VFSElement elem(it_element->getType()
-					, fInfoTo.absoluteFilePath()
-					, it_element->getName()
-					, it_element->getSmallUrl()
-					, it_element->getOrigUrl()
-					, it_element->getId()
-					, it_dir_to->getId()
-					, it_dir_to->getModified()
-					, it_dir_to->getPluginName());
-
-				cache->erase(it_element);
-				cache->insert(elem);
-
-				return eNO_ERROR;
-			}
+				, it_element->getType());
 		}
-		//else if(it_dir_from != _FileList.end() //From the inside, to outside.
-		//	&& it_dir_to == _FileList.end()	   //Thus we have to delete a photo
-		//	&& it_element != _FileList.end()) 
-
-		//{
-		//	this->RemoveFile(from);
-		//}
 		return eERROR;
 	}
 
@@ -388,13 +316,17 @@ namespace Common
 				return eERROR;
 			}
 
-			if(driver->deleteFile(elem->getId()) == eNO_ERROR)
-			{
-				cache->erase(elem);
-				return eNO_ERROR;
-			}
+			QFileInfo fInfo(elem->getPath());
+			increaseNotDeletedCounter();
+			_deleteQueue.append(fInfo.absoluteFilePath());
+
+			QFile::Permissions permissions = QFile::permissions(fInfo.absoluteFilePath());
+			permissions |= (QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
+			bool err = QFile::setPermissions(fInfo.absoluteFilePath(), permissions);
+
+			QtConcurrent::run(boost::bind(&RemoteDriver::RVFSDriver::deleteFile, _1, _2), driver, elem->getId());
 		}
-		return eERROR;
+		return eNO_ERROR;
 	}
 
 	void FileProxy::notifyUser(Ui::Notification::_Types type, QString title, QString description)
@@ -508,4 +440,54 @@ namespace Common
 							+ " ) !");
 		 }
 	 }
+
+	void FileProxy::fileDeleted(const QString& filePath, RESULT result)
+	{
+		QList<QString>::iterator iter;
+		for(iter = _deleteQueue.begin(); iter != _deleteQueue.end(); iter++)
+		{
+			if(*iter == filePath)
+			{
+				_deleteQueue.erase(iter);
+				if(result == eNO_ERROR)
+				{
+					VFSCache* cache = WebMounter::getCache();
+					VFSCache::iterator elem = cache->find(filePath);
+					if(elem != cache->end())
+						cache->erase(elem);
+				}
+				break;
+			}
+		}
+
+		if(_deleteQueue.empty())
+		{
+			_uDeleted = 0;
+			_uNotDeleted = 0;
+
+			if(result == eNO_ERROR)
+			{
+				notifyUser(Ui::Notification::eINFO
+					, QObject::tr("Info")
+					, QObject::tr("Deletion completed !"));
+			}
+			else
+			{
+				notifyUser(Ui::Notification::eINFO
+					, QObject::tr("Info")
+					, QObject::tr("Deletion completed, but some files has been not deleted !"));
+			}		
+		}
+		else
+		{
+			IncreaseUploadedCounter();
+			notifyUser(Ui::Notification::eINFO
+				, QObject::tr("Info")
+				, QObject::tr("Deleting progress (") 
+				+ QString::number(getDeletedCounter()) 
+				+ QObject::tr(" of ") 
+				+ QString::number(getNotDeletedCounter())
+				+ " ) !");
+		}
+	}
 }

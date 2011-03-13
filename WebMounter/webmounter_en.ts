@@ -106,15 +106,19 @@
     </message>
     <message>
         <location filename="file_proxy.h" line="65"/>
-        <location filename="file_proxy.cpp" line="72"/>
-        <location filename="file_proxy.cpp" line="177"/>
-        <location filename="file_proxy.cpp" line="239"/>
-        <location filename="file_proxy.cpp" line="282"/>
-        <location filename="file_proxy.cpp" line="334"/>
-        <location filename="file_proxy.cpp" line="387"/>
-        <location filename="file_proxy.cpp" line="489"/>
-        <location filename="file_proxy.cpp" line="495"/>
+        <location filename="file_proxy.h" line="91"/>
+        <location filename="file_proxy.cpp" line="76"/>
+        <location filename="file_proxy.cpp" line="181"/>
+        <location filename="file_proxy.cpp" line="243"/>
+        <location filename="file_proxy.cpp" line="286"/>
+        <location filename="file_proxy.cpp" line="338"/>
+        <location filename="file_proxy.cpp" line="391"/>
+        <location filename="file_proxy.cpp" line="497"/>
         <location filename="file_proxy.cpp" line="503"/>
+        <location filename="file_proxy.cpp" line="511"/>
+        <location filename="file_proxy.cpp" line="547"/>
+        <location filename="file_proxy.cpp" line="553"/>
+        <location filename="file_proxy.cpp" line="561"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
@@ -124,11 +128,16 @@
         <translation>Uploading has been started !</translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="72"/>
-        <location filename="file_proxy.cpp" line="239"/>
-        <location filename="file_proxy.cpp" line="282"/>
-        <location filename="file_proxy.cpp" line="334"/>
-        <location filename="file_proxy.cpp" line="387"/>
+        <location filename="file_proxy.h" line="92"/>
+        <source>Deletion has been started !</source>
+        <translation>Deletion has been started !</translation>
+    </message>
+    <message>
+        <location filename="file_proxy.cpp" line="76"/>
+        <location filename="file_proxy.cpp" line="243"/>
+        <location filename="file_proxy.cpp" line="286"/>
+        <location filename="file_proxy.cpp" line="338"/>
+        <location filename="file_proxy.cpp" line="391"/>
         <source>Plugin is not connected !
 Plugin has to be in connected state.
 </source>
@@ -137,19 +146,19 @@ Plugin has to be in connected state.
 </translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="82"/>
+        <location filename="file_proxy.cpp" line="86"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="82"/>
+        <location filename="file_proxy.cpp" line="86"/>
         <source>Select a specific category, at first
 </source>
         <translation>Select a specific category, at first
 </translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="177"/>
+        <location filename="file_proxy.cpp" line="181"/>
         <source> plugin is not connected !
 Plugin has to be in connected state.
 </source>
@@ -158,24 +167,40 @@ Plugin has to be in connected state.
 </translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="490"/>
+        <location filename="file_proxy.cpp" line="498"/>
         <source>Upload completed !</source>
         <translation>Upload completed !</translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="496"/>
+        <location filename="file_proxy.cpp" line="504"/>
         <source>Upload completed, but some files has been not uploaded !</source>
         <translation>Upload completed, but some files has been not uploaded !</translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="504"/>
+        <location filename="file_proxy.cpp" line="512"/>
         <source>Uploading progress (</source>
         <translation>Uploading progress (</translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="506"/>
+        <location filename="file_proxy.cpp" line="514"/>
+        <location filename="file_proxy.cpp" line="564"/>
         <source> of </source>
         <translation> of </translation>
+    </message>
+    <message>
+        <location filename="file_proxy.cpp" line="548"/>
+        <source>Deletion completed !</source>
+        <translation>Deletion completed !</translation>
+    </message>
+    <message>
+        <location filename="file_proxy.cpp" line="554"/>
+        <source>Deletion completed, but some files has been not deleted !</source>
+        <translation>Deletion completed, but some files has been not deleted !</translation>
+    </message>
+    <message>
+        <location filename="file_proxy.cpp" line="562"/>
+        <source>Deleting progress (</source>
+        <translation>Deleting progress (</translation>
     </message>
     <message>
         <source>An upload limit is reached! 
@@ -375,9 +400,9 @@ Please check proxy settings on Configuration tab and check settings on correspon
 <context>
     <name>RemoteDriver::YafRVFSDriver</name>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="150"/>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="155"/>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="828"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="153"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="158"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="833"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
@@ -388,44 +413,44 @@ Please check proxy settings on Configuration tab and check settings on correspon
 </translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="150"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="153"/>
         <source>This file extension is not supported !
 </source>
         <translation>This file extension is not supported !
 </translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="155"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="158"/>
         <source>This file will be changed locally!
 </source>
         <translation>This file will be changed locally!
 </translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="198"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="201"/>
         <source>File upload failed (</source>
         <translation>File upload failed (</translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="828"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="833"/>
         <source>Synchronization is stopped !
 </source>
         <translation>Synchronization is stopped !
 </translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="891"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="896"/>
         <source>Downloading failed  !
 </source>
         <translation>Downloading failed  !
 </translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="197"/>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="678"/>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="775"/>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="810"/>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="891"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="200"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="683"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="780"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="815"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="896"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
@@ -440,15 +465,15 @@ Please check proxy settings on Configuration tab and check settings on correspon
 </translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="678"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="683"/>
         <source>Sync failed !
 </source>
         <translation>Sync failed !
 </translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="775"/>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="810"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="780"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="815"/>
         <source>Authorization failed !
 Please check proxy settings on Configuration tab and check settings on corresponding plugin tab...
 </source>

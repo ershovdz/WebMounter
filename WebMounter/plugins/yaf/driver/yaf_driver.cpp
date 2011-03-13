@@ -21,109 +21,131 @@ namespace RemoteDriver
 		}
 	}
 
-	void YafRVFSDriver::syncCacheWithFileSystem(const QString& path)
-	{
-		VFSCache* vfsCache = WebMounter::getCache();
-
-		QDir dir(path);
-		QStringList lstDirs = dir.entryList(QDir::Dirs | QDir::AllDirs | QDir::NoDotAndDotDot);
-		QStringList lstFiles = dir.entryList(QDir::Files);
-
-		foreach (QString entry, lstFiles)
-		{
-			QString entryAbsPath = dir.absolutePath() + "/" + entry;
-
-			if(vfsCache->find(entryAbsPath) == vfsCache->end())
-			{
-				QFile::remove(entryAbsPath);
-			}
-		}
-
-		foreach (QString entry, lstDirs)
-		{
-			QString entryAbsPath = dir.absolutePath() + "/" + entry;
-			
-			if(vfsCache->find(entryAbsPath) == vfsCache->end())
-			{
-				removeFolder(QDir(entryAbsPath));
-			}
-			else
-			{
-				syncCacheWithFileSystem(entryAbsPath);
-			}
-		}
-
-		for(VFSCache::iterator iter = vfsCache->begin(); iter != vfsCache->end(); ++iter)
-		{
-			if(iter->getType() == VFSElement::DIRECTORY)
-			{
-				if(!dir.exists(iter->getPath())) 
-					dir.mkdir(iter->getPath());
-			}
-			else if(iter->getType() == VFSElement::FILE)
-			{
-				if(!QFile::exists(iter->getPath()))
-				{
-					QFile file(iter->getPath());
-					file.open(QIODevice::WriteOnly);
-					file.close();
-				}
-			}
-		}
-	}
-
 	YafRVFSDriver::~YafRVFSDriver(void)
 	{
 		delete _httpConnector;
 	}
 
-	RESULT YafRVFSDriver::downloadFile(const QString& url, const QString& path)
-	{
-		RESULT res = _httpConnector->downloadFile(url, path);
-		if(res == eNO_ERROR)
-		{
-			QFile::Permissions permissions = QFile::permissions(path);
-			permissions &= ~(QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
-			QFile::setPermissions(path, permissions);
-		}
-		return res;
-	}
+	// RESULT YafRVFSDriver::downloadFile(const QString& url, const QString& path)
+	// {
+		// QFileInfo fInfo(path);
+		// VFSCache* cache = WebMounter::getCache();
+		// VFSCache::iterator iter = cache->find(fInfo.absoluteFilePath());
+		
+		// if(iter != cache->end())
+		// {
+			// { 	LOCK(_driverMutex)
+			
+				// if(iter->getFlags() ~& eFl_Downloading
+						// && iter->getFlags() ~& eFl_Downloaded)
+				// {
+					// cache->setFlag(iter, eFl_Downloading);
+				// }
+				// else
+				// {
+					// return eERROR;
+				// }
+			// }
+		// }
+		// else
+		// {
+			// return eERROR;
+		// }
+		
+		// RESULT res = _httpConnector->downloadFile(url, path);
+		
+		// { 	LOCK(_driverMutex)
+			
+			// if(res == eNO_ERROR)
+			// {
+				// QFile::Permissions permissions = QFile::permissions(path);
+				// permissions &= ~(QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
+				// QFile::setPermissions(path, permissions);
+				// cache->setFlag(iter, eFl_Downloaded, eFl_Downloading);
+			// }
+			// else
+			// {
+				// cache->setFlag(iter, eFl_None, eFl_Downloading);
+			// }
+		// }
+		// return res;
+	// }
 
-	RESULT YafRVFSDriver::downloadFiles(const QList <QString>& urlList, const QList <QString>& pathList, UINT& uDownloaded, UINT& uNotDownloaded)
+	RESULT YafRVFSDriver::downloadFiles(QList <QString>& urlList, QList <QString>& pathList)
 	{
-		RESULT res = _httpConnector->downloadFile(urlList, pathList);
-		VFSCache* cache = WebMounter::getCache();
-		if(res == eNO_ERROR)
+		VFSCache* vfsCache = WebMounter::getCache();
+		int initialListSize = urlList.size();
+		
+		{ 	LOCK(_driverMutex)
+		
+			VFSCache::iterator iter = vfsCache->end();
+			for(int i = 0; i < pathList.size(); ++i)
+			{
+				iter = vfsCache->find(pathList.at(i));
+				if(iter != vfsCache->end()
+					&& !(iter->getFlags() & VFSElement::eFl_Downloading)
+					&& !(iter->getFlags() & VFSElement::eFl_Downloaded))
+				{	
+					vfsCache->setFlag(iter, VFSElement::eFl_Downloading, VFSElement::eFl_None);
+					QFile::remove(pathList.at(i));
+				}
+				else
+				{
+					urlList.removeAt(i);
+					pathList.removeAt(i);
+					i = 0;
+				}
+			}
+			
+			if(urlList.size() == 0) // there is nothing to download
+			{
+				if(initialListSize == 1
+					&& iter != vfsCache->end() 
+					&& iter->getFlags() & VFSElement::eFl_Downloaded) // download request has been recieved for one file, but file is already downloaded
+				{	
+					return eNO_ERROR;
+				}
+				else
+				{
+					return eERROR;
+				}
+			}
+		}
+		
+		RESULT res = _httpConnector->downloadFiles(urlList, pathList);
+		if(res == eERROR)
 		{
+			UINT retryDownloadCounter = 0;
+			while(res == eERROR && retryDownloadCounter < MAX_DOWNLOAD_RETRY)
+			{
+				res = _httpConnector->downloadFiles(urlList, pathList);
+				retryDownloadCounter++;
+			}
+		}
+		
+		{ 	LOCK(_driverMutex)
+		
 			for(int i = 0; i < pathList.size(); i++)
 			{
-				QFile::Permissions permissions = QFile::permissions(pathList.at(i));
-				permissions &= ~(QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
-				QFile::setPermissions(pathList.at(i), permissions);
-
 				QFileInfo fInfo(pathList.at(i));
-				VFSCache::iterator iter = cache->find(fInfo.absoluteFilePath());
+				VFSCache::iterator iter = vfsCache->find(fInfo.absoluteFilePath());
 
-				if(iter != cache->end())
+				if(iter != vfsCache->end())
 				{
-					if(!iter->isDownloaded())
+					if(res == eERROR)
 					{
-						cache->setDownloaded(iter, true);
+						vfsCache->setFlag(iter, VFSElement::eFl_None, VFSElement::eFl_Downloading);
+					}
+					else
+					{
+						QFile::Permissions permissions = QFile::permissions(pathList.at(i));
+						permissions &= ~(QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
+						QFile::setPermissions(pathList.at(i), permissions);
+						vfsCache->setFlag(iter, VFSElement::eFl_Downloaded, VFSElement::eFl_Downloading);
 					}
 				}
 			}
 		}
-		/*else
-		{
-			notifyUser(Ui::Notification::eCRITICAL, tr("Error"), tr("Downloading failed  !\n"));
-			_driverMutex.lock();
-			if(_state != eSyncStopping)
-			{
-				updateState(100, RemoteDriver::eConnected);
-			}
-			_driverMutex.unlock();
-			return eERROR;
-		}*/
 		return res;
 	}
 
@@ -131,21 +153,12 @@ namespace RemoteDriver
 	{
 		QString xmlResp;
 		QString id = ROOT_ID;
-		RESULT err = _httpConnector->uploadFile(path, title, parentId, xmlResp);
-		UINT retryUploadCounter = 0;
-
-		while(err == eERROR && retryUploadCounter < MAX_UPLOAD_RETRY)
-		{
-			err = _httpConnector->uploadFile(path, title, parentId, xmlResp);
-			retryUploadCounter++;
-		}
-
 		QFileInfo fInfo(path);
 
 		QString suffix = fInfo.suffix();
 		suffix = suffix.toLower();
 
-		if(suffix != "jpg" && suffix != "jpeg" && suffix != "png" && suffix != "gif")
+		if(suffix != "jpg" && suffix != "jpeg" && suffix != "png" && suffix != "gif" && suffix != "bmp")
 		{
 			notifyUser(Ui::Notification::eINFO, tr("Info"), tr("This file extension is not supported !\n"));
 			return eERROR;
@@ -158,6 +171,15 @@ namespace RemoteDriver
 		else if (fInfo.size() == 0)
 		{
 			return eNO_ERROR;
+		}
+		
+		RESULT err = _httpConnector->uploadFile(path, title, parentId, xmlResp);
+		UINT retryUploadCounter = 0;
+
+		while(err == eERROR && retryUploadCounter < MAX_UPLOAD_RETRY)
+		{
+			err = _httpConnector->uploadFile(path, title, parentId, xmlResp);
+			retryUploadCounter++;
 		}
 		
 		VFSElement elem;
@@ -175,14 +197,15 @@ namespace RemoteDriver
 			{
 				VFSCache* vfsCache = WebMounter::getCache();
 				elem = VFSElement(VFSElement::FILE
-					, fInfo.absoluteFilePath()
-					, title
-					, ""
-					, ""
-					, id
-					, parentId
-					, ""
-					, _pluginName);
+									, fInfo.absoluteFilePath()
+									, title
+									, ""
+									, ""
+									, ""
+									, id
+									, parentId
+									, ""
+									, _pluginName);
 
 				vfsCache->insert(elem);
 
@@ -223,10 +246,10 @@ namespace RemoteDriver
 	{
 		QString response;
 		RESULT res = _httpConnector->deleteFile("photo/" + id + "/", response);
+		VFSCache* vfsCache = WebMounter::getCache();
+		VFSCache::iterator iter = vfsCache->begin();
 		if(res == eNO_ERROR)
 		{
-			VFSCache* vfsCache = WebMounter::getCache();
-			VFSCache::iterator iter = vfsCache->begin();
 			for(iter; iter != vfsCache->end(); ++iter)
 			{
 				if(iter->getId() == id)
@@ -235,10 +258,13 @@ namespace RemoteDriver
 					permissions |= (QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
 					bool err = QFile::setPermissions(iter->getPath(), permissions);
 
+					vfsCache->erase(iter);
 					break;
 				}
 			}
 		}
+
+		WebMounter::getProxy()->fileDeleted(iter->getPath(), res);
 		return res;
 	}
 
@@ -457,14 +483,15 @@ namespace RemoteDriver
 		QList<VFSElement> elements;
 				
 		VFSElement elem = VFSElement(VFSElement::DIRECTORY
-			, _pluginName
-			, "ROOT"
-			, ""
-			, ""
-			, ROOT_ID
-			, ROOT_ID
-			, ""
-			, _pluginName);
+										, _pluginName
+										, "ROOT"
+										, ""
+										, ""
+										, ""
+										, ROOT_ID
+										, ROOT_ID
+										, ""
+										, _pluginName);
 
 		elements.append(elem);
 
@@ -509,7 +536,7 @@ namespace RemoteDriver
 
 		rx.setPattern("<link href=\"(.*)\" rel=\"self\" />");
 		rx.indexIn(xmlEntry);
-		elem.setOrigUrl(rx.cap(1));
+		elem.setSrcUrl(rx.cap(1));
 
 		rx.setPattern("<link href=\"(.*)\" rel=\"album\" />");
 		rx.indexIn(xmlEntry);
@@ -555,16 +582,7 @@ namespace RemoteDriver
 
 		rx.setPattern("<content src=\"(.*)\" type=");
 		rx.indexIn(xmlEntry);
-		elem.setOrigUrl(rx.cap(1));
-	}
-
-	void YafRVFSDriver::notifyUser(Ui::Notification::_Types type, QString title, QString description) const
-	{
-		Ui::ControlPanel* notifDevice = WebMounter::getControlPanel();
-
-		Ui::Notification msg(type, title, description);
-
-		notifDevice->showNotification(msg);
+		elem.setSrcUrl(rx.cap(1));
 	}
 
 	RESULT YafRVFSDriver::sync()
@@ -585,14 +603,15 @@ namespace RemoteDriver
 		QList<VFSElement> elements;
 
 		VFSElement elem = VFSElement(VFSElement::DIRECTORY
-			, fInfo.absoluteFilePath()
-			, "ROOT"
-			, ""
-			, ""
-			, ROOT_ID
-			, ROOT_ID
-			, ""
-			, _pluginName);
+										, fInfo.absoluteFilePath()
+										, "ROOT"
+										, ""
+										, ""
+										, ""
+										, ROOT_ID
+										, ROOT_ID
+										, ""
+										, _pluginName);
 
 		elements.append(elem);
 
@@ -658,16 +677,7 @@ namespace RemoteDriver
 
 				if(plSettings.bFullSync)
 				{
-					
-
-
-					///////////////////////////////////
-					////////////////////////////////////////
-
 					res = downloadFiles();
-
-					///////////////////////////////////////
-					////////////////////////////////////////
 				}
 			}
 		}
@@ -812,110 +822,6 @@ namespace RemoteDriver
 		}
 	}
 
-	RESULT YafRVFSDriver::downloadFiles()
-	{
-		QList <QString> urlToDownload;
-		QList <QString> pathToDownload;
-		VFSCache* vfsCache = WebMounter::getCache();
-		VFSCache::iterator iter = vfsCache->begin();
-		UINT uNotDownloaded = countNotDownloaded();
-		UINT uDownloaded = 0;
-		RESULT err;
-		for(iter = vfsCache->begin(); iter != vfsCache->end(); ++iter)
-		{
-			if(this->_state == eSyncStopping)
-			{
-				notifyUser(Ui::Notification::eINFO, tr("Info"), tr("Synchronization is stopped !\n"));
-				//updateState(100, RemoteDriver::eConnected);
-				return eNO_ERROR;
-			}
-
-			if(iter->getPluginName() == _pluginName)
-			{
-				if(iter->getType() == VFSElement::FILE && !iter->isDownloaded())
-				{
-					QFile::remove(iter->getPath());
-
-					urlToDownload.append(iter->getOrigUrl());
-					pathToDownload.append(iter->getPath());
-
-					if(urlToDownload.size() == DOWNLOAD_CHUNK_SIZE)
-					{
-						err = downloadFiles(urlToDownload, pathToDownload, uDownloaded, uNotDownloaded);
-						
-						UINT retryDownloadCounter = 0;
-						while(err == eERROR && retryDownloadCounter < MAX_DOWNLOAD_RETRY)
-						{
-							err = downloadFiles(urlToDownload, pathToDownload, uDownloaded, uNotDownloaded);
-							retryDownloadCounter++;
-						}
-
-						if(err)
-						{
-							updateDownloadStatus(err, uDownloaded, uNotDownloaded);
-							return err;
-						}
-						else
-						{
-							uDownloaded += urlToDownload.size();
-							updateDownloadStatus(err, uDownloaded, uNotDownloaded);
-							urlToDownload.clear();
-							pathToDownload.clear();
-						}
-					}
-				}
-			}
-		}
-
-		if(urlToDownload.size() > 0)
-		{
-			return downloadFiles(urlToDownload, pathToDownload, uDownloaded, uNotDownloaded);
-		}
-
-		return err;
-	}
-
-	void YafRVFSDriver::updateDownloadStatus(RESULT downloadResult, const UINT uDownloaded, const UINT uNotDownloaded)
-	{
-		if(!downloadResult)
-		{
-			_driverMutex.lock();
-			if(_state != eSyncStopping)
-			{
-				updateState((int)(((float)uDownloaded/uNotDownloaded)*50) + 50, RemoteDriver::eSync);
-			}
-			_driverMutex.unlock();
-		}
-		else
-		{
-			notifyUser(Ui::Notification::eCRITICAL, tr("Error"), tr("Downloading failed  !\n"));
-			_driverMutex.lock();
-			if(_state != eSyncStopping)
-			{
-				updateState(100, RemoteDriver::eNotConnected);
-			}
-			_driverMutex.unlock();
-		}
-	}
-
-	UINT YafRVFSDriver::countNotDownloaded()
-	{
-		VFSCache* cache = WebMounter::getCache();
-		UINT counter = 0;
-
-		for(VFSCache::iterator iter = cache->begin(); 
-			iter != cache->end(); 
-			++iter)
-		{
-			if( iter->getPluginName() == _pluginName && !iter->isDownloaded() && iter->getType() == VFSElement::FILE)
-			{
-				counter++;
-			}
-		}
-
-		return counter;
-	}
-
 	void YafRVFSDriver::disconnectHandler()
 	{
 		_driverMutex.lock();
@@ -974,35 +880,6 @@ namespace RemoteDriver
 		}
 		updateState(100, eConnected);
 		start(); // start sync thread again
-	}
-
-	int YafRVFSDriver::removeFolder(QDir& dir)
-	{
-		int res = 0;
-		
-		QStringList lstDirs  = dir.entryList(QDir::Dirs | QDir::AllDirs | QDir::NoDotAndDotDot);
-		QStringList lstFiles = dir.entryList(QDir::Files);
-
-		foreach (QString entry, lstFiles)
-		{
-			QString entryAbsPath = dir.absolutePath() + "/" + entry;
-			QFile::Permissions permissions = QFile::permissions(entryAbsPath);
-			permissions |= (QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
-			bool err = QFile::setPermissions(entryAbsPath, permissions);
-			QFile::remove(entryAbsPath);
-		}
-
-		foreach (QString entry, lstDirs)
-		{
-			QString entryAbsPath = dir.absolutePath() + "/" + entry;
-			removeFolder(QDir(entryAbsPath));
-		}
-
-		if (!QDir().rmdir(dir.absolutePath()))
-		{
-			res = 1;
-		}
-		return res;
 	}
 
 	QString YafRVFSDriver::addPathSuffix(ElementType type, const QString& path, const QString& suffix)

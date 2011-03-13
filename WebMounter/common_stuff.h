@@ -20,7 +20,7 @@ namespace Common
 	};
 };
 
-//using Common::RESULT;
+#define LOCK(mutex) QMutexLocker locker(&mutex);
 
 #include <QString>
 

@@ -1,7 +1,7 @@
-//#include "StdAfx.h"
 #include "rvfs_driver.h"
 #include <QtCore>
 #include <boost/bind.hpp>
+#include "WebMounter.h"
 
 using namespace RemoteDriver;
 using namespace Common;
@@ -44,6 +44,193 @@ RESULT RVFSDriver::checkKey(const PluginSettings&)
 {
 	return eNO_ERROR;
 }
+
+void RVFSDriver::updateDownloadStatus(RESULT downloadResult, const UINT uDownloaded, const UINT uNotDownloaded)
+{
+	if(!downloadResult)
+	{
+		_driverMutex.lock();
+		if(_state != eSyncStopping)
+		{
+			updateState((int)(((float)uDownloaded/uNotDownloaded)*50) + 50, RemoteDriver::eSync);
+		}
+		_driverMutex.unlock();
+	}
+	else
+	{
+		notifyUser(Ui::Notification::eCRITICAL, tr("Error"), tr("Downloading failed  !\n"));
+		_driverMutex.lock();
+		if(_state != eSyncStopping)
+		{
+			updateState(100, RemoteDriver::eNotConnected);
+		}
+		_driverMutex.unlock();
+	}
+}
+
+UINT RVFSDriver::countNotDownloaded()
+{
+	VFSCache* cache = WebMounter::getCache();
+	UINT counter = 0;
+
+	for(VFSCache::iterator iter = cache->begin(); 
+		iter != cache->end(); 
+		++iter)
+	{
+		if( iter->getPluginName() == _pluginName && !iter->isDownloaded() && iter->getType() == VFSElement::FILE)
+		{
+			counter++;
+		}
+	}
+
+	return counter;
+}
+int RVFSDriver::removeFolder(QDir& dir)
+{
+	int res = 0;
+
+	QStringList lstDirs  = dir.entryList(QDir::Dirs | QDir::AllDirs | QDir::NoDotAndDotDot);
+	QStringList lstFiles = dir.entryList(QDir::Files);
+
+	foreach (QString entry, lstFiles)
+	{
+		QString entryAbsPath = dir.absolutePath() + "/" + entry;
+		QFile::remove(entryAbsPath);
+	}
+
+	foreach (QString entry, lstDirs)
+	{
+		QString entryAbsPath = dir.absolutePath() + "/" + entry;
+		removeFolder(QDir(entryAbsPath));
+	}
+
+	if (!QDir().rmdir(dir.absolutePath()))
+	{
+		res = 1;
+	}
+	return res;
+}
+
+void RVFSDriver::syncCacheWithFileSystem(const QString& path)
+{
+	VFSCache* vfsCache = WebMounter::getCache();
+
+	QDir dir(path);
+	QStringList lstDirs = dir.entryList(QDir::Dirs | QDir::AllDirs | QDir::NoDotAndDotDot);
+	QStringList lstFiles = dir.entryList(QDir::Files);
+
+	foreach (QString entry, lstFiles)
+	{
+		QString entryAbsPath = dir.absolutePath() + "/" + entry;
+
+		if(vfsCache->find(entryAbsPath) == vfsCache->end())
+		{
+			QFile::remove(entryAbsPath);
+		}
+	}
+
+	foreach (QString entry, lstDirs)
+	{
+		QString entryAbsPath = dir.absolutePath() + "/" + entry;
+
+		if(vfsCache->find(entryAbsPath) == vfsCache->end())
+		{
+			removeFolder(QDir(entryAbsPath));
+		}
+		else
+		{
+			syncCacheWithFileSystem(entryAbsPath);
+		}
+	}
+
+	for(VFSCache::iterator iter = vfsCache->begin(); iter != vfsCache->end(); ++iter)
+	{
+		if(iter->getType() == VFSElement::DIRECTORY)
+		{
+			if(!dir.exists(iter->getPath())) 
+				dir.mkpath(iter->getPath());
+		}
+		else if(iter->getType() == VFSElement::FILE)
+		{
+			QFile file(iter->getPath());
+			if(!file.exists() || file.size() == 0)
+			{
+				file.open(QIODevice::WriteOnly);
+				file.close();
+				vfsCache->setFlag(iter, VFSElement::eFl_None, VFSElement::eFl_Downloaded);
+			}
+		}
+	}
+}
+
+RESULT RVFSDriver::downloadFiles()
+{
+	QList <QString> urlToDownload;
+	QList <QString> pathToDownload;
+	VFSCache* vfsCache = WebMounter::getCache();
+	VFSCache::iterator iter = vfsCache->begin();
+	UINT uDownloaded = 0;
+	RESULT err = eNO_ERROR;
+	for(iter = vfsCache->begin(); iter != vfsCache->end(); ++iter)
+	{
+		{ 	LOCK(_driverMutex)
+
+			if(_state == eSyncStopping)
+			{
+				notifyUser(Ui::Notification::eINFO, tr("Info"), tr("Downloading is stopped !\n"));
+				//updateState(100, RemoteDriver::eConnected);
+				return eNO_ERROR;
+			}
+		}
+
+		if(iter->getPluginName() == _pluginName)
+		{
+			if(iter->getType() == VFSElement::FILE 
+				&& !(iter->getFlags() & VFSElement::eFl_Downloading)
+				&& !(iter->getFlags() & VFSElement::eFl_Downloaded))
+			{
+				urlToDownload.append(iter->getSrcUrl());
+				pathToDownload.append(iter->getPath());
+
+				if(urlToDownload.size() == DOWNLOAD_CHUNK_SIZE)
+				{
+					err = downloadFiles(urlToDownload, pathToDownload);
+
+					if(err)
+					{
+						updateDownloadStatus(err, uDownloaded, countNotDownloaded());
+						return err;
+					}
+					else
+					{
+						uDownloaded += urlToDownload.size();
+						updateDownloadStatus(err, uDownloaded, countNotDownloaded());
+						urlToDownload.clear();
+						pathToDownload.clear();
+					}
+				}
+			}
+		}
+	}
+
+	if(urlToDownload.size() > 0)
+	{
+		return downloadFiles(urlToDownload, pathToDownload);
+	}
+
+	return err;
+}
+
+void RVFSDriver::notifyUser(Ui::Notification::_Types type, QString title, QString description) const
+{
+	Ui::ControlPanel* notifDevice = WebMounter::getControlPanel();
+
+	Ui::Notification msg(type, title, description);
+
+	notifDevice->showNotification(msg);
+}
+
+
 /***********************************************************************
 *********************** Handlers for slots *****************************							  
 ***********************************************************************/

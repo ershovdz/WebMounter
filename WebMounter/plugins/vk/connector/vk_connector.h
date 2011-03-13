@@ -22,7 +22,7 @@ namespace Connector
 			, const QString& proxy = ""//"proxy.te.mera.ru:8080"
 			, const QString& proxyLoginPwd = ""//"login:password"
 			);
-		RESULT downloadFile(const QList <QString>& urlList, const QList <QString>& pathList);
+		RESULT downloadFiles(QList <QString>& urlList, QList <QString>& pathList);
 		RESULT auth();
 		RESULT getAlbums(QString& response);
 		RESULT getPhotos(int offset, QString& response);

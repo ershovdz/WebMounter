@@ -9,8 +9,10 @@
 
 #include "vfs_cache.h"
 #include "view.h"
+#include "notification_device.h"
 
 #include <QThread>
+#include <QDir>
 
 using namespace std;
 using Common::RESULT;
@@ -38,7 +40,9 @@ namespace RemoteDriver
 		Q_OBJECT
 
 	public:
-		virtual RESULT downloadFile(const QString& url, const QString& path) = 0;
+		virtual RESULT downloadFiles();
+
+		virtual RESULT downloadFiles(QList <QString>& urlList, QList <QString>& pathList) = 0;
 
 		virtual RESULT uploadFile(const QString& path, const QString& title,  const QString& id, const QString& parentId) = 0;
 
@@ -62,11 +66,15 @@ namespace RemoteDriver
 
 		virtual bool areFileAttributesValid(const QString& path, unsigned long attributes);
 
-		//virtual void registerView(Ui::View*) = 0;
 		virtual RESULT checkKey(const PluginSettings& pluginSettings);
 
-	protected:
+	//protected:
+		virtual void notifyUser(Ui::Notification::_Types type, QString title, QString description) const;
 		virtual void updateState(int progress, DriverState newState);
+		virtual int removeFolder(QDir& dir);
+		virtual void syncCacheWithFileSystem(const QString& path);
+		virtual void updateDownloadStatus(RESULT downloadResult, const UINT uDownloaded, const UINT uNotDownloaded);
+		UINT countNotDownloaded();
 
     Q_SIGNALS:
 
@@ -99,7 +107,8 @@ namespace RemoteDriver
 	
 	protected:
 		DriverState _state;
-
+		QString _pluginName;
+		QMutex _driverMutex;
 	};
 }
 

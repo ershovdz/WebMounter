@@ -339,13 +339,13 @@ namespace Xml
 
 				if(!strcmp(attr_name, "big_url"))
 				{
-					ptrVFSElem->setOrigUrl(QString::fromUtf8(pText->Value()));
+					ptrVFSElem->setSrcUrl(QString::fromUtf8(pText->Value()));
 					parsingState |= ORIGURL_PART;
 				}
 
 				if(!strcmp(attr_name, "small_url"))
 				{
-					ptrVFSElem->setSmallUrl(QString::fromUtf8(pText->Value()));
+					ptrVFSElem->setEditMetaUrl(QString::fromUtf8(pText->Value()));
 					parsingState |= SMALLURL_PART;
 				}
 
