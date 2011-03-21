@@ -48,13 +48,13 @@ namespace RemoteDriver
 
 		virtual RESULT modifyFile(const QString&) = 0;
 
-		virtual RESULT renameElement( const QString& id, ElementType type, const QString& newTitle) = 0;
+		virtual RESULT renameElement( const QString& path, const QString& newTitle) = 0;
 
-		virtual RESULT deleteDirectory( const QString& id) = 0;
+		virtual RESULT deleteDirectory( const QString& path) = 0;
 
-		virtual RESULT deleteFile( const QString& id) = 0;
+		virtual RESULT deleteFile( const QString& path) = 0;
 
-		virtual RESULT moveElement( const QString& id,  const QString& oldParentId, const QString& newParentId, ElementType type) = 0;
+		virtual RESULT moveElement( const QString& path, const QString& newParentId) = 0;
 
 		virtual RESULT createDirectory(const QString& path,  const QString& parentid, const QString& title) = 0;
 
@@ -68,13 +68,14 @@ namespace RemoteDriver
 
 		virtual RESULT checkKey(const PluginSettings& pluginSettings);
 
-	//protected:
+	protected:
 		virtual void notifyUser(Ui::Notification::_Types type, QString title, QString description) const;
 		virtual void updateState(int progress, DriverState newState);
 		virtual int removeFolder(QDir& dir);
 		virtual void syncCacheWithFileSystem(const QString& path);
 		virtual void updateDownloadStatus(RESULT downloadResult, const UINT uDownloaded, const UINT uNotDownloaded);
 		UINT countNotDownloaded();
+		void updateChildrenPath(const VFSElement& elem);
 
     Q_SIGNALS:
 

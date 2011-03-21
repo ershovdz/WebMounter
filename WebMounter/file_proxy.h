@@ -27,7 +27,7 @@ namespace Common
 		RESULT CreateDirectoryW(QString path);
 		RESULT CreateFileW(QString path);
 
-		RESULT MoveElement(QString from, QString to);
+		RESULT MoveElement(QString from, QString to, bool bFirstRequest = true);
 
 		void OpenDirectory(QString path);
 		RESULT ReadFile(QString path);

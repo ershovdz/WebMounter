@@ -40,10 +40,10 @@ namespace RemoteDriver
 		virtual RESULT downloadFiles(QList <QString>& urlList, QList <QString>& pathList);
 		virtual RESULT uploadFile(const QString& path, const QString& title, const QString& id, const QString& parentid);
 		virtual RESULT modifyFile(const QString&);
-		virtual RESULT renameElement( const QString& id, ElementType type, const QString& newTitle);
-		virtual RESULT deleteDirectory( const QString& id);
+		virtual RESULT renameElement( const QString& path, const QString& newTitle);
+		virtual RESULT deleteDirectory( const QString& path);
 		virtual RESULT deleteFile( const QString& id );
-		virtual RESULT moveElement( const QString& id,  const QString& oldParentId, const QString& newParentId, ElementType type);
+		virtual RESULT moveElement( const QString& path, const QString& newParentId);
 		virtual RESULT createDirectory(const QString& path,  const QString& parentid, const QString& title);
 		virtual RESULT createFile(const QString& path, const QString& title,  const QString& id, const QString& parentId);
 		virtual RESULT getElements();
@@ -59,7 +59,7 @@ namespace RemoteDriver
 		virtual void syncHandler();
 		virtual void stopSyncHandler();
 
-		int removeFolder(QDir& dir);
+//		int removeFolder(QDir& dir);
 		void syncCacheWithFileSystem(const QString& path);
 		virtual RESULT checkKey(const PluginSettings& pluginSettings);
 		void run();
@@ -72,7 +72,7 @@ namespace RemoteDriver
 		QMutex _driverMutex;
 		
 		//JmmRVFSDriver* _driverInstance;
-		const QString _pluginName;
+		//const QString _pluginName;
 
 		Ui::View* _driverView;
 

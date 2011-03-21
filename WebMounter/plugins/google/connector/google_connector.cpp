@@ -12,6 +12,35 @@
 
 namespace Connector
 {
+	class FileHandle
+	{
+	public:
+		FileHandle(FILE* ptr)
+		{
+			pFile = ptr;
+		}
+		~FileHandle()
+		{
+			if(pFile)
+				fclose(pFile);
+		}
+		FILE* getPtr()
+		{
+			return pFile;
+		}
+		operator bool()
+		{
+			return (bool)pFile;
+		}
+		bool operator!()
+		{
+			return !(bool)pFile;
+		}
+	private:
+		FILE* pFile;
+	};
+	
+	
 	using std::ifstream;
 	using std::ios;
 	using Common::eERROR;
@@ -205,6 +234,39 @@ namespace Connector
 				curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &http_code);
 				res = (_error == CURLE_OK 
 					&& (http_code == 304 || http_code == 412)) ? eNO_ERROR : eERROR;
+
+				// clean up
+				curl_easy_cleanup(p_curl);
+				curl_slist_free_all(headers);
+			}
+			else
+			{
+				res = eERROR;
+			}
+			return res;
+		}
+	}
+
+	RESULT GoogleHTTPConnector::getRemoteFile(const QString& id, QString& xmlResp)
+	{
+		{   LOCK(_connectorMutex)
+
+			xmlResp = "";
+			RESULT res = eNO_ERROR;
+			struct curl_slist *headers = NULL;
+			CURL* p_curl = curl_easy_init();
+			long http_code;
+			QString url = kDocListScope + kDocListFeed_V3 + "/" + id;
+			
+			if(p_curl)
+			{
+				initCurl(p_curl, headers, url, write_str, 3, "GET");
+				curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, &xmlResp);
+
+				CURLcode _error = curl_easy_perform(p_curl);
+
+				curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &http_code);
+				res = (_error == CURLE_OK && http_code == 200 ) ? eNO_ERROR : eERROR;
 
 				// clean up
 				curl_easy_cleanup(p_curl);
@@ -468,7 +530,7 @@ namespace Connector
 
 				if(parentid != ROOT_ID)
 				{
-					url += QString("/folder%3A%1/contents").arg(parentid);
+					url += QString("/%1/contents").arg(parentid);
 				}
 
 				if(p_curl)
@@ -552,7 +614,7 @@ namespace Connector
 	void GoogleHTTPConnector::setUploadHeader(const QString& file_extension
 												, const QString& title
 												, const QString& etag
-												, curl_slist *headers)
+												, curl_slist*& headers)
 	{
 		if (file_extension == "doc") 
 		{
@@ -600,7 +662,10 @@ namespace Connector
 		}
 		
 		headers = curl_slist_append(headers, qPrintable(QString("Slug: " + title)));
-		headers = curl_slist_append(headers, qPrintable(QString("If-Match: " + etag)));
+		if(etag != "")
+		{
+			headers = curl_slist_append(headers, qPrintable(QString("If-Match: " + etag)));
+		}
 	}
 
 	QString GoogleHTTPConnector::getDocType(const QString& file_extension)
@@ -694,11 +759,6 @@ namespace Connector
 					/* free slist */ 
 					curl_slist_free_all(headers);
 					curl_easy_cleanup(p_curl);
-
-					if(data)
-					{
-						delete[] data;
-					}
 				}
 				else
 				{
@@ -879,77 +939,164 @@ namespace Connector
 	}
 
 
-	RESULT GoogleHTTPConnector::uploadFile(VFSCache::iterator iter, QString& response)
+	RESULT GoogleHTTPConnector::uploadFile(const QString& path, const QString& title, const QString& parentId, QString& response)
 	{
 		RESULT res = eERROR;
-		QString url = iter->getEditMediaUrl();
-		char* memblock = 0;
+		int file_size = 0;
+		char *memblock = 0; 
+		QString url = kDocListScope + kDocListFeed_V3;
+		struct curl_slist *headers = 0;
+		CURL* p_curl = 0;
 
 		try
 		{
-		if(url == "")
-		{
-			return res;
-		}
-
-		CURL* p_curl = curl_easy_init();
-		if(p_curl)
-		{
-			struct curl_slist *headers = NULL;
-
-			QString file_extension = iter->getPath().mid(iter->getPath().lastIndexOf(".") + 1).toLower();			
-			setUploadHeader(file_extension, iter->getName(),iter->getModified(), headers);
-
-			if(getDocType(file_extension) == "spreadsheet")
-			{
-				initCurl(p_curl, headers, url, write_str, 3, "PUT", "spr");
-			}
-			else
-			{
-				initCurl(p_curl, headers, url, write_str, 3, "PUT", "doc");
-			}
-
-						
-			curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, &response);
-
-			//Reading file for uploading
-			ifstream file(qPrintable(iter->getPath()), ios::binary | ios::ate);
-			if (!file) 
-			{
-				curl_slist_free_all(headers);
-				curl_easy_cleanup(p_curl);
-				return eERROR;
-			} 
-			else 
-			{
-				int file_size = static_cast<int>(file.tellg());
-				memblock = new char[file_size];
-				file.seekg(0, ios::beg);
-				file.read(memblock, file_size);
-				file.close();
-
-				curl_easy_setopt(p_curl, CURLOPT_POSTFIELDS, memblock);
-				curl_easy_setopt(p_curl, CURLOPT_POSTFIELDSIZE, file_size);
-			}
-
-			CURLcode error = curl_easy_perform(p_curl);
+			p_curl = curl_easy_init();
 			long code;
-			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
-			res = (error == CURLE_OK && code == 201) ? eNO_ERROR : eERROR;
 
-			/* free slist */ 
-			curl_slist_free_all(headers);
-			curl_easy_cleanup(p_curl);
-		}
+			if(p_curl)
+			{
+				if(parentId != ROOT_ID)
+				{
+					url += QString("/%1/contents").arg(parentId);
+				}
+
+				QString file_extension = path.mid(path.lastIndexOf(".") + 1).toLower();			
+				setUploadHeader(file_extension, title, "", headers);
+
+				ifstream file(qPrintable(path), ios::binary | ios::ate);
+
+				if (!file) 
+				{
+					curl_slist_free_all(headers);
+					curl_easy_cleanup(p_curl);
+					return eERROR;
+				} 
+				else 
+				{
+					int file_size = static_cast<int>(file.tellg());
+					memblock = new char[file_size];
+					file.seekg(0, ios::beg);
+					file.read(memblock, file_size);
+					file.close();
+
+					curl_easy_setopt(p_curl, CURLOPT_POSTFIELDS, memblock);
+					curl_easy_setopt(p_curl, CURLOPT_POSTFIELDSIZE, file_size);
+				}
+
+				if(getDocType(file_extension) == "spreadsheet")
+				{
+					initCurl(p_curl, headers, url, write_str, 3, "POST", "spr");
+				}
+				else
+				{
+					initCurl(p_curl, headers, url, write_str, 3, "POST", "doc");
+				}
+
+				curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, &response);
+
+				CURLcode error = curl_easy_perform(p_curl);
+				curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
+				res = (error == CURLE_OK && code == 201) ? eNO_ERROR : eERROR;
+			}
 		}
 		catch(...)
 		{
 		}
 
-		if(memblock)
+		try
 		{
-			delete[] memblock;
+			/* free slist */ 
+			curl_slist_free_all(headers);
+			curl_easy_cleanup(p_curl);
+
+			if (memblock != 0) 
+			{
+				delete[] memblock;
+			}
 		}
+		catch(...)
+		{
+
+		}
+		return res;
+	}
+	
+	RESULT GoogleHTTPConnector::uploadFile(VFSCache::iterator iter, QString& response)
+	{
+		RESULT res = eERROR;
+		QString url = iter->getEditMediaUrl();
+		int file_size = 0;
+
+		try
+		{
+			if(url == "")
+			{
+				return res;
+			}
+
+			CURL* p_curl = curl_easy_init();
+			if(p_curl)
+			{
+				struct curl_slist *headers = NULL;
+
+				QString file_extension = iter->getPath().mid(iter->getPath().lastIndexOf(".") + 1).toLower();			
+				setUploadHeader(file_extension, iter->getName(),iter->getModified(), headers);
+
+				if(getDocType(file_extension) == "spreadsheet")
+				{
+					initCurl(p_curl, headers, url, write_str, 3, "PUT", "spr");
+				}
+				else
+				{
+					initCurl(p_curl, headers, url, write_str, 3, "PUT", "doc");
+				}
+
+				curl_easy_setopt(p_curl, CURLOPT_UPLOAD, 1L);
+				curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, &response);
+
+				//Reading file for uploading
+				ifstream file(qPrintable(iter->getPath()), ios::binary | ios::ate);
+				
+				if (!file) 
+				{
+					curl_slist_free_all(headers);
+					curl_easy_cleanup(p_curl);
+					return eERROR;
+				} 
+				else 
+				{
+					file_size = static_cast<int>(file.tellg());
+					file.seekg(0, ios::beg);
+					file.close();
+					bool open = file.is_open();
+
+					FileHandle handle(fopen(qPrintable(iter->getPath()), "rb"));
+					if(!handle)
+					{
+						curl_slist_free_all(headers);
+						curl_easy_cleanup(p_curl);
+						return eERROR;
+					}
+
+					curl_easy_setopt(p_curl, CURLOPT_READFUNCTION, read_b);
+					curl_easy_setopt(p_curl, CURLOPT_READDATA, handle.getPtr());
+					curl_easy_setopt(p_curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t)file_size);
+
+					CURLcode error = curl_easy_perform(p_curl);
+					long code;
+					curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
+					res = (error == CURLE_OK && code == 200) ? eNO_ERROR : eERROR;
+
+					/* free slist */ 
+					curl_slist_free_all(headers);
+					curl_easy_cleanup(p_curl);
+				}
+			}
+		}
+		catch(...)
+		{
+		}
+
 		return res;
 	}
 	
@@ -992,7 +1139,16 @@ namespace Connector
 
 		return res;
 	}
+	
+	size_t GoogleHTTPConnector::read_b(void *ptr, size_t size, size_t nmemb, void *stream)
+	{
+		size_t retcode;
+ 
+		retcode = fread(ptr, size, nmemb, (FILE*)stream);
+		//ptr = stream;
 
+		return retcode;
+	}
 	size_t GoogleHTTPConnector::fwrite_b(void *ptr, size_t size, size_t count, void *path) 
 	{
 		//QMutexLocker locker(&_connectorMutex); 		

@@ -26,10 +26,11 @@ namespace Xml
 		QString NextLinkHref() const;
 		RESULT checkExtension(const QString& file_extension) const;
 		RESULT parseDocList(const QString& xml_doc_list, QList<VFSElement>& elements);
-		RESULT parseAlbumEntry(const QString& xml_album, VFSElement& element);
-		RESULT parseDocEntry(const QString& xml_doc_entry, VFSElement& element);
+		RESULT parseEntry(const QString& xml_entry, VFSElement& element);
 	
 	private:
+		RESULT parseAlbumEntry(const xmlpp::Node* singleEntry, VFSElement& element);
+		RESULT parseDocEntry(const xmlpp::Node* singleEntry, VFSElement& element);
 		QString exportFormat(const Node* entry) const;
 		RESULT checkExtension(const Node* entry) const;
 		QString getElementName(const Node* entry);

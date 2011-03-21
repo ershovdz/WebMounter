@@ -7,10 +7,11 @@ namespace RemoteDriver
 	using namespace Common;
 	using namespace Connector;
 
-	VkRVFSDriver::VkRVFSDriver(const QString& pluginName) : _pluginName(pluginName), _isDemo(true)
+	VkRVFSDriver::VkRVFSDriver(const QString& pluginName) : _isDemo(true)
 	{
 		_state = RemoteDriver::eNotConnected;
 		_httpConnector = new VkHTTPConnector();
+		_pluginName = pluginName;
 
 		RESULT res = WebMounter::getCache()->restoreCache();
 		if(res == eNO_ERROR)
@@ -258,54 +259,133 @@ namespace RemoteDriver
 		return eERROR;
 	}
 
-	RESULT VkRVFSDriver::renameElement(const QString& id, ElementType type, const QString& newTitle)
+	RESULT VkRVFSDriver::renameElement(const QString& path, const QString& newTitle)
 	{
 		RESULT res = eERROR;
-		if(type == VFSElement::FILE)
+		QFileInfo qInfo(path);
+		VFSCache* cache = WebMounter::getCache();
+		VFSCache::iterator elem = cache->find(qInfo.absoluteFilePath());
+
+		if(elem != cache->end())
 		{
-			return res; // Renaming of photos is not supported by Vkontakte
+			if(elem->getType() == VFSElement::FILE)
+			{
+				return res; // Renaming of photos is not supported by Vkontakte
+			}
+
+			res = _httpConnector->renameAlbum(elem->getId(), newTitle);
+			if(res == eNO_ERROR)
+			{
+				qInfo = qInfo.dir().absolutePath() + QString(QDir::separator()) + newTitle;
+				VFSElement newElem(elem->getType()
+					, qInfo.absoluteFilePath()
+					, newTitle
+					, elem->getEditMetaUrl()
+					, elem->getEditMediaUrl()
+					, elem->getSrcUrl()
+					, elem->getId()
+					, elem->getParentId()
+					, elem->getModified()
+					, elem->getPluginName()
+					, elem->getFlags());
+
+				cache->erase(elem);
+				cache->insert(newElem);
+
+				if(newElem.getType() == VFSElement::DIRECTORY)
+				{
+					updateChildrenPath(newElem);
+				}
+			}
 		}
 
-		return _httpConnector->renameAlbum(id, newTitle);
+		return res;
 	}
 
-	RESULT VkRVFSDriver::deleteDirectory(const QString& id)
-	{
-		return _httpConnector->deleteAlbum(id);
-	}
-
-	RESULT VkRVFSDriver::deleteFile(const QString& id)
+	RESULT VkRVFSDriver::deleteDirectory(const QString& path)
 	{
 		RESULT res = eERROR;
-		res = _httpConnector->deleteFile(id);
-		if(res == eNO_ERROR)
-		{
-			VFSCache* vfsCache = WebMounter::getCache();
-			VFSCache::iterator iter = vfsCache->begin();
-			for(iter; iter != vfsCache->end(); ++iter)
-			{
-				if(iter->getId() == id)
-				{
-					QFile::Permissions permissions = QFile::permissions(iter->getPath());
-					permissions |= (QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
-					bool err = QFile::setPermissions(iter->getPath(), permissions);
+		QDir qDirFrom(path);
+		VFSCache* cache = WebMounter::getCache();
+		VFSCache::iterator elem = cache->find(qDirFrom.absolutePath());
 
-					vfsCache->erase(iter);
-					break;
-				}
+		if(elem != cache->end() && elem->getType() == VFSElement::DIRECTORY)
+		{
+			res = _httpConnector->deleteAlbum(elem->getId());
+			if(res != eERROR)
+			{
+				cache->erase(elem);
 			}
 		}
 		return res;
 	}
 
-	RESULT VkRVFSDriver::moveElement(const QString& id, const QString& oldParentId, const QString& newParentId, ElementType type)
+	RESULT VkRVFSDriver::deleteFile(const QString& path)
 	{
-		if(type == VFSElement::DIRECTORY)
+		RESULT res = eERROR;
+		QFileInfo qInfo(path);
+		VFSCache* cache = WebMounter::getCache();
+		VFSCache::iterator elem = cache->find(qInfo.absoluteFilePath());
+
+		if(elem != cache->end())
 		{
-			return eERROR; // Moving of albums is not supported
+			QString response;
+			res = res = _httpConnector->deleteFile(elem->getId());
+			if(res == eNO_ERROR)
+			{
+				WebMounter::getProxy()->fileDeleted(elem->getPath(), res);
+				cache->erase(elem);
+			}
 		}
 
-		return _httpConnector->moveFile(id, oldParentId, newParentId);
+		return res;
+	}
+
+	RESULT VkRVFSDriver::moveElement(const QString& path, const QString& newParentId)
+	{
+		RESULT res = eERROR;
+		QFileInfo qInfo(path);
+		VFSCache* cache = WebMounter::getCache();
+		VFSCache::iterator elem = cache->find(qInfo.absoluteFilePath());
+
+		if(elem != cache->end())
+		{
+			if(elem->getType() == VFSElement::DIRECTORY)
+			{
+				return res; // Moving of albums is not supported
+			}
+
+			res = _httpConnector->moveFile(elem->getId(), elem->getParentId(), newParentId);
+			if(res == eNO_ERROR)
+			{
+				VFSElement newElem(elem->getType()
+					, elem->getPath()
+					, elem->getName()
+					, elem->getEditMetaUrl()
+					, elem->getEditMediaUrl()
+					, elem->getSrcUrl()
+					, elem->getId()
+					, newParentId
+					, elem->getModified()
+					, elem->getPluginName());
+
+				VFSCache::iterator iter = cache->begin();
+				for(iter; iter != cache->end(); ++iter)
+				{
+					if(iter->getId() == newParentId)
+						break;
+				}
+
+				QString path = iter->getPath() + QString(QDir::separator()) + newElem.getName();
+				QFileInfo fInfo(path);
+				newElem.setPath(fInfo.absoluteFilePath());
+
+				cache->erase(elem);
+				cache->insert(newElem);
+			}
+		}
+
+		return res;
 	}
 
 	RESULT VkRVFSDriver::createDirectory(const QString& path, const QString& parentId, const QString& title)
@@ -633,7 +713,6 @@ namespace RemoteDriver
 				}
 				_driverMutex.unlock();
 				
-				
 				for(iter; iter != vfsCache->end(); ++iter)
 				{
 					if(iter->getPluginName() == _pluginName)
@@ -663,7 +742,8 @@ namespace RemoteDriver
 						// Element has been deleted
 						if(!found)
 						{
-							vfsCache->erase(iter--);
+							vfsCache->erase(iter);
+							iter = vfsCache->begin();
 						}
 					}
 				}
@@ -940,32 +1020,6 @@ namespace RemoteDriver
 		updateState(100, eConnected);
 		start(); // start sync thread again
 	}
-
-	/*int VkRVFSDriver::removeFolder(QDir& dir)
-	{
-		int res = 0;
-
-		QStringList lstDirs  = dir.entryList(QDir::Dirs | QDir::AllDirs | QDir::NoDotAndDotDot);
-		QStringList lstFiles = dir.entryList(QDir::Files);
-
-		foreach (QString entry, lstFiles)
-		{
-			QString entryAbsPath = dir.absolutePath() + "/" + entry;
-			QFile::remove(entryAbsPath);
-		}
-
-		foreach (QString entry, lstDirs)
-		{
-			QString entryAbsPath = dir.absolutePath() + "/" + entry;
-			removeFolder(QDir(entryAbsPath));
-		}
-
-		if (!QDir().rmdir(dir.absolutePath()))
-		{
-			res = 1;
-		}
-		return res;
-	}*/
 
 	RESULT VkRVFSDriver::checkKey(const PluginSettings& pluginSettings)
 	{

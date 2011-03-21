@@ -44,12 +44,14 @@ namespace Connector
 			, const QString& pluginName = "");
 
 	public:
+		static size_t read_b(void *ptr, size_t size, size_t nmemb, void *stream);
 		static size_t read_str(void *ptr, size_t size, size_t count, void *buffer);
 		static size_t write_str(void *ptr, size_t size, size_t count, void *response);
 		static size_t fwrite_b(void *ptr, size_t size, size_t count, void *path);
 		
 		RESULT auth();
 		RESULT checkRemoteFile(VFSCache::iterator iter);
+		RESULT getRemoteFile(const QString& id, QString& xmlResp);
 		RESULT createFile(const QString& path
 							, const QString& title
 							, const QString& parentId
@@ -59,6 +61,7 @@ namespace Connector
 		RESULT downloadFile(QString& url, QString& path);
 		RESULT deleteElement(const QString& url, const QString& etag, QString& response);
 		RESULT getTreeElements(const QString& path, const QString& pluginName);
+		RESULT uploadFile(const QString& path, const QString& title, const QString& parentId, QString& response);
 		RESULT uploadFile(VFSCache::iterator iter, QString& response);
 		RESULT deleteFile(const QString& id, QString& response, const QString& pluginName);
 		RESULT deleteDirectory(const QString& id, QString& response, const QString& pluginName);
@@ -75,7 +78,7 @@ namespace Connector
 		void setUploadHeader(const QString& file_extension
 								, const QString& title
 								, const QString& etag
-								, curl_slist *headers);
+								, curl_slist*& headers);
 
 		void initCurl(CURL* p_curl
 						, curl_slist*& headers

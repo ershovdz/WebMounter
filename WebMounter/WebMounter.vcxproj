@@ -105,24 +105,24 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <Optimization>Disabled</Optimization>
+      <Optimization>Full</Optimization>
       <AdditionalIncludeDirectories>$(GTKMM_DIR)\include\libxml++-2.6;$(GTKMM_DIR)\lib\libxml++-2.6\include;$(GTKMM_DIR)\lib\glibmm-2.4\include;$(GTKMM_DIR)\lib\glib-2.0\include;$(GTKMM_DIR)\include\glib-2.0;$(GTKMM_DIR)\include\glibmm-2.4\glibmm;$(GTKMM_DIR)\include\glibmm-2.4;$(LIBXML_PP_DIR);$(DOKAN_DIR)\tags\dokan-0.5.3\dokan;$(LIBCURL_DIR)\include;$(TINYXML_DIR);$(QTDIR)\include\QtSql;.\GeneratedFiles;$(QTDIR)\include;.\GeneratedFiles\$(Configuration);$(QTDIR)\include\qtmain;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtMultimedia;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtWebKit;.;.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>UNICODE;WIN32;QT_LARGEFILE_SUPPORT;QT_THREAD_SUPPORT;QT_CORE_LIB;QT_GUI_LIB;QT_MULTIMEDIA_LIB;QT_NETWORK_LIB;QT_WEBKIT_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
     </ClCompile>
     <Link>
       <AdditionalDependencies>glibmm-vc100-d-2_4.lib;xml++-vc100-d-2_6.lib;zdll.lib;gtkmm-vc100-d-2_4.lib;tinyxmld.lib;libcurl.lib;dokan.lib;qtmaind.lib;QtCored4.lib;QtSqld4.lib;QtGuid4.lib;QtMultimediad4.lib;QtNetworkd4.lib;QtWebKitd4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(GTKMM_DIR)\lib;$(TINYXML_DIR)\Debug;$(DOKAN_DIR)\release\dokan-0.5.3\win7\dll;$(LIBCURL_DIR);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <GenerateMapFile>true</GenerateMapFile>
+      <GenerateMapFile>false</GenerateMapFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_|Win32'">

@@ -409,33 +409,28 @@ namespace Xml
 		return Common::eERROR;
 	}
 	
-	RESULT GoogleAtomParser::parseAlbumEntry(const QString& xml_album_entry, VFSElement& element)
+	RESULT GoogleAtomParser::parseEntry(const QString& xml_entry, VFSElement& element)
 	{
 		try
 		{
-			if(xml_album_entry == "")
+			if(xml_entry == "")
 			{
 				return Common::eERROR;
 			}
-			
-			Parse(xml_album_entry);
+
+			Parse(xml_entry);
 			const xmlpp::Node* singleEntry = Entry();
-			
+
 			if(singleEntry) // We have recieved a single entry, not a list
 			{
-				element.setType(VFSElement::DIRECTORY);
-				element.setPath(""); // we cannot generate path here, because we don't know path of parent folder. Lets driver do it.
-				element.setName(Title(singleEntry));
-				element.setSrcUrl(ContentSrc(singleEntry));
-				element.setEditMetaUrl(EditLinkHref(singleEntry));
-				element.setEditMediaUrl(EditMediaLinkHref(singleEntry));
-				element.setId(Id(singleEntry));
-				element.setParentId(ParentId(singleEntry));
-				element.setModified(ETag(singleEntry));
-				element.setPluginName(_pluginName);
-				element.setFlags(VFSElement::eFl_Dirty | VFSElement::eFl_Downloaded);
-				
-				return Common::eNO_ERROR;
+				if(CategoryLabel(singleEntry) == "folder")
+				{
+					return parseAlbumEntry(singleEntry, element);
+				}
+				else
+				{
+					return parseDocEntry(singleEntry, element);
+				}
 			}
 		}
 		catch(...)
@@ -444,34 +439,48 @@ namespace Xml
 		return Common::eERROR;
 	}
 	
-	RESULT GoogleAtomParser::parseDocEntry(const QString& xml_doc_entry, VFSElement& element)
+	RESULT GoogleAtomParser::parseAlbumEntry(const xmlpp::Node* singleEntry, VFSElement& element)
 	{
 		try
 		{
-			if(xml_doc_entry == "")
-			{
-				return Common::eERROR;
-			}
-			
-			Parse(xml_doc_entry);
-			const xmlpp::Node* singleEntry = Entry();
-			
-			if(singleEntry) // We have recieved a single entry, not a list
-			{
-				element.setType(VFSElement::FILE);
-				element.setPath(""); // we cannot generate path here, because we don't know path of parent folder. Lets driver do it.
-				element.setName(getElementName(singleEntry));
-				element.setSrcUrl(ContentSrc(singleEntry) + "&exportFormat=" + exportFormat(singleEntry));
-				element.setEditMetaUrl(EditLinkHref(singleEntry));
-				element.setEditMediaUrl(EditMediaLinkHref(singleEntry));
-				element.setId(Id(singleEntry));
-				element.setParentId(ParentId(singleEntry));
-				element.setModified(ETag(singleEntry));
-				element.setPluginName(_pluginName);
-				element.setFlags(VFSElement::eFl_Dirty | VFSElement::eFl_Downloaded);
-				
-				return Common::eNO_ERROR;
-			}
+			element.setType(VFSElement::DIRECTORY);
+			element.setPath(""); // we cannot generate path here, because we don't know path of parent folder. Lets driver do it.
+			element.setName(Title(singleEntry));
+			element.setSrcUrl(ContentSrc(singleEntry));
+			element.setEditMetaUrl(EditLinkHref(singleEntry));
+			element.setEditMediaUrl(EditMediaLinkHref(singleEntry));
+			element.setId(Id(singleEntry));
+			element.setParentId(ParentId(singleEntry));
+			element.setModified(ETag(singleEntry));
+			element.setPluginName(_pluginName);
+			element.setFlags(VFSElement::eFl_Dirty | VFSElement::eFl_Downloaded);
+
+			return Common::eNO_ERROR;
+
+		}
+		catch(...)
+		{
+		}
+		return Common::eERROR;
+	}
+	
+	RESULT GoogleAtomParser::parseDocEntry(const xmlpp::Node* singleEntry, VFSElement& element)
+	{
+		try
+		{
+			element.setType(VFSElement::FILE);
+			element.setPath(""); // we cannot generate path here, because we don't know path of parent folder. Lets driver do it.
+			element.setName(getElementName(singleEntry));
+			element.setSrcUrl(ContentSrc(singleEntry) + "&exportFormat=" + exportFormat(singleEntry));
+			element.setEditMetaUrl(EditLinkHref(singleEntry));
+			element.setEditMediaUrl(EditMediaLinkHref(singleEntry));
+			element.setId(Id(singleEntry));
+			element.setParentId(ParentId(singleEntry));
+			element.setModified(ETag(singleEntry));
+			element.setPluginName(_pluginName);
+			element.setFlags(VFSElement::eFl_Dirty | VFSElement::eFl_Downloaded);
+
+			return Common::eNO_ERROR;
 		}
 		catch(...)
 		{

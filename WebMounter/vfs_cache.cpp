@@ -53,7 +53,7 @@ namespace Data
 
 		if(_DB.isOpen())
 		{
-			query.exec("PRAGMA synchronous=OFF");
+			//query.exec("PRAGMA synchronous=OFF");
 
 			bool isOk = query.exec("create table Elements (path varchar(256),"
 				"elemid varchar(256),"
@@ -134,7 +134,7 @@ namespace Data
 			if(iter != elem ) // element not equal to existing one
 			{
 				iter.getNatureIter()->second->setFlags(VFSElement::eFl_Dirty);
-				iter.getNatureIter()->second->setDownloaded(false);
+				iter.getNatureIter()->second->setDownloaded(elem.isDownloaded());
 				iter.getNatureIter()->second->setId(elem.getId());
 				iter.getNatureIter()->second->setModified(elem.getModified());
 				iter.getNatureIter()->second->setSrcUrl(elem.getSrcUrl());

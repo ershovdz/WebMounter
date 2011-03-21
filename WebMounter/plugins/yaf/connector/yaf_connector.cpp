@@ -8,6 +8,7 @@
 #include "base64.h"
 #include "yaf_connector.h"
 #include "reg_exp.h"
+#include <QFileInfo>
 
 namespace Connector
 {
@@ -291,7 +292,7 @@ namespace Connector
 
 			QByteArray pathArray = path.toLocal8Bit();
 			
-			QString fileName = title;
+			QString fileName = title + "." + QFileInfo(path).suffix().toLower();
 			QByteArray titleArray = fileName.toUtf8();
 
 			QString access = "public";

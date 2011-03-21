@@ -27,12 +27,11 @@ namespace RemoteDriver
 		virtual RESULT downloadFiles(QList <QString>& urlList, QList <QString>& pathList);
 		virtual RESULT uploadFile(const QString& path, const QString& title,  const QString& id, const QString& parentId);
 		virtual RESULT modifyFile(const QString&);
-		virtual RESULT renameElement(const QString& id, ElementType type, const QString& newTitle);
+		virtual RESULT renameElement(const QString& path, const QString& newTitle);
 		virtual RESULT deleteDirectory(const QString& id);
 		virtual RESULT deleteFile(const QString& id);
-		virtual RESULT moveElement(const QString& id, const QString& oldParentId, const QString& newParentId, ElementType type);
+		virtual RESULT moveElement(const QString& path, const QString& newParentId);
 		virtual RESULT createDirectory(const QString& path, const QString& parentId, const QString& title);
-		virtual RESULT creatFile(const QString& path, const QString& title,  const QString& id, const QString& parentId) {return Common::eERROR;}
 		virtual RESULT getElements();
 		virtual RESULT sync();
 		virtual bool areFileAttributesValid(const QString& path, unsigned long attributes);
@@ -58,7 +57,7 @@ namespace RemoteDriver
 	
 	private:
 		Connector::YafHTTPConnector* _httpConnector;
-		const QString _pluginName;
+		//const QString _pluginName;
 		QWaitCondition _forceSync;
 		QMutex _syncMutex;
 	};

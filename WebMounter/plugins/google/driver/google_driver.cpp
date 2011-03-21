@@ -55,20 +55,28 @@ namespace RemoteDriver
 			notifyUser(Ui::Notification::eINFO, tr("Info"), tr("This file extension is not supported !\n"));
 			return eERROR;
 		}
-		
+
+		if(suffix == "pdf") // it is not allowed to create pdf files, only upload an existing file
+		{
+			return eNO_ERROR;
+		}
+
 		if(_httpConnector.createFile(path, title, parentid, xmlResp) == eNO_ERROR)
 		{
 			VFSElement element;
-			if(_atomParser.parseDocEntry(xmlResp, element) == eNO_ERROR)
+			QString etag;
+			if(_atomParser.parseEntry(xmlResp, element) == eNO_ERROR
+				&& getFileEtag(element.getId(), etag) == eNO_ERROR)
 			{
+				element.setModified(etag);
 				VFSCache* vfsCache = WebMounter::getCache();
 				VFSCache::iterator iter = vfsCache->begin();
 				for(iter; iter != vfsCache->end(); ++iter)
 				{
 					if(iter->getId() == element.getParentId())
-					break;
+						break;
 				}
-				
+
 				if(iter != vfsCache->end())
 				{
 					QString path = iter->getPath() + QString(QDir::separator()) + element.getName();
@@ -83,40 +91,74 @@ namespace RemoteDriver
 		return eERROR;
 	}
 
+	RESULT GoogleRVFSDriver::getFileEtag(const QString& id, QString& etag)
+	{
+		QString xmlResp;
+		VFSElement elem;
+		int retry = 0;
+
+		do
+		{
+			sleep(2);
+			if(_httpConnector.getRemoteFile(id, xmlResp) == eNO_ERROR
+				&& _atomParser.parseEntry(xmlResp, elem) == eNO_ERROR)
+			{
+				if(etag != elem.getModified())
+				{
+					etag = elem.getModified();
+				}
+				else
+				{
+					return eNO_ERROR;
+				}
+			}
+			retry++;
+		}
+		while(retry < 5);
+		return eERROR;
+	}
+
 	RESULT GoogleRVFSDriver::uploadFile(const QString& path, const QString& title, const QString& id, const QString& parentid)
 	{
 		QString xmlResp;
 		QFileInfo fInfo(path);
 		RESULT err = eERROR;
-
+		QString etag = "";
+		VFSElement elem;
 		QString suffix = fInfo.suffix();
 		suffix = suffix.toLower();
 
-		if(_atomParser.checkExtension(suffix) == eERROR)
+		if(_atomParser.checkExtension(suffix) == eERROR 
+			&& suffix != "tmp")
 		{
 			notifyUser(Ui::Notification::eINFO, tr("Info"), tr("This file extension is not supported !\n"));
 			return eERROR;
 		}
-		
+
 		VFSCache* vfsCache = WebMounter::getCache();
 		VFSCache::iterator iter = vfsCache->begin();
 		for(iter; iter != vfsCache->end(); ++iter)
 		{
 			if(iter->getId() == id)
-			break;
+				break;
 		}
-		
-		if(iter != vfsCache->end())
+
+		// uploading common file type: document, spreadsheet or presentation
+		// Before uploading we create the file on the server in the CreateFile request.
+		// So this is the second request and the file has been already inserted into the cache
+		if(iter != vfsCache->end() && id != ROOT_ID) 
 		{
 			if(_httpConnector.checkRemoteFile(iter) == eERROR)
 			{
 				notifyUser(Ui::Notification::eERROR, tr("Error")
-							, tr("The file ") 
-							+ iter->getName() 
-							+ tr(" is modified by another user on Google server. This file will be changed locally. \n"));
+					, tr("The file ") 
+					+ iter->getName() 
+					+ tr(" is modified by another user on Google server. This file will be changed locally. \n"));
+
+				WebMounter::getProxy()->fileUploaded(fInfo.absoluteFilePath(), eNO_ERROR);
 				return eNO_ERROR;
 			}
-			
+
 			err = _httpConnector.uploadFile(iter, xmlResp);
 			UINT retryUploadCounter = 0;
 
@@ -125,28 +167,50 @@ namespace RemoteDriver
 				err = _httpConnector.uploadFile(iter, xmlResp);
 				retryUploadCounter++;
 			}
-			
-			VFSElement elem;
-			if(!err && xmlResp != "")
-			{
-				_atomParser.parseDocEntry(xmlResp, elem);
-				
-				if(elem.getId() == iter->getId()) // modified field has been changed, so we need to update cache and DB.
-				{
-					WebMounter::getCache()->insert(elem, true, true); 
-				}
-			}
-			else
-			{
-				notifyUser(Ui::Notification::eCRITICAL
-				, tr("Error")
-				, tr("File upload failed (") + title + QString(")"));
-			}
+		}
+		else // Uploading pdf file or smth like that.
+			 // We do not create file in the CreateFile request, so this is the first request
+		{
+			err = _httpConnector.uploadFile(path, title, parentid, xmlResp);
+			UINT retryUploadCounter = 0;
 
-			WebMounter::getProxy()->fileUploaded(fInfo.absoluteFilePath(), err);
-			return eNO_ERROR;
+			while(err == eERROR && retryUploadCounter < MAX_UPLOAD_RETRY)
+			{
+				err = _httpConnector.uploadFile(path, title, parentid, xmlResp);
+				retryUploadCounter++;
+			}
 		}
 		
+		if(!err && xmlResp != "")
+		{
+			if(_atomParser.parseEntry(xmlResp, elem) == eNO_ERROR
+				&& getFileEtag(elem.getId(), etag) == eNO_ERROR)
+			{
+				elem.setModified(etag);
+				VFSCache::iterator parent = vfsCache->begin();
+				for(parent = vfsCache->begin(); parent != vfsCache->end(); ++parent)
+				{
+					if(parent->getId() == elem.getParentId())
+						break;
+				}
+
+				if(parent != vfsCache->end())
+				{
+					QString path = parent->getPath() + QString(QDir::separator()) + elem.getName();
+					QFileInfo fCurInfo(path);
+					elem.setPath(fCurInfo.absoluteFilePath());
+					elem.setDownloaded(true);
+
+					WebMounter::getProxy()->fileUploaded(fInfo.absoluteFilePath(), err);
+
+					vfsCache->insert(elem, true, true); // modified field has been changed, so we need to update cache and DB. 
+					return eNO_ERROR;
+				}
+			}
+			err = eERROR;
+		}
+
+		WebMounter::getProxy()->fileUploaded(fInfo.absoluteFilePath(), err);
 		return err;
 	};
 
@@ -155,7 +219,7 @@ namespace RemoteDriver
 		return eNO_ERROR;
 	};
 
-	RESULT GoogleRVFSDriver::renameElement( const QString& id, ElementType type, const QString& newTitle)
+	RESULT GoogleRVFSDriver::renameElement( const QString& path, const QString& newTitle)
 	{
 		QString xmlResp;
 
@@ -166,19 +230,15 @@ namespace RemoteDriver
 		}
 
 		VFSCache* vfsCache = WebMounter::getCache();
-		VFSCache::iterator iter = vfsCache->begin();
-		for(iter; iter != vfsCache->end(); ++iter)
-		{
-			if(iter->getId() == id)
-			break;
-		}
-		
+		QFileInfo qInfo(path);
+		VFSCache::iterator iter = vfsCache->find(qInfo.absoluteFilePath());
+
 		if(iter != vfsCache->end())
 		{
 			if(_httpConnector.renameElement(iter, newTitle, xmlResp) == eNO_ERROR)
 			{
 				VFSElement element;
-				if(_atomParser.parseDocEntry(xmlResp, element) == eNO_ERROR)
+				if(_atomParser.parseEntry(xmlResp, element) == eNO_ERROR)
 				{
 					VFSCache::iterator parent = vfsCache->begin();
 					for(parent = vfsCache->begin(); parent != vfsCache->end(); ++parent)
@@ -203,16 +263,16 @@ namespace RemoteDriver
 		return eERROR;
 	};
 
-	RESULT GoogleRVFSDriver::deleteDirectory( const QString& id)
+	RESULT GoogleRVFSDriver::deleteDirectory( const QString& path)
 	{
-		return deleteElement(id);
+		return deleteElement(path);
 	}
-	RESULT GoogleRVFSDriver::deleteFile( const QString& id )
+	RESULT GoogleRVFSDriver::deleteFile( const QString& path )
 	{
-		return deleteElement(id);
+		return deleteElement(path);
 	}
 
-	RESULT GoogleRVFSDriver::deleteElement( const QString& id)
+	RESULT GoogleRVFSDriver::deleteElement( const QString& path)
 	{
 		QString response;
 
@@ -222,26 +282,24 @@ namespace RemoteDriver
 			return eERROR;
 		}
 		
+		QFileInfo qInfo(path);
 		VFSCache* vfsCache = WebMounter::getCache();
-		VFSCache::iterator iter = vfsCache->begin();
-		for(iter; iter != vfsCache->end(); ++iter)
-		{
-			if(iter->getId() == id)
-			break;
-		}
-		
+		VFSCache::iterator iter = vfsCache->find(qInfo.absoluteFilePath());
+
 		if(iter != vfsCache->end())
 		{
 			if(_httpConnector.deleteElement(iter->getEditMetaUrl(), iter->getModified(), response) == eNO_ERROR)
 			{
 				vfsCache->erase(iter);
+				WebMounter::getProxy()->fileDeleted(iter->getPath(), eNO_ERROR);
 				return eNO_ERROR;
 			}
+			WebMounter::getProxy()->fileDeleted(iter->getPath(), eERROR);
 		}
 		return eERROR;
 	};
 
-	RESULT GoogleRVFSDriver::moveElement( const QString& id, const QString& oldParentId, const QString& newParentId, ElementType type)
+	RESULT GoogleRVFSDriver::moveElement(const QString& path, const QString& newParentId)
 	{
 		QString response;
 
@@ -251,32 +309,28 @@ namespace RemoteDriver
 			return eERROR;
 		}
 
-		if(type == VFSElement::DIRECTORY)
-		{
-			notifyUser(Ui::Notification::eCRITICAL, QString(tr("Error")), QString(tr("Moving directory is not allowed !\n")));
-			return eERROR;
-		}
-		
 		VFSCache* vfsCache = WebMounter::getCache();
 		VFSCache::iterator parent = vfsCache->begin();
-		VFSCache::iterator element = vfsCache->begin();
+		QFileInfo qInfo(path);
+		VFSCache::iterator element = vfsCache->find(qInfo.absoluteFilePath());
 		for(parent; parent != vfsCache->end(); ++parent)
 		{
 			if(parent->getId() == newParentId)
 			break;
 		}
-		for(element; element != vfsCache->end(); ++element)
-		{
-			if(element->getId() == id)
-			break;
-		}
 		
-		if(parent != vfsCache->end())
+		if(parent != vfsCache->end() && element != vfsCache->end())
 		{
+			if(element->getType() == VFSElement::DIRECTORY)
+			{
+				notifyUser(Ui::Notification::eCRITICAL, QString(tr("Error")), QString(tr("Moving directory is not allowed !\n")));
+				return eERROR;
+			}
+
 			if(_httpConnector.moveElement(element, parent->getSrcUrl(), response) == eNO_ERROR)
 			{
 				VFSElement element;
-				if(_atomParser.parseDocEntry(response, element) == eNO_ERROR)
+				if(_atomParser.parseEntry(response, element) == eNO_ERROR)
 				{
 					QString path = parent->getPath() + QString(QDir::separator()) + element.getName();
 					QFileInfo fInfo(path);
@@ -314,7 +368,7 @@ namespace RemoteDriver
 
 		if(_httpConnector.createDirectory(parentid, title, response, _pluginName) == eNO_ERROR)
 		{
-			if(_atomParser.parseAlbumEntry(response, element) == eNO_ERROR)
+			if(_atomParser.parseEntry(response, element) == eNO_ERROR)
 			{
 				VFSCache* vfsCache = WebMounter::getCache();
 				VFSCache::iterator iter = vfsCache->begin();
@@ -364,13 +418,14 @@ namespace RemoteDriver
 		QString nextLink;
 		
 
-		_driverMutex.lock();
-		if(_state != eSyncStopping)
-		{
-			updateState(0, RemoteDriver::eSync);
+		{	LOCK(_driverMutex)
+			
+			if(_state != eSyncStopping)
+			{
+				updateState(0, RemoteDriver::eSync);
+			}
 		}
-		_driverMutex.unlock();
-
+		
 		QList<VFSElement> elements;
 
 		VFSElement elem = VFSElement(VFSElement::DIRECTORY
@@ -384,14 +439,24 @@ namespace RemoteDriver
 			, ""
 			, _pluginName);
 
-		elements.append(elem);
+		// Hack start
+		// Something wrong with Glib::ustring. locale_from_utf8 function sometimes throws an exception
+		int counter = 0;
+		while(counter < 10 && res == eERROR)
+		{
+			elements.clear();
+			elements.append(elem);
+			
+			res = _atomParser.parseDocList(_httpConnector.getElements(), elements);
+			counter++;
+		}
+		//Hack end
 
-		res = _atomParser.parseDocList(_httpConnector.getElements(), elements);
 		if(!res)
 		{
 			while((nextLink = _atomParser.NextLinkHref()) != "")
 			{
-				res = _atomParser.parseDocList(_httpConnector.getElements(), elements);
+				res = _atomParser.parseDocList(_httpConnector.getElements(&nextLink), elements);
 				if(res == eERROR)
 				{
 					stopPlugin();

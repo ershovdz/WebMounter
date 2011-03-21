@@ -95,6 +95,11 @@ int RVFSDriver::removeFolder(QDir& dir)
 	foreach (QString entry, lstFiles)
 	{
 		QString entryAbsPath = dir.absolutePath() + "/" + entry;
+	
+		QFile::Permissions permissions = QFile::permissions(entryAbsPath);
+		permissions |= (QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
+		bool err = QFile::setPermissions(entryAbsPath, permissions);
+
 		QFile::remove(entryAbsPath);
 	}
 
@@ -125,6 +130,10 @@ void RVFSDriver::syncCacheWithFileSystem(const QString& path)
 
 		if(vfsCache->find(entryAbsPath) == vfsCache->end())
 		{
+			QFile::Permissions permissions = QFile::permissions(entryAbsPath);
+			permissions |= (QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
+			bool err = QFile::setPermissions(entryAbsPath, permissions);
+
 			QFile::remove(entryAbsPath);
 		}
 	}
@@ -268,4 +277,37 @@ void RVFSDriver::stopSyncHandler()
 bool RVFSDriver::areFileAttributesValid(const QString&, unsigned long)
 {
 	return true;
+}
+
+void RVFSDriver::updateChildrenPath(const VFSElement& elem)
+{
+	VFSCache* vfsCache = WebMounter::getCache();
+	VFSCache::iterator iter = vfsCache->begin();
+	for(iter; iter != vfsCache->end(); ++iter)
+	{
+		if(iter->getParentId() == elem.getId())
+		{
+			QString path = elem.getPath() + QString(QDir::separator()) + iter->getName();
+			QFileInfo fInfo(path);
+
+			if(iter->getPath() != fInfo.absoluteFilePath())
+			{
+				VFSElement newElem(iter->getType()
+					, fInfo.absoluteFilePath()
+					, iter->getName()
+					, iter->getEditMetaUrl()
+					, iter->getEditMediaUrl()
+					, iter->getSrcUrl()
+					, iter->getId()
+					, iter->getParentId()
+					, iter->getModified()
+					, iter->getPluginName()
+					, iter->getFlags());
+
+				vfsCache->erase(iter);
+				vfsCache->insert(newElem);
+				iter = vfsCache->begin();
+			}
+		}
+	}
 }

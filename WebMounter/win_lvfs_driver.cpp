@@ -343,7 +343,7 @@ namespace LocalDriver
 		LPCWSTR					FileName,
 		PDOKAN_FILE_INFO		DokanFileInfo)
 	{
-		QMutexLocker locker(&_DriverMutex);
+		//QMutexLocker locker(&_DriverMutex);
 
 		WCHAR filePath[MAX_PATH];
 		GetFilePath(filePath, MAX_PATH, FileName);
@@ -369,7 +369,7 @@ namespace LocalDriver
 		LPCWSTR					FileName,
 		PDOKAN_FILE_INFO		DokanFileInfo)
 	{
-		QMutexLocker locker(&_DriverMutex);
+		//QMutexLocker locker(&_DriverMutex);
 
 		WCHAR filePath[MAX_PATH];
 		GetFilePath(filePath, MAX_PATH, FileName);
@@ -462,9 +462,10 @@ namespace LocalDriver
 				opened = TRUE;
 				DokanFileInfo->Context = (ULONG64)handle;
 			}
-			else if(fileState &  VFSElement::eFl_Downloading)
+			else if((fileState &  VFSElement::eFl_Downloading)
+					&& (fileState != VFSElement::eFl_All))
 			{
-				sleep(1000);
+				sleep(3);
 				return -1;
 			}
 
@@ -515,10 +516,10 @@ namespace LocalDriver
 				DbgPrint(L"\tread %d, offset %d\n\n", *ReadLength, offset);
 			}
 
-			if((offset) == GetFileSize((HANDLE)DokanFileInfo->Context,  NULL))
+			/*if((offset) == GetFileSize((HANDLE)DokanFileInfo->Context,  NULL))
 			{
 				_pFileProxy->UnCheckFile(QString::fromWCharArray(filePath));
-			}
+			}*/
 
 			if (opened)
 			{
@@ -614,20 +615,21 @@ namespace LocalDriver
 
 			Sleep(100); //hack. We need a time to close file 
 
-			QMutexLocker locker(&_DriverMutex);
-			if(_pFileProxy->CreateFileW(QString::fromWCharArray(filePath)) == eERROR)
-			{
-				/*DbgPrint(L"  DeleteFile ");
-				if (DeleteFile(filePath) == 0) 
+			{	LOCK(_DriverMutex);
+				if(_pFileProxy->CreateFileW(QString::fromWCharArray(filePath)) == eERROR)
 				{
+					/*DbgPrint(L"  DeleteFile ");
+					if (DeleteFile(filePath) == 0) 
+					{
 					DbgPrint(L" error code = %d\n\n", GetLastError());
-				} 
-				else 
-				{
+					} 
+					else 
+					{
 					DbgPrint(L"success\n\n");
-				}
+					}
 
-				return -1;*/
+					return -1;*/
+				}
 			}
 		}
 		return 0;
@@ -864,40 +866,45 @@ namespace LocalDriver
 		GetFilePath(filePath, MAX_PATH, FileName);
 		GetFilePath(newFilePath, MAX_PATH, NewFileName);
 
-		_DriverMutex.lock();
-		if(_pFileProxy->MoveElement(QString::fromWCharArray(filePath)
-			, QString::fromWCharArray(newFilePath)))
-		{
-			_DriverMutex.unlock();
-			return -1;	
-		}
-		
+		{	LOCK(_DriverMutex)
 
-		DbgPrint(L"MoveFile %s -> %s\n\n", filePath, newFilePath);
+			if(_pFileProxy->MoveElement(QString::fromWCharArray(filePath)
+				, QString::fromWCharArray(newFilePath)))
+			{
+				return -1;	
+			}
 
-		if (DokanFileInfo->Context) 
-		{
-			// should close? or rename at closing?
-			CloseHandle((HANDLE)DokanFileInfo->Context);
-			DokanFileInfo->Context = 0;
-		}
+			DbgPrint(L"MoveFile %s -> %s\n\n", filePath, newFilePath);
 
-		if (ReplaceIfExisting)
-			status = MoveFileEx(filePath, newFilePath, MOVEFILE_REPLACE_EXISTING);
-		else
-			status = MoveFile(filePath, newFilePath);
+			if (DokanFileInfo->Context) 
+			{
+				// should close? or rename at closing?
+				CloseHandle((HANDLE)DokanFileInfo->Context);
+				DokanFileInfo->Context = 0;
+			}
 
-		_DriverMutex.unlock();
+			if (ReplaceIfExisting)
+				status = MoveFileEx(filePath, newFilePath, MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH);
+			else
+				status = MoveFile(filePath, newFilePath);
 
-		if (status == FALSE) 
-		{
-			DWORD error = GetLastError();
-			DbgPrint(L"\tMoveFile failed status = %d, code = %d\n", status, error);
-			return -(int)error;
-		} 
-		else 
-		{
-			return 0;
+
+			if (status == FALSE) 
+			{
+				DWORD error = GetLastError();
+				DbgPrint(L"\tMoveFile failed status = %d, code = %d\n", status, error);
+				return -(int)error;
+			} 
+			else 
+			{
+				if(_pFileProxy->MoveElement(QString::fromWCharArray(filePath)
+					, QString::fromWCharArray(newFilePath), false)) // the file has been moved already
+				{
+					return -1;	
+				}
+
+				return 0;
+			}
 		}
 	}
 
@@ -1027,10 +1034,10 @@ namespace LocalDriver
 
 		GetFilePath(filePath, MAX_PATH, FileName);
 		
-		if(!_pFileProxy->CheckFileAttributes(QString::fromWCharArray(filePath), FileAttributes))
+		/*if(!_pFileProxy->CheckFileAttributes(QString::fromWCharArray(filePath), FileAttributes))
 		{
 			return -1;
-		}
+		}*/
 
 		DbgPrint(L"SetFileAttributes %s\n", filePath);
 
@@ -1237,7 +1244,7 @@ namespace LocalDriver
 
 			ZeroMemory(_pDriverOptions, sizeof(DOKAN_OPTIONS));
 			//_pDriverOptions->Version = DOKAN_VERSION;
-			_pDriverOptions->ThreadCount = 0; // use default
+			_pDriverOptions->ThreadCount = 1; // use default
 
 			//_pDriverOptions->MountPoint =
 			//	(WCHAR*)malloc(sizeof(WCHAR) * _mountPoint.size() + 1);

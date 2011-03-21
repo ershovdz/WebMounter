@@ -28,10 +28,10 @@ namespace RemoteDriver
 		virtual RESULT downloadFiles(QList <QString>& urlList, QList <QString>& pathList);
 		virtual RESULT uploadFile(const QString& path, const QString& title,  const QString& id, const QString& parentId);
 		virtual RESULT modifyFile(const QString&);
-		virtual RESULT renameElement(const QString& id, ElementType type, const QString& newTitle);
+		virtual RESULT renameElement(const QString& path, const QString& newTitle);
 		virtual RESULT deleteDirectory(const QString& id);
 		virtual RESULT deleteFile(const QString& id);
-		virtual RESULT moveElement(const QString& id, const QString& oldParentId, const QString& newParentId, ElementType type);
+		virtual RESULT moveElement(const QString& path, const QString& newParentId);
 		virtual RESULT createDirectory(const QString& path, const QString& parentId, const QString& title);
 		virtual RESULT getElements();
 		virtual RESULT sync();
@@ -44,10 +44,6 @@ namespace RemoteDriver
 		void parsePhotoEntry(QString& xmlEntry, VFSElement& elem);
 
 		void notifyUser(Ui::Notification::_Types type, QString title, QString description) const;
-
-		//RESULT downloadFiles();
-
-		//UINT countNotDownloaded();
 		void run();
 
 		virtual void connectHandler(PluginSettings& pluginSettings);
@@ -56,15 +52,13 @@ namespace RemoteDriver
 		virtual void stopSyncHandler();
 		virtual RESULT checkKey(const PluginSettings& pluginSettings);
 
-		//int removeFolder(QDir& dir);
 		int findParentIndex(const QList<VFSElement>& elemList, const VFSElement& elem);
-		//void syncCacheWithFileSystem(const QString& path);
 		void markNameDuplicates(QList<VFSElement>& elemList);
 		void handleNameDuplicates(QList<VFSElement>& elemList);
 		QString addPathSuffix(ElementType type, const QString& path, const QString& suffix);
 	private:
 		Connector::VkHTTPConnector* _httpConnector;
-		const QString _pluginName;
+		//const QString _pluginName;
 		QWaitCondition _forceSync;
 		QMutex _syncMutex;
 		QMutex _driverMutex;

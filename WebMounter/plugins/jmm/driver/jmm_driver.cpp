@@ -18,9 +18,10 @@ namespace RemoteDriver
 	//JmmRVFSDriver* JmmRVFSDriver::_driverInstance = 0;
 	//QMutex JmmRVFSDriver::_driverMutex;
 
-	JmmRVFSDriver::JmmRVFSDriver(const QString& pluginName) : _pluginName(pluginName)
+	JmmRVFSDriver::JmmRVFSDriver(const QString& pluginName) 
 	{
 		_state = RemoteDriver::eNotConnected;
+		_pluginName = pluginName;
 
 		RESULT res = WebMounter::getCache()->restoreCache();
 		if(res == eNO_ERROR)
@@ -37,10 +38,10 @@ namespace RemoteDriver
 								, const QString& login
 								, const QString& password
 								, const QString& proxy//"proxy.te.mera.ru:8080"
-								, const QString& proxyLoginPwd) : _pluginName(pluginName)//:  _rootPath(rootPath)
+								, const QString& proxyLoginPwd) //:  _rootPath(rootPath)
 	{
 		_state = RemoteDriver::eNotConnected;
-		
+		_pluginName = pluginName;
 		RESULT res = WebMounter::getCache()->restoreCache();
 		/*if(res == eNO_ERROR)
 		{
@@ -55,31 +56,31 @@ namespace RemoteDriver
 		//Connector::JmmHTTPConnector::deleteConnector();
 	}
 
-	int JmmRVFSDriver::removeFolder(QDir& dir)
-	{
-		int res = 0;
-		
-		QStringList lstDirs  = dir.entryList(QDir::Dirs | QDir::AllDirs | QDir::NoDotAndDotDot);
-		QStringList lstFiles = dir.entryList(QDir::Files);
-
-		foreach (QString entry, lstFiles)
-		{
-			QString entryAbsPath = dir.absolutePath() + "/" + entry;
-			QFile::remove(entryAbsPath);
-		}
-
-		foreach (QString entry, lstDirs)
-		{
-			QString entryAbsPath = dir.absolutePath() + "/" + entry;
-			removeFolder(QDir(entryAbsPath));
-		}
-
-		if (!QDir().rmdir(dir.absolutePath()))
-		{
-			res = 1;
-		}
-		return res;
-	}
+// 	int JmmRVFSDriver::removeFolder(QDir& dir)
+// 	{
+// 		int res = 0;
+// 		
+// 		QStringList lstDirs  = dir.entryList(QDir::Dirs | QDir::AllDirs | QDir::NoDotAndDotDot);
+// 		QStringList lstFiles = dir.entryList(QDir::Files);
+// 
+// 		foreach (QString entry, lstFiles)
+// 		{
+// 			QString entryAbsPath = dir.absolutePath() + "/" + entry;
+// 			QFile::remove(entryAbsPath);
+// 		}
+// 
+// 		foreach (QString entry, lstDirs)
+// 		{
+// 			QString entryAbsPath = dir.absolutePath() + "/" + entry;
+// 			removeFolder(QDir(entryAbsPath));
+// 		}
+// 
+// 		if (!QDir().rmdir(dir.absolutePath()))
+// 		{
+// 			res = 1;
+// 		}
+// 		return res;
+// 	}
 	
 	void JmmRVFSDriver::syncCacheWithFileSystem(const QString& path)
 	{
@@ -361,96 +362,199 @@ namespace RemoteDriver
 		return eNO_ERROR;
 	};
 
-	RESULT JmmRVFSDriver::renameElement( const QString& id, ElementType type, const QString& newTitle)
+	RESULT JmmRVFSDriver::renameElement( const QString& path, const QString& newTitle)
 	{
-		QString response;
-
 		if(!isRunning())
 		{
 			notifyUser(Ui::Notification::eCRITICAL, tr("Error"), tr("Plugin is not connected !\nPlease connect plugin at first.\n"));
 			return eERROR;
 		}
-		
-		if(_httpConnector.auth() != eNO_ERROR) // to be sure that session has not been expired
+	
+		RESULT res = eERROR;
+		QFileInfo qInfo(path);
+		VFSCache* cache = WebMounter::getCache();
+		VFSCache::iterator elem = cache->find(qInfo.absoluteFilePath());
+
+		if(elem != cache->end())
 		{
-			//stopPlugin();
-			//updateState(100, RemoteDriver::eNotConnected);
-			return eERROR;	
+			if(_httpConnector.auth() != eNO_ERROR) // to be sure that session has not been expired
+			{
+				//stopPlugin();
+				//updateState(100, RemoteDriver::eNotConnected);
+				return res;	
+			}
+
+			QFileInfo fInfo(newTitle);
+
+			QString response;
+			res = _httpConnector.renameElement(elem->getId(), elem->getType(), fInfo.baseName(), response, _pluginName);
+			if(res == eNO_ERROR)
+			{
+				res = (RESULT)(Xml::JmmXmlParser::parseResponse(response).toInt() != -1);
+				if(res == eNO_ERROR)
+				{
+					qInfo = qInfo.dir().absolutePath() + QString(QDir::separator()) + newTitle;
+					VFSElement newElem(elem->getType()
+						, qInfo.absoluteFilePath()
+						, newTitle
+						, elem->getEditMetaUrl()
+						, elem->getEditMediaUrl()
+						, elem->getSrcUrl()
+						, elem->getId()
+						, elem->getParentId()
+						, elem->getModified()
+						, elem->getPluginName());
+
+					cache->erase(elem);
+					cache->insert(newElem);
+
+					if(newElem.getType() == VFSElement::DIRECTORY)
+					{
+						updateChildrenPath(newElem);
+					}
+				}
+			}
 		}
 
-		QFileInfo fInfo(newTitle);
-
-		_httpConnector.renameElement(id, type, fInfo.baseName(), response, _pluginName);
-		return (RESULT)(Xml::JmmXmlParser::parseResponse(response).toInt() != -1);
+		return res;
 	};
 
-	RESULT JmmRVFSDriver::deleteDirectory( const QString& id)
+	RESULT JmmRVFSDriver::deleteDirectory(const QString& path)
 	{
-		QString response;
-
 		if(!isRunning())
 		{
 			notifyUser(Ui::Notification::eCRITICAL, tr("Error"), tr("Plugin is not connected !\nPlease connect plugin at first.\n"));
 			return eERROR;
 		}
-		
-		if(_httpConnector.auth() != eNO_ERROR) // to be sure that session has not been expired
-		{
-			//stopPlugin();
-			//updateState(100, RemoteDriver::eNotConnected);
-			return eERROR;	
-		}
 
-		_httpConnector.deleteDirectory(id, response, _pluginName);
-		return (RESULT)(Xml::JmmXmlParser::parseResponse(response).toInt() != -1);
+		RESULT res = eERROR;
+		QDir qDirFrom(path);
+		VFSCache* cache = WebMounter::getCache();
+		VFSCache::iterator elem = cache->find(qDirFrom.absolutePath());
+
+		if(elem != cache->end() && elem->getType() == VFSElement::DIRECTORY)
+		{
+			if(_httpConnector.auth() != eNO_ERROR) // to be sure that session has not been expired
+			{
+				return eERROR;	
+			}
+
+			QString response;
+			res = _httpConnector.deleteDirectory(elem->getId(), response, _pluginName);
+			if(res == eNO_ERROR)
+			{
+				res = (RESULT)(Xml::JmmXmlParser::parseResponse(response).toInt() != -1);
+				if(res == eNO_ERROR)
+				{
+					cache->erase(elem);
+				}
+			}
+		}
+		return res;
 	};
 
-	RESULT JmmRVFSDriver::deleteFile( const QString& id)
+	RESULT JmmRVFSDriver::deleteFile( const QString& path)
 	{
-		QString response;
-
-		if(!isRunning())
-		{
-			notifyUser(Ui::Notification::eCRITICAL, QString(tr("Error")), QString(tr("Plugin is not connected !\nPlease connect plugin at first.\n")));
-			return eERROR;
-		}
-		
-		if(_httpConnector.auth() != eNO_ERROR) // to be sure that session has not been expired
-		{
-			//stopPlugin();
-			//updateState(100, RemoteDriver::eNotConnected);
-			return eERROR;	
-		}
-
-		_httpConnector.deleteFile(id, response, _pluginName);
-		return (RESULT)(Xml::JmmXmlParser::parseResponse(response).toInt() != -1);
-	};
-
-	RESULT JmmRVFSDriver::moveElement( const QString& id, const QString& oldParentId, const QString& newParentId, ElementType type)
-	{
-		QString response;
-
 		if(!isRunning())
 		{
 			notifyUser(Ui::Notification::eCRITICAL, QString(tr("Error")), QString(tr("Plugin is not connected !\nPlease connect plugin at first.\n")));
 			return eERROR;
 		}
 
-		if(_httpConnector.auth() != eNO_ERROR) // to be sure that session has not been expired
+		RESULT res = eERROR;
+		QFileInfo qInfo(path);
+		VFSCache* cache = WebMounter::getCache();
+		VFSCache::iterator elem = cache->find(qInfo.absoluteFilePath());
+
+		if(elem != cache->end())
 		{
-			//stopPlugin();
-			//updateState(100, RemoteDriver::eNotConnected);
-			return eERROR;	
+			if(_httpConnector.auth() != eNO_ERROR) // to be sure that session has not been expired
+			{
+				//stopPlugin();
+				//updateState(100, RemoteDriver::eNotConnected);
+				return eERROR;	
+			}
+
+			QString response;
+			res = _httpConnector.deleteFile(elem->getId(), response, _pluginName);
+			if(res == eNO_ERROR)
+			{
+				res = (RESULT)(Xml::JmmXmlParser::parseResponse(response).toInt() != -1);
+				if(res == eNO_ERROR)
+				{
+					WebMounter::getProxy()->fileDeleted(elem->getPath(), res);
+					cache->erase(elem);
+				}
+			}
 		}
 
-		if(type == VFSElement::DIRECTORY)
+		return res;
+	};
+
+	RESULT JmmRVFSDriver::moveElement( const QString& path, const QString& newParentId)
+	{
+		if(!isRunning())
 		{
-			notifyUser(Ui::Notification::eCRITICAL, QString(tr("Error")), QString(tr("Moving directory is not allowed !\n")));
+			notifyUser(Ui::Notification::eCRITICAL, QString(tr("Error")), QString(tr("Plugin is not connected !\nPlease connect plugin at first.\n")));
 			return eERROR;
 		}
 
-		_httpConnector.moveElement(id, oldParentId, newParentId, type, response, _pluginName);
-		return (RESULT)(Xml::JmmXmlParser::parseResponse(response).toInt() != -1);
+		RESULT res = eERROR;
+		QFileInfo qInfo(path);
+		VFSCache* cache = WebMounter::getCache();
+		VFSCache::iterator elem = cache->find(qInfo.absoluteFilePath());
+
+		if(elem != cache->end())
+		{
+			if(_httpConnector.auth() != eNO_ERROR) // to be sure that session has not been expired
+			{
+				//stopPlugin();
+				//updateState(100, RemoteDriver::eNotConnected);
+				return eERROR;	
+			}
+
+			if(elem->getType() == VFSElement::DIRECTORY)
+			{
+				notifyUser(Ui::Notification::eCRITICAL, QString(tr("Error")), QString(tr("Moving directory is not allowed !\n")));
+				return res; // Moving of albums is not supported
+			}
+
+			QString response;
+			res = _httpConnector.moveElement(elem->getId(), elem->getParentId(), newParentId, elem->getType(), response, _pluginName);
+			if(res == eNO_ERROR)
+			{
+				res = (RESULT)(Xml::JmmXmlParser::parseResponse(response).toInt() != -1);
+				if(res == eNO_ERROR)
+				{
+					VFSElement newElem(elem->getType()
+						, elem->getPath()
+						, elem->getName()
+						, elem->getEditMetaUrl()
+						, elem->getEditMediaUrl()
+						, elem->getSrcUrl()
+						, elem->getId()
+						, newParentId
+						, elem->getModified()
+						, elem->getPluginName());
+
+					VFSCache::iterator iter = cache->begin();
+					for(iter; iter != cache->end(); ++iter)
+					{
+						if(iter->getId() == newParentId)
+							break;
+					}
+
+					QString path = iter->getPath() + QString(QDir::separator()) + newElem.getName();
+					QFileInfo fInfo(path);
+					newElem.setPath(fInfo.absoluteFilePath());
+
+					cache->erase(elem);
+					cache->insert(newElem);
+				}
+			}
+		}
+
+		return res;
 	};
 
 	RESULT JmmRVFSDriver::createDirectory(const QString& path, const QString& parentid, const QString& title)

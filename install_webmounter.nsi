@@ -1,4 +1,5 @@
-!define VERSION "0.2 (build 109)"
+;!define VERSION "0.2 DE(build 110)"
+!define VERSION "0.3(build 100)"
 
 !define MULTIUSER_EXECUTIONLEVEL Highest
 ;!define MULTIUSER_NOUNINSTALL ;Uncomment if no uninstaller is created
@@ -43,7 +44,11 @@ Icon ".\drive.ico"
 
   SetOutPath $PROGRAMFILES32\WebMounter
 
-    File .\WebMounter\curllib.dll
+    File .\WebMounter\glibmm-vc100-d-2_4.dll
+    File .\WebMounter\gtkmm-vc100-d-2_4.dll
+    File .\WebMounter\xml++-vc100-d-2_6.dll
+    File .\WebMounter\zlib1.dll
+	File .\WebMounter\curllib.dll
     File .\WebMounter\libeay32.dll
     File .\WebMounter\libidn-11.dll
     File .\WebMounter\libssh2.dll
@@ -165,20 +170,20 @@ Icon ".\drive.ico"
 
 
   !insertmacro MUI_LANGUAGE "Russian"
-  
+  ;!insertmacro MUI_LANGUAGE "English"
   !insertmacro MUI_RESERVEFILE_LANGDLL
   
 ;---------------------------------
  
   
-  LangString prevExist ${LANG_ENGLISH} "Please unstall the previous version and restart your computer before running this installer."
-  LangString prevExist ${LANG_RUSSIAN} "Пожалуйста, удалите предыдущую версию и перезагрузите компьютер перед началом новой установки"
-  LangString notSupportOS64 ${LANG_ENGLISH} "Your OS is not supported. WebMounter supports Windows 2003, Vista, 2008, 2008R2 and 7 for x64."
-  LangString notSupportOS64 ${LANG_RUSSIAN} "Ваша операционная система не поддерживается. WebMounter поддерживает Windows 2003, Vista, 2008, 2008R2 and 7 для x64."	
-  LangString notSupportOS86 ${LANG_ENGLISH} "Your OS is not supported. WebMounter supports Windows XP, 2003, Vista, 2008 and 7 for x86."
-  LangString notSupportOS86 ${LANG_RUSSIAN} "Ваша операционная система не поддерживается. WebMounter поддерживает Windows XP, 2003, Vista, 2008 and 7 для x86."	
-  LangString rebootReq ${LANG_ENGLISH} "A reboot is required to finish the uninstallation. Do you wish to reboot now?"
-  LangString rebootReq ${LANG_RUSSIAN} "Для завершения установки требуется перезагрузка. Вы хотите перезагрузиться сейчас ?"	
+ ; LangString prevExist ${LANG_ENGLISH} "Please unstall the previous version and restart your computer before running this installer."
+ LangString prevExist ${LANG_RUSSIAN} "Пожалуйста, удалите предыдущую версию и перезагрузите компьютер перед началом новой установки"
+  ;LangString notSupportOS64 ${LANG_ENGLISH} "Your OS is not supported. WebMounter supports Windows 2003, Vista, 2008, 2008R2 and 7 for x64."
+ LangString notSupportOS64 ${LANG_RUSSIAN} "Ваша операционная система не поддерживается. WebMounter поддерживает Windows 2003, Vista, 2008, 2008R2 and 7 для x64."	
+  ;LangString notSupportOS86 ${LANG_ENGLISH} "Your OS is not supported. WebMounter supports Windows XP, 2003, Vista, 2008 and 7 for x86."
+ LangString notSupportOS86 ${LANG_RUSSIAN} "Ваша операционная система не поддерживается. WebMounter поддерживает Windows XP, 2003, Vista, 2008 and 7 для x86."	
+  ;LangString rebootReq ${LANG_ENGLISH} "A reboot is required to finish the uninstallation. Do you wish to reboot now?"
+ LangString rebootReq ${LANG_RUSSIAN} "Для завершения установки требуется перезагрузка. Вы хотите перезагрузиться сейчас ?"	
 
 Section "WebMounter Files" section_webmounter
 	!insertmacro WebMounter

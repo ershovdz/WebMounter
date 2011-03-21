@@ -7,10 +7,11 @@ namespace RemoteDriver
 	using namespace Common;
 	using namespace Connector;
 	
-	YafRVFSDriver::YafRVFSDriver(const QString& pluginName) : _pluginName(pluginName)
+	YafRVFSDriver::YafRVFSDriver(const QString& pluginName)
 	{
 		_state = RemoteDriver::eNotConnected;
 		_httpConnector = new YafHTTPConnector;
+		_pluginName = pluginName;
 
 		RESULT res = WebMounter::getCache()->restoreCache();
 		if(res == eNO_ERROR)
@@ -25,51 +26,6 @@ namespace RemoteDriver
 	{
 		delete _httpConnector;
 	}
-
-	// RESULT YafRVFSDriver::downloadFile(const QString& url, const QString& path)
-	// {
-		// QFileInfo fInfo(path);
-		// VFSCache* cache = WebMounter::getCache();
-		// VFSCache::iterator iter = cache->find(fInfo.absoluteFilePath());
-		
-		// if(iter != cache->end())
-		// {
-			// { 	LOCK(_driverMutex)
-			
-				// if(iter->getFlags() ~& eFl_Downloading
-						// && iter->getFlags() ~& eFl_Downloaded)
-				// {
-					// cache->setFlag(iter, eFl_Downloading);
-				// }
-				// else
-				// {
-					// return eERROR;
-				// }
-			// }
-		// }
-		// else
-		// {
-			// return eERROR;
-		// }
-		
-		// RESULT res = _httpConnector->downloadFile(url, path);
-		
-		// { 	LOCK(_driverMutex)
-			
-			// if(res == eNO_ERROR)
-			// {
-				// QFile::Permissions permissions = QFile::permissions(path);
-				// permissions &= ~(QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
-				// QFile::setPermissions(path, permissions);
-				// cache->setFlag(iter, eFl_Downloaded, eFl_Downloading);
-			// }
-			// else
-			// {
-				// cache->setFlag(iter, eFl_None, eFl_Downloading);
-			// }
-		// }
-		// return res;
-	// }
 
 	RESULT YafRVFSDriver::downloadFiles(QList <QString>& urlList, QList <QString>& pathList)
 	{
@@ -230,50 +186,125 @@ namespace RemoteDriver
 		return eERROR;
 	}
 
-	RESULT YafRVFSDriver::renameElement(const QString& id, ElementType type, const QString& newTitle)
+	RESULT YafRVFSDriver::renameElement(const QString& path, const QString& newTitle)
 	{
-		QString response;
-		return _httpConnector->renameElement(id, type, newTitle, response);
-	}
+		RESULT res = eERROR;
+		QFileInfo qInfo(path);
+		VFSCache* cache = WebMounter::getCache();
+		VFSCache::iterator elem = cache->find(qInfo.absoluteFilePath());
 
-	RESULT YafRVFSDriver::deleteDirectory(const QString& id)
-	{
-		QString response;
-		return _httpConnector->deleteFile("album/" + id + "/", response);
-	}
-
-	RESULT YafRVFSDriver::deleteFile(const QString& id)
-	{
-		QString response;
-		RESULT res = _httpConnector->deleteFile("photo/" + id + "/", response);
-		VFSCache* vfsCache = WebMounter::getCache();
-		VFSCache::iterator iter = vfsCache->begin();
-		if(res == eNO_ERROR)
+		if(elem != cache->end())
 		{
-			for(iter; iter != vfsCache->end(); ++iter)
+			QString response;
+			res = _httpConnector->renameElement(elem->getId(), elem->getType(), newTitle, response);
+			if(res == eNO_ERROR)
 			{
-				if(iter->getId() == id)
-				{
-					QFile::Permissions permissions = QFile::permissions(iter->getPath());
-					permissions |= (QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
-					bool err = QFile::setPermissions(iter->getPath(), permissions);
+				qInfo = qInfo.dir().absolutePath() + QString(QDir::separator()) + newTitle;
+				VFSElement newElem(elem->getType()
+					, qInfo.absoluteFilePath()
+					, newTitle
+					, elem->getEditMetaUrl()
+					, elem->getEditMediaUrl()
+					, elem->getSrcUrl()
+					, elem->getId()
+					, elem->getParentId()
+					, elem->getModified()
+					, elem->getPluginName());
 
-					vfsCache->erase(iter);
-					break;
+				cache->erase(elem);
+				cache->insert(newElem);
+
+				if(newElem.getType() == VFSElement::DIRECTORY)
+				{
+					updateChildrenPath(newElem);
 				}
 			}
 		}
 
-		WebMounter::getProxy()->fileDeleted(iter->getPath(), res);
 		return res;
 	}
 
-	RESULT YafRVFSDriver::moveElement(const QString& id, const QString& oldParentId, const QString& newParentId, ElementType type)
+	RESULT YafRVFSDriver::deleteDirectory(const QString& path)
 	{
 		RESULT res = eERROR;
+		QDir qDirFrom(path);
+		VFSCache* cache = WebMounter::getCache();
+		VFSCache::iterator elem = cache->find(qDirFrom.absolutePath());
 
-		QString response;
-		res = _httpConnector->moveElement(id, oldParentId, newParentId, type, response);
+		if(elem != cache->end() && elem->getType() == VFSElement::DIRECTORY)
+		{
+			QString response;
+			res = _httpConnector->deleteFile("album/" + elem->getId() + "/", response);
+			if(res != eERROR)
+			{
+				cache->erase(elem);
+			}
+		}
+
+		return res;
+	}
+
+	RESULT YafRVFSDriver::deleteFile(const QString& path)
+	{
+		RESULT res = eERROR;
+		QFileInfo qInfo(path);
+		VFSCache* cache = WebMounter::getCache();
+		VFSCache::iterator elem = cache->find(qInfo.absoluteFilePath());
+
+		if(elem != cache->end())
+		{
+			QString response;
+			res = _httpConnector->deleteFile("photo/" + elem->getId() + "/", response);
+			if(res == eNO_ERROR)
+			{
+				WebMounter::getProxy()->fileDeleted(elem->getPath(), res);
+				cache->erase(elem);
+			}
+		}
+	
+		return res;
+	}
+
+	RESULT YafRVFSDriver::moveElement(const QString& path, const QString& newParentId)
+	{
+		RESULT res = eERROR;
+		QFileInfo qInfo(path);
+		VFSCache* cache = WebMounter::getCache();
+		VFSCache::iterator elem = cache->find(qInfo.absoluteFilePath());
+
+		if(elem != cache->end())
+		{
+			QString response;
+			res = _httpConnector->moveElement(elem->getId(), elem->getParentId(), newParentId, elem->getType(), response);
+			if(res == eNO_ERROR)
+			{
+				VFSElement newElem(elem->getType()
+					, elem->getPath()
+					, elem->getName()
+					, elem->getEditMetaUrl()
+					, elem->getEditMediaUrl()
+					, elem->getSrcUrl()
+					, elem->getId()
+					, newParentId
+					, elem->getModified()
+					, elem->getPluginName());
+
+				VFSCache::iterator iter = cache->begin();
+				for(iter; iter != cache->end(); ++iter)
+				{
+					if(iter->getId() == newParentId)
+						break;
+				}
+
+				QString path = iter->getPath() + QString(QDir::separator()) + newElem.getName();
+				QFileInfo fInfo(path);
+				newElem.setPath(fInfo.absoluteFilePath());
+
+				cache->erase(elem);
+				cache->insert(newElem);
+			}
+		}
+
 		return res;
 	}
 
@@ -286,28 +317,20 @@ namespace RemoteDriver
 			VFSElement elem;
 			parseAlbumEntry(xmlResp, elem);
 			
-			if(parentId != ROOT_ID)
-			{
-				err = moveElement(elem.getId(), elem.getParentId(), parentId, elem.getType());
-				if(err == eNO_ERROR)
-				{
-					elem.setParentId(parentId);
-				}
-			}
-
-			VFSCache* vfsCache = WebMounter::getCache();
-			VFSCache::iterator iter = vfsCache->begin();
-			for(iter; iter != vfsCache->end(); ++iter)
-			{
-				if(iter->getId() == elem.getParentId())
-					break;
-			}
-
-			QString path = iter->getPath() + QString(QDir::separator()) + elem.getName();
+			QString path = WebMounter::getSettingStorage()->getAppStoragePath() + 
+										QString(QDir::separator()) + 
+										_pluginName + 
+										QString(QDir::separator()) + 
+										elem.getName();
 			QFileInfo fInfo(path);
 			elem.setPath(fInfo.absoluteFilePath());
-
+			
 			WebMounter::getCache()->insert(elem);
+
+			if(parentId != ROOT_ID)
+			{
+				err = moveElement(elem.getPath(), parentId);
+			}
 		}
 
 		return err;

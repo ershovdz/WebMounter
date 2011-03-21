@@ -42,10 +42,10 @@ namespace RemoteDriver
 		virtual RESULT downloadFiles(QList <QString>& urlList, QList <QString>& pathList);
 		virtual RESULT uploadFile(const QString& path, const QString& title, const QString& id, const QString& parentid);
 		virtual RESULT modifyFile(const QString&);
-		virtual RESULT renameElement( const QString& id, ElementType type, const QString& newTitle);
-		virtual RESULT deleteDirectory( const QString& id);
-		virtual RESULT deleteFile( const QString& id );
-		virtual RESULT moveElement( const QString& id,  const QString& oldParentId, const QString& newParentId, ElementType type);
+		virtual RESULT renameElement( const QString& path, const QString& newTitle);
+		virtual RESULT deleteDirectory( const QString& path);
+		virtual RESULT deleteFile( const QString& path );
+		virtual RESULT moveElement( const QString& path, const QString& newParentId);
 		virtual RESULT createDirectory(const QString& path,  const QString& parentid, const QString& title);
 		virtual RESULT createFile(const QString& path, const QString& title,  const QString& id, const QString& parentId);
 		virtual RESULT getElements();
@@ -68,7 +68,8 @@ namespace RemoteDriver
 		void run();
 	
 	private:
-		RESULT deleteElement( const QString& id);
+		RESULT getFileEtag(const QString& id, QString& etag);
+		RESULT deleteElement( const QString& path);
 		Connector::GoogleHTTPConnector _httpConnector;
 		Xml::GoogleAtomParser _atomParser;
 
