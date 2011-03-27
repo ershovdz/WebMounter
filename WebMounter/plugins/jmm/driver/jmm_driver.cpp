@@ -82,7 +82,7 @@ namespace RemoteDriver
 // 		return res;
 // 	}
 	
-	void JmmRVFSDriver::syncCacheWithFileSystem(const QString& path)
+	/*void JmmRVFSDriver::syncCacheWithFileSystem(const QString& path)
 	{
 		VFSCache* vfsCache = WebMounter::getCache();
 
@@ -132,7 +132,7 @@ namespace RemoteDriver
 				}
 			}
 		}
-	}
+	}*/
 
 	RESULT JmmRVFSDriver::createFile(const QString& path, const QString& title,  const QString& id, const QString& parentId)
 	{
@@ -722,6 +722,10 @@ namespace RemoteDriver
 
 	RESULT JmmRVFSDriver::checkKey(const PluginSettings& pluginSettings)
 	{
+#ifndef WM_VERSION_FULL
+		return eNO_ERROR;
+#endif
+
 		QCryptographicHash md5Hash(QCryptographicHash::Md5);
 		QCryptographicHash sha1Hash(QCryptographicHash::Sha1);
 

@@ -74,28 +74,33 @@ void WebMounter::startApp()
 		{
 			dir.mkdir(_globalSettings->getAppStoragePath() + "\\Joomla.Gallery");
 		}
-
+	
+	#ifdef WM_VERSION_FULL
 		if(!dir.exists(_globalSettings->getAppStoragePath() + "\\Vkontakte"))
 		{
 			dir.mkdir(_globalSettings->getAppStoragePath() + "\\Vkontakte");
 		}
-
+		if(!dir.exists(_globalSettings->getAppStoragePath() + "\\Yandex.Fotki"))
+		{
+			dir.mkdir(_globalSettings->getAppStoragePath() + "\\Yandex.Fotki");
+		}
+	#endif
+	
 		if(!dir.exists(_globalSettings->getAppStoragePath() + "\\Google.Docs"))
 		{
 			dir.mkdir(_globalSettings->getAppStoragePath() + "\\Google.Docs");
 		}
 
-		if(!dir.exists(_globalSettings->getAppStoragePath() + "\\Yandex.Fotki"))
-		{
-			dir.mkdir(_globalSettings->getAppStoragePath() + "\\Yandex.Fotki");
-		}
+		
 
 		_vfsCache = VFSCache::getCache(_globalSettings->getAppSettingStoragePath());
 		
 		_pluginList.insert(PluginList_Pair("Joomla.Article", new RemoteDriver::JmmRVFSDriver("Joomla.Article")));
 		_pluginList.insert(PluginList_Pair("Joomla.Gallery", new RemoteDriver::JmmRVFSDriver("Joomla.Gallery")));
+	#ifdef WM_VERSION_FULL
 		_pluginList.insert(PluginList_Pair(QString("Yandex.Fotki"), new RemoteDriver::YafRVFSDriver("Yandex.Fotki")));
 		_pluginList.insert(PluginList_Pair(QString("Vkontakte"), new RemoteDriver::VkRVFSDriver("Vkontakte")));
+	#endif
 		_pluginList.insert(PluginList_Pair(QString("Google.Docs"), new RemoteDriver::GoogleRVFSDriver("Google.Docs")));
 		
 		_fileProxy = FileProxy::CreateFileProxy();

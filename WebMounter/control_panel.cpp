@@ -50,8 +50,10 @@ namespace Ui
 		GeneralSettings generalSettings;
 
 		Common::WebMounter::getSettingStorage()->getData(googleSettings, "Google.Docs");
+	#ifdef WM_VERSION_FULL
 		Common::WebMounter::getSettingStorage()->getData(yafSettings, "Yandex.Fotki");
 		Common::WebMounter::getSettingStorage()->getData(vkSettings, "Vkontakte");
+	#endif
 		Common::WebMounter::getSettingStorage()->getData(jmmgSettings, "Joomla.Gallery");
 		Common::WebMounter::getSettingStorage()->getData(jmmaSettings, "Joomla.Article");
 		Common::WebMounter::getSettingStorage()->getData(generalSettings);
@@ -96,16 +98,21 @@ namespace Ui
 		_pagesWidget = new QStackedWidget;
 		
 		_generalView = new GeneralView(generalSettings, this);
+	
+	#ifdef WM_VERSION_FULL	
 		_vkView		 = new VkView(&vkSettings,  QString(tr("Vkontakte")));
 		_yafView	 = new YafView(&yafSettings,  QString(tr("Yandex.Fotki")));
+	#endif
 		_jmmgView	 = new PluginView(&jmmgSettings, QString(tr("Joomla (Gallery)")));
 		_jmmaView	 = new PluginView(&jmmaSettings,  QString(tr("Joomla (Article)")));
 		_googleView	 = new GoogleView(&googleSettings,  QString(tr("Google Docs")));
 		//_odnView	 = new PluginView(0,  QString(tr("Odnoklassniki")));
 
 		_pagesWidget->addWidget(_generalView);
+	#ifdef WM_VERSION_FULL	
 		_pagesWidget->addWidget(_vkView);
 		_pagesWidget->addWidget(_yafView);
+	#endif	
 		_pagesWidget->addWidget(_googleView);
 		//_pagesWidget->addWidget(_odnView);
 		_pagesWidget->addWidget(_jmmgView);
@@ -163,12 +170,12 @@ namespace Ui
 
 		_configButton->setText(tr("Configuration"));
 		
+	#ifdef WM_VERSION_FULL	
 		_vkButton->setText(tr("Vkontakte"));
-		
 		_yafButton->setText(tr("Yandex Fotki"));
-		
-		_jmmgButton->setText(tr("Joomla (Gallery)"));
-		
+	#endif
+	
+		_jmmgButton->setText(tr("Joomla (Gallery)"));		
 		_jmmaButton->setText(tr("Joomla (Article)"));
 
 		_googleButton->setText(QString(tr("Google Docs")));
@@ -187,7 +194,8 @@ namespace Ui
 		_configButton->setText(tr("Configuration"));
 		_configButton->setTextAlignment(Qt::AlignHCenter);
 		_configButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-
+	
+	#ifdef WM_VERSION_FULL	
 		_vkButton = new QListWidgetItem(_contentsWidget);
 		_vkButton->setIcon(QIcon(":/Resources/vk.png"));
 		_vkButton->setText(tr("Vkontakte"));
@@ -199,7 +207,8 @@ namespace Ui
 		_yafButton->setText(tr("Yandex Fotki"));
 		_yafButton->setTextAlignment(Qt::AlignHCenter);
 		_yafButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-
+	#endif
+	
 		_googleButton = new QListWidgetItem(_contentsWidget);
 		_googleButton->setIcon(QIcon(":/Resources/docs_logo_ru.png"));
 		_googleButton->setText(tr("Google Docs"));
@@ -224,10 +233,6 @@ namespace Ui
 		_jmmaButton->setTextAlignment(Qt::AlignHCenter);
 		_jmmaButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
-		
-
-
-
 		connect(_contentsWidget,
 			SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
 			this, SLOT(changePage(QListWidgetItem*,QListWidgetItem*)));
@@ -243,35 +248,16 @@ namespace Ui
 
 	void ControlPanel::setVisible(bool visible)
 	{
-		//_minimizeAction->setEnabled(visible);
-		//_maximizeAction->setEnabled(!isMaximized());
 		_restoreAction->setEnabled(isMaximized() || !visible);
 		QDialog::setVisible(visible);
 	}
 
 	void ControlPanel::closeEvent(QCloseEvent *event)
 	{
-		/*if (_bShowOnCloseMessage) 
-		{
-		QMessageBox::information(this, tr("WebDisk"),
-		tr("The program will keep running in the "
-		"system tray. To terminate the program, "
-		"choose <b>Quit</b> in the context menu "
-		"of the system tray entry."));
-		hide();
-		event->ignore();
-		_bShowOnCloseMessage = false;
-		}*/
-		//LocalDriver::stopDriver();
 	}
 
 	void ControlPanel::setIcon(int index)
 	{
-		//QIcon icon = QIcon(":/Resources/diskUp.png");//iconComboBox->itemIcon(index);
-		//trayIcon->setIcon(icon);
-		//setWindowIcon(icon);
-
-		//trayIcon->setToolTip(iconComboBox->itemText(index));
 	}
 
 	void ControlPanel::iconActivated(QSystemTrayIcon::ActivationReason reason)
@@ -294,19 +280,11 @@ namespace Ui
 
 	void ControlPanel::messageClicked()
 	{
-		/*QMessageBox::information(0, tr("Systray"),
-			tr("Sorry, I already gave what help I could.\n"
-			"Maybe you should try asking a human?"));*/
+		
 	}
 	
 	void ControlPanel::createActions()
 	{
-		//_minimizeAction = new QAction(tr("Mi&nimize"), this);
-		//connect(_minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
-
-		//_maximizeAction = new QAction(tr("Ma&ximize"), this);
-		//connect(_maximizeAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
-
 		_restoreAction = new QAction(tr("&Restore"), this);
 		connect(_restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
 
@@ -317,8 +295,6 @@ namespace Ui
 	void ControlPanel::createTrayIcon()
 	{
 		trayIconMenu = new QMenu(this);
-		//trayIconMenu->addAction(_minimizeAction);
-		//trayIconMenu->addAction(_maximizeAction);
 		trayIconMenu->addAction(_restoreAction);
 		trayIconMenu->addSeparator();
 		trayIconMenu->addAction(_quitAction);

@@ -120,7 +120,7 @@ namespace LocalDriver
 
 		//PrintUserName(DokanFileInfo);
 
-		//QMutexLocker locker(&_DriverMutex);
+		QMutexLocker locker(&_DriverMutex);
 		if (CreationDisposition == CREATE_NEW)
 		{
 			DbgPrint(L"\tCREATE_NEW\n");

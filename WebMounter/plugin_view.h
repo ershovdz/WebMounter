@@ -44,9 +44,11 @@ namespace Ui
 		QLineEdit *_nameEdit;
 		QLabel *_passwordLabel;
 		QLineEdit *_passwordEdit;
+#ifdef WM_VERSION_FULL
 		QLabel *_keyLabel;
 		QLineEdit *_keyEdit;
 		QLabel* _keyUrl;
+#endif
 
 		QPushButton *_startPluginButton;
 		QPushButton *_stopPluginButton;

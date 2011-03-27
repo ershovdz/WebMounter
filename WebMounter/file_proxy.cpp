@@ -510,7 +510,7 @@ namespace Common
 		}
 		else
 		{
-			IncreaseUploadedCounter();
+			increaseDeletedCounter();
 			notifyUser(Ui::Notification::eINFO
 				, QObject::tr("Info")
 				, QObject::tr("Deleting progress (") 

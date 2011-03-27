@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'win_lvfs_driver.h'
 **
-** Created: Tue 22. Mar 01:31:55 2011
+** Created: Sun 27. Mar 21:28:09 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!

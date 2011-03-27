@@ -4,41 +4,41 @@
 <context>
     <name>LocalDriver::LVFSDriver</name>
     <message>
-        <location filename="win_lvfs_driver.cpp" line="1297"/>
-        <location filename="win_lvfs_driver.cpp" line="1304"/>
-        <location filename="win_lvfs_driver.cpp" line="1312"/>
-        <location filename="win_lvfs_driver.cpp" line="1319"/>
-        <location filename="win_lvfs_driver.cpp" line="1326"/>
-        <location filename="win_lvfs_driver.cpp" line="1347"/>
+        <location filename="win_lvfs_driver.cpp" line="1308"/>
+        <location filename="win_lvfs_driver.cpp" line="1315"/>
+        <location filename="win_lvfs_driver.cpp" line="1323"/>
+        <location filename="win_lvfs_driver.cpp" line="1330"/>
+        <location filename="win_lvfs_driver.cpp" line="1337"/>
+        <location filename="win_lvfs_driver.cpp" line="1358"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="win_lvfs_driver.cpp" line="1297"/>
+        <location filename="win_lvfs_driver.cpp" line="1308"/>
         <source>Error
 </source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="win_lvfs_driver.cpp" line="1304"/>
+        <location filename="win_lvfs_driver.cpp" line="1315"/>
         <source>Bad Drive letter
 </source>
         <translation>Неправильная буква диска</translation>
     </message>
     <message>
-        <location filename="win_lvfs_driver.cpp" line="1312"/>
+        <location filename="win_lvfs_driver.cpp" line="1323"/>
         <source>Can&apos;t install driver
 </source>
         <translation>Не могу установить драйвер</translation>
     </message>
     <message>
-        <location filename="win_lvfs_driver.cpp" line="1319"/>
+        <location filename="win_lvfs_driver.cpp" line="1330"/>
         <source>Driver something wrong
 </source>
         <translation>Что-то не так с драйвером</translation>
     </message>
     <message>
-        <location filename="win_lvfs_driver.cpp" line="1326"/>
+        <location filename="win_lvfs_driver.cpp" line="1337"/>
         <source>Can&apos;t assign a drive letter
 </source>
         <translation>Не могу назначить букву диску</translation>
@@ -49,25 +49,25 @@
         <translation type="obsolete">Ошибка точки монтирования</translation>
     </message>
     <message>
-        <location filename="win_lvfs_driver.cpp" line="1286"/>
-        <location filename="win_lvfs_driver.cpp" line="1340"/>
+        <location filename="win_lvfs_driver.cpp" line="1297"/>
+        <location filename="win_lvfs_driver.cpp" line="1351"/>
         <source>Info</source>
         <translation>Информация</translation>
     </message>
     <message>
-        <location filename="win_lvfs_driver.cpp" line="1286"/>
+        <location filename="win_lvfs_driver.cpp" line="1297"/>
         <source>Disk is mounted
 </source>
         <translation>Диск cмонтирован</translation>
     </message>
     <message>
-        <location filename="win_lvfs_driver.cpp" line="1340"/>
+        <location filename="win_lvfs_driver.cpp" line="1351"/>
         <source>Disk is unmounted
 </source>
         <translation>Диск отмонтирован</translation>
     </message>
     <message>
-        <location filename="win_lvfs_driver.cpp" line="1347"/>
+        <location filename="win_lvfs_driver.cpp" line="1358"/>
         <source>Unknown error
 </source>
         <translation>Неизвестная ошибка</translation>
@@ -98,18 +98,18 @@
     <message>
         <location filename="file_proxy.h" line="65"/>
         <location filename="file_proxy.h" line="91"/>
-        <location filename="file_proxy.cpp" line="76"/>
-        <location filename="file_proxy.cpp" line="181"/>
-        <location filename="file_proxy.cpp" line="243"/>
-        <location filename="file_proxy.cpp" line="286"/>
-        <location filename="file_proxy.cpp" line="338"/>
-        <location filename="file_proxy.cpp" line="391"/>
-        <location filename="file_proxy.cpp" line="497"/>
-        <location filename="file_proxy.cpp" line="503"/>
-        <location filename="file_proxy.cpp" line="511"/>
-        <location filename="file_proxy.cpp" line="547"/>
-        <location filename="file_proxy.cpp" line="553"/>
-        <location filename="file_proxy.cpp" line="561"/>
+        <location filename="file_proxy.cpp" line="83"/>
+        <location filename="file_proxy.cpp" line="198"/>
+        <location filename="file_proxy.cpp" line="242"/>
+        <location filename="file_proxy.cpp" line="296"/>
+        <location filename="file_proxy.cpp" line="339"/>
+        <location filename="file_proxy.cpp" line="356"/>
+        <location filename="file_proxy.cpp" line="451"/>
+        <location filename="file_proxy.cpp" line="457"/>
+        <location filename="file_proxy.cpp" line="465"/>
+        <location filename="file_proxy.cpp" line="501"/>
+        <location filename="file_proxy.cpp" line="507"/>
+        <location filename="file_proxy.cpp" line="515"/>
         <source>Info</source>
         <translation>Информация</translation>
     </message>
@@ -124,11 +124,11 @@
         <translation>Удаление началось !</translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="76"/>
-        <location filename="file_proxy.cpp" line="243"/>
-        <location filename="file_proxy.cpp" line="286"/>
-        <location filename="file_proxy.cpp" line="338"/>
-        <location filename="file_proxy.cpp" line="391"/>
+        <location filename="file_proxy.cpp" line="83"/>
+        <location filename="file_proxy.cpp" line="242"/>
+        <location filename="file_proxy.cpp" line="296"/>
+        <location filename="file_proxy.cpp" line="339"/>
+        <location filename="file_proxy.cpp" line="356"/>
         <source>Plugin is not connected !
 Plugin has to be in connected state.
 </source>
@@ -136,18 +136,18 @@ Plugin has to be in connected state.
 </translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="86"/>
+        <location filename="file_proxy.cpp" line="93"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="86"/>
+        <location filename="file_proxy.cpp" line="93"/>
         <source>Select a specific category, at first
 </source>
         <translation>Выберите сначало категорию</translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="181"/>
+        <location filename="file_proxy.cpp" line="198"/>
         <source> plugin is not connected !
 Plugin has to be in connected state.
 </source>
@@ -155,38 +155,38 @@ Plugin has to be in connected state.
 </translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="498"/>
+        <location filename="file_proxy.cpp" line="452"/>
         <source>Upload completed !</source>
         <translation>Загрузка завершена</translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="504"/>
+        <location filename="file_proxy.cpp" line="458"/>
         <source>Upload completed, but some files has been not uploaded !</source>
         <translation>Загрузка завершена, но некоторые файлы не были загружены !</translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="512"/>
+        <location filename="file_proxy.cpp" line="466"/>
         <source>Uploading progress (</source>
         <translation>Прогресс загрузки (</translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="514"/>
-        <location filename="file_proxy.cpp" line="564"/>
+        <location filename="file_proxy.cpp" line="468"/>
+        <location filename="file_proxy.cpp" line="518"/>
         <source> of </source>
         <translation> из </translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="548"/>
+        <location filename="file_proxy.cpp" line="502"/>
         <source>Deletion completed !</source>
         <translation>Удаление завершено !</translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="554"/>
+        <location filename="file_proxy.cpp" line="508"/>
         <source>Deletion completed, but some files has been not deleted !</source>
         <translation>Удаление завершено, но некотороые файлы не были удалены !</translation>
     </message>
     <message>
-        <location filename="file_proxy.cpp" line="562"/>
+        <location filename="file_proxy.cpp" line="516"/>
         <source>Deleting progress (</source>
         <translation>Прогресс удаления (</translation>
     </message>
@@ -200,15 +200,50 @@ Activation key required.
     </message>
 </context>
 <context>
-    <name>RemoteDriver::JmmRVFSDriver</name>
+    <name>RemoteDriver::GoogleRVFSDriver</name>
     <message>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="217"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="349"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="372"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="393"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="414"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="442"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="510"/>
+        <location filename="plugins/google/driver/google_driver.cpp" line="55"/>
+        <location filename="plugins/google/driver/google_driver.cpp" line="134"/>
+        <source>Info</source>
+        <translation>Информация</translation>
+    </message>
+    <message>
+        <location filename="plugins/google/driver/google_driver.cpp" line="55"/>
+        <location filename="plugins/google/driver/google_driver.cpp" line="134"/>
+        <source>This file extension is not supported !
+</source>
+        <translation>Файлы с данным расширением не поддерживаются !</translation>
+    </message>
+    <message>
+        <location filename="plugins/google/driver/google_driver.cpp" line="153"/>
+        <location filename="plugins/google/driver/google_driver.cpp" line="228"/>
+        <location filename="plugins/google/driver/google_driver.cpp" line="281"/>
+        <location filename="plugins/google/driver/google_driver.cpp" line="308"/>
+        <location filename="plugins/google/driver/google_driver.cpp" line="326"/>
+        <location filename="plugins/google/driver/google_driver.cpp" line="355"/>
+        <location filename="plugins/google/driver/google_driver.cpp" line="463"/>
+        <location filename="plugins/google/driver/google_driver.cpp" line="529"/>
+        <location filename="plugins/google/driver/google_driver.cpp" line="588"/>
+        <source>Error</source>
+        <translation>Ошибка</translation>
+    </message>
+    <message>
+        <location filename="plugins/google/driver/google_driver.cpp" line="154"/>
+        <source>The file </source>
+        <translation>Файл </translation>
+    </message>
+    <message>
+        <location filename="plugins/google/driver/google_driver.cpp" line="156"/>
+        <source> is modified by another user on Google server. This file will be changed locally. 
+</source>
+        <translation> изменен другим пользователем на сервер Google. Файл будет изменен только локально.
+</translation>
+    </message>
+    <message>
+        <location filename="plugins/google/driver/google_driver.cpp" line="228"/>
+        <location filename="plugins/google/driver/google_driver.cpp" line="281"/>
+        <location filename="plugins/google/driver/google_driver.cpp" line="308"/>
+        <location filename="plugins/google/driver/google_driver.cpp" line="355"/>
         <source>Plugin is not connected !
 Please connect plugin at first.
 </source>
@@ -217,59 +252,101 @@ Please connect plugin at first.
 </translation>
     </message>
     <message>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="199"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="217"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="279"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="328"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="349"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="372"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="393"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="414"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="427"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="442"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="509"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="642"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="679"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="753"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="818"/>
-        <source>Error</source>
-        <translation>Ошибка</translation>
-    </message>
-    <message>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="149"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="258"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="266"/>
-        <source>This file extension is not supported !
-</source>
-        <translation>Файлы с данным расширением не поддерживаются !</translation>
-    </message>
-    <message>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="200"/>
-        <source>File creating failed (</source>
-        <translation>Создание файла сорвалось (</translation>
-    </message>
-    <message>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="280"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="329"/>
-        <source>File upload failed (</source>
-        <translation>Загрузка файла сорвалась (</translation>
-    </message>
-    <message>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="427"/>
+        <location filename="plugins/google/driver/google_driver.cpp" line="326"/>
         <source>Moving directory is not allowed !
 </source>
         <translation>Перемещение директории запрещено !
 </translation>
     </message>
     <message>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="642"/>
+        <location filename="plugins/google/driver/google_driver.cpp" line="463"/>
+        <location filename="plugins/google/driver/google_driver.cpp" line="529"/>
+        <source>Sync failed !
+</source>
+        <translation>Синхронизация провалилась !
+</translation>
+    </message>
+    <message>
+        <location filename="plugins/google/driver/google_driver.cpp" line="588"/>
+        <source>Authorization failed !
+Please check proxy settings on Configuration tab and check settings on corresponding plugin tab...
+</source>
+        <translation>Авторизация сорвалась !
+Проверьте, пожалуйста, настройки на вкладке &quot;Конфигурация&quot; и проверьте настройки соответствующего плагина...
+</translation>
+    </message>
+</context>
+<context>
+    <name>RemoteDriver::JmmRVFSDriver</name>
+    <message>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="219"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="369"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="426"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="460"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="498"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="567"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="636"/>
+        <source>Plugin is not connected !
+Please connect plugin at first.
+</source>
+        <translation>Плагин не подключен
+Пожалуйста, включить сначало плагин. 
+</translation>
+    </message>
+    <message>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="202"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="219"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="300"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="350"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="369"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="426"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="460"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="498"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="518"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="567"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="635"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="768"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="805"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="879"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="949"/>
+        <source>Error</source>
+        <translation>Ошибка</translation>
+    </message>
+    <message>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="151"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="279"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="287"/>
+        <source>This file extension is not supported !
+</source>
+        <translation>Файлы с данным расширением не поддерживаются !</translation>
+    </message>
+    <message>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="203"/>
+        <source>File creating failed (</source>
+        <translation>Создание файла сорвалось (</translation>
+    </message>
+    <message>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="301"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="351"/>
+        <source>File upload failed (</source>
+        <translation>Загрузка файла сорвалась (</translation>
+    </message>
+    <message>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="518"/>
+        <source>Moving directory is not allowed !
+</source>
+        <translation>Перемещение директории запрещено !
+</translation>
+    </message>
+    <message>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="768"/>
         <source>Activation key is not valid !
 </source>
         <translation>Ключ активации неправильный !
 </translation>
     </message>
     <message>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="679"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="805"/>
         <source>Authorization failed !
 Please check proxy settings on Configuration tab and check settings on corresponding plugin tab...
 </source>
@@ -278,27 +355,27 @@ Please check proxy settings on Configuration tab and check settings on correspon
 </translation>
     </message>
     <message>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="753"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="879"/>
         <source>Sync failed !
 </source>
         <translation>Синхронизация провалилась !
 </translation>
     </message>
     <message>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="818"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="949"/>
         <source>Downloading failed </source>
         <translation>Скачивание сорвалось </translation>
     </message>
     <message>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="149"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="258"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="266"/>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="773"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="151"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="279"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="287"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="899"/>
         <source>Info</source>
         <translation>Информация</translation>
     </message>
     <message>
-        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="773"/>
+        <location filename="plugins/jmm/driver/jmm_driver.cpp" line="899"/>
         <source>Synchronization is stopped !
 </source>
         <translation>Синхронизация остановлена !
@@ -312,22 +389,48 @@ Please check proxy settings on Configuration tab and check settings on correspon
     </message>
 </context>
 <context>
-    <name>RemoteDriver::VkRVFSDriver</name>
+    <name>RemoteDriver::RVFSDriver</name>
     <message>
-        <location filename="plugins/vk/driver/vk_driver.cpp" line="197"/>
-        <location filename="plugins/vk/driver/vk_driver.cpp" line="207"/>
-        <location filename="plugins/vk/driver/vk_driver.cpp" line="319"/>
-        <location filename="plugins/vk/driver/vk_driver.cpp" line="838"/>
+        <location filename="rvfs_driver.cpp" line="61"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="plugins/vk/driver/vk_driver.cpp" line="198"/>
+        <location filename="rvfs_driver.cpp" line="61"/>
+        <source>Downloading failed  !
+</source>
+        <translation>Загрузка сорвалась !</translation>
+    </message>
+    <message>
+        <location filename="rvfs_driver.cpp" line="189"/>
+        <source>Info</source>
+        <translation>Информация</translation>
+    </message>
+    <message>
+        <location filename="rvfs_driver.cpp" line="189"/>
+        <source>Downloading is stopped !
+</source>
+        <translation>Загрука остановлена !
+</translation>
+    </message>
+</context>
+<context>
+    <name>RemoteDriver::VkRVFSDriver</name>
+    <message>
+        <location filename="plugins/vk/driver/vk_driver.cpp" line="235"/>
+        <location filename="plugins/vk/driver/vk_driver.cpp" line="245"/>
+        <location filename="plugins/vk/driver/vk_driver.cpp" line="437"/>
+        <location filename="plugins/vk/driver/vk_driver.cpp" line="958"/>
+        <source>Error</source>
+        <translation>Ошибка</translation>
+    </message>
+    <message>
+        <location filename="plugins/vk/driver/vk_driver.cpp" line="236"/>
         <source>File upload failed (</source>
         <translation>Загрузка файла сорвалась (</translation>
     </message>
     <message>
-        <location filename="plugins/vk/driver/vk_driver.cpp" line="207"/>
+        <location filename="plugins/vk/driver/vk_driver.cpp" line="245"/>
         <source>An upload limit is reached! 
 Activation key required.
 </source>
@@ -336,7 +439,7 @@ Activation key required.
 </translation>
     </message>
     <message>
-        <location filename="plugins/vk/driver/vk_driver.cpp" line="319"/>
+        <location filename="plugins/vk/driver/vk_driver.cpp" line="437"/>
         <source>Creation limit is reached! 
 Activation key required.
 </source>
@@ -345,7 +448,7 @@ Activation key required.
 </translation>
     </message>
     <message>
-        <location filename="plugins/vk/driver/vk_driver.cpp" line="131"/>
+        <location filename="plugins/vk/driver/vk_driver.cpp" line="169"/>
         <source>Info</source>
         <translation>Информация</translation>
     </message>
@@ -356,7 +459,7 @@ Activation key required.
 </translation>
     </message>
     <message>
-        <location filename="plugins/vk/driver/vk_driver.cpp" line="131"/>
+        <location filename="plugins/vk/driver/vk_driver.cpp" line="169"/>
         <source>This file extension is not supported !
 </source>
         <translation>Файлы с данным расширением не поддерживаются !</translation>
@@ -374,7 +477,7 @@ Activation key required.
 </translation>
     </message>
     <message>
-        <location filename="plugins/vk/driver/vk_driver.cpp" line="838"/>
+        <location filename="plugins/vk/driver/vk_driver.cpp" line="958"/>
         <source>Authorization failed !
 Please check proxy settings on Configuration tab and check settings on corresponding plugin tab...
 </source>
@@ -386,9 +489,8 @@ Please check proxy settings on Configuration tab and check settings on correspon
 <context>
     <name>RemoteDriver::YafRVFSDriver</name>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="153"/>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="158"/>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="833"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="119"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="124"/>
         <source>Info</source>
         <translation>Информация</translation>
     </message>
@@ -399,42 +501,39 @@ Please check proxy settings on Configuration tab and check settings on correspon
 </translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="153"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="119"/>
         <source>This file extension is not supported !
 </source>
         <translation>Файлы с данным расширением не поддерживаются !</translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="158"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="124"/>
         <source>This file will be changed locally!
 </source>
         <translation>Изменения вступят в силу только для локальной копии файла !
 </translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="201"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="177"/>
         <source>File upload failed (</source>
         <translation>Загрузка файла сорвалась (</translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="833"/>
         <source>Synchronization is stopped !
 </source>
-        <translation>Синхронизация остановлена !
+        <translation type="obsolete">Синхронизация остановлена !
 </translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="896"/>
         <source>Downloading failed  !
 </source>
-        <translation>Загрузка сорвалась !</translation>
+        <translation type="obsolete">Загрузка сорвалась !</translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="200"/>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="683"/>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="780"/>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="815"/>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="896"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="176"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="711"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="808"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="843"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
@@ -449,15 +548,15 @@ Please check proxy settings on Configuration tab and check settings on correspon
 </translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="683"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="711"/>
         <source>Sync failed !
 </source>
         <translation>Синхронизация провалилась !
 </translation>
     </message>
     <message>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="780"/>
-        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="815"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="808"/>
+        <location filename="plugins/yaf/driver/yaf_driver.cpp" line="843"/>
         <source>Authorization failed !
 Please check proxy settings on Configuration tab and check settings on corresponding plugin tab...
 </source>
@@ -473,65 +572,62 @@ Please check proxy settings on Configuration tab and check settings on correspon
         <translation type="obsolete">Закрыть</translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="134"/>
+        <location filename="control_panel.cpp" line="137"/>
         <source>WebMounter</source>
         <translation>WebMounter</translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="111"/>
-        <location filename="control_panel.cpp" line="151"/>
+        <location filename="control_panel.cpp" line="114"/>
+        <location filename="control_panel.cpp" line="154"/>
         <source>Minimize</source>
         <translation>Свернуть</translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="100"/>
-        <location filename="control_panel.cpp" line="171"/>
-        <location filename="control_panel.cpp" line="202"/>
+        <location filename="control_panel.cpp" line="103"/>
+        <location filename="control_panel.cpp" line="174"/>
+        <location filename="control_panel.cpp" line="205"/>
         <source>Google Docs</source>
         <translation>    Google Docs  </translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="101"/>
-        <location filename="control_panel.cpp" line="172"/>
-        <location filename="control_panel.cpp" line="208"/>
         <source>Odnoklassniki</source>
-        <translation>Одноклассники</translation>
+        <translation type="obsolete">Одноклассники</translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="161"/>
-        <location filename="control_panel.cpp" line="184"/>
+        <location filename="control_panel.cpp" line="164"/>
+        <location filename="control_panel.cpp" line="187"/>
         <source>Configuration</source>
         <translation>  Конфигурация </translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="96"/>
-        <location filename="control_panel.cpp" line="163"/>
-        <location filename="control_panel.cpp" line="190"/>
+        <location filename="control_panel.cpp" line="99"/>
+        <location filename="control_panel.cpp" line="166"/>
+        <location filename="control_panel.cpp" line="193"/>
         <source>Vkontakte</source>
         <translation>      ВКонтакте     </translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="165"/>
-        <location filename="control_panel.cpp" line="196"/>
+        <location filename="control_panel.cpp" line="168"/>
+        <location filename="control_panel.cpp" line="199"/>
         <source>Yandex Fotki</source>
         <translation>  Яндекс Фотки   </translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="98"/>
-        <location filename="control_panel.cpp" line="167"/>
-        <location filename="control_panel.cpp" line="214"/>
+        <location filename="control_panel.cpp" line="101"/>
+        <location filename="control_panel.cpp" line="170"/>
+        <location filename="control_panel.cpp" line="217"/>
         <source>Joomla (Gallery)</source>
         <translation>Joomla (Галереи)</translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="97"/>
+        <location filename="control_panel.cpp" line="100"/>
         <source>Yandex.Fotki</source>
         <translation>Яндекс.Фотки</translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="99"/>
-        <location filename="control_panel.cpp" line="169"/>
-        <location filename="control_panel.cpp" line="220"/>
+        <location filename="control_panel.cpp" line="102"/>
+        <location filename="control_panel.cpp" line="172"/>
+        <location filename="control_panel.cpp" line="223"/>
         <source>Joomla (Article)</source>
         <translation>Joomla (Статьи)</translation>
     </message>
@@ -602,14 +698,14 @@ Maybe you should try asking a human?</translation>
         <translation type="obsolete">Увеличить</translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="157"/>
-        <location filename="control_panel.cpp" line="307"/>
+        <location filename="control_panel.cpp" line="160"/>
+        <location filename="control_panel.cpp" line="283"/>
         <source>&amp;Restore</source>
         <translation>Восстановить</translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="159"/>
-        <location filename="control_panel.cpp" line="310"/>
+        <location filename="control_panel.cpp" line="162"/>
+        <location filename="control_panel.cpp" line="286"/>
         <source>&amp;Quit</source>
         <translation>Выйти</translation>
     </message>
@@ -1518,34 +1614,32 @@ Maybe you should try asking a human?</translation>
 <context>
     <name>VkRVFSDriver</name>
     <message>
-        <location filename="plugins/vk/driver/vk_driver.cpp" line="136"/>
-        <location filename="plugins/vk/driver/vk_driver.cpp" line="727"/>
+        <location filename="plugins/vk/driver/vk_driver.cpp" line="174"/>
         <source>Info</source>
         <translation>Информация</translation>
     </message>
     <message>
-        <location filename="plugins/vk/driver/vk_driver.cpp" line="136"/>
+        <location filename="plugins/vk/driver/vk_driver.cpp" line="174"/>
         <source>This file will be changed locally!
 </source>
         <translation>Изменения вступят в силу только для локальной копии файла !
 </translation>
     </message>
     <message>
-        <location filename="plugins/vk/driver/vk_driver.cpp" line="727"/>
         <source>Synchronization is stopped !
 </source>
-        <translation>Синхронизация остановлена !
+        <translation type="obsolete">Синхронизация остановлена !
 </translation>
     </message>
     <message>
-        <location filename="plugins/vk/driver/vk_driver.cpp" line="789"/>
+        <location filename="plugins/vk/driver/vk_driver.cpp" line="909"/>
         <source>Downloading failed  !
 </source>
         <translation>Загрузка сорвалась !</translation>
     </message>
     <message>
-        <location filename="plugins/vk/driver/vk_driver.cpp" line="665"/>
-        <location filename="plugins/vk/driver/vk_driver.cpp" line="789"/>
+        <location filename="plugins/vk/driver/vk_driver.cpp" line="785"/>
+        <location filename="plugins/vk/driver/vk_driver.cpp" line="909"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
@@ -1560,7 +1654,7 @@ Maybe you should try asking a human?</translation>
 </translation>
     </message>
     <message>
-        <location filename="plugins/vk/driver/vk_driver.cpp" line="665"/>
+        <location filename="plugins/vk/driver/vk_driver.cpp" line="785"/>
         <source>Sync failed !
 </source>
         <translation>Синхронизация провалилась !

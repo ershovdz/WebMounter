@@ -60,7 +60,7 @@ namespace RemoteDriver
 		virtual void stopSyncHandler();
 
 //		int removeFolder(QDir& dir);
-		void syncCacheWithFileSystem(const QString& path);
+		//void syncCacheWithFileSystem(const QString& path);
 		virtual RESULT checkKey(const PluginSettings& pluginSettings);
 		void run();
 	

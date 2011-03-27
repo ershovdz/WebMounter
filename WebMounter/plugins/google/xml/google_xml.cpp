@@ -281,7 +281,7 @@ namespace Xml
 		{
 			return Common::eNO_ERROR;
 		}
-		else if(file_extension == "xls" || file_extension == "xlsx")
+		else if(file_extension == "xls" /*|| file_extension == "xlsx"*/)
 		{
 			return Common::eNO_ERROR;
 		}
@@ -317,7 +317,7 @@ namespace Xml
 				return Common::eNO_ERROR;
 			}
 			else if((file_extension == "xls"
-					|| file_extension == "xlsx") && CategoryLabel(entry) == "spreadsheet")
+					/*|| file_extension == "xlsx"*/) && CategoryLabel(entry) == "spreadsheet")
 			{
 				return Common::eNO_ERROR;
 			}

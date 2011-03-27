@@ -207,6 +207,7 @@ namespace Connector
 										, QString& response
 										, const QString& pluginName)
 	{
+		QMutexLocker locker(&_connectorMutex);
 		CURL* p_curl = curl_easy_init();
 		if(_proxy != ":")
 		{
@@ -291,6 +292,7 @@ namespace Connector
 	}
 	RESULT JmmHTTPConnector::deleteFile(const QString& photoid, QString& response, const QString& pluginName)
 	{
+		QMutexLocker locker(&_connectorMutex); 
 		try
 		{
 			if(_curl) 

@@ -16,12 +16,6 @@ namespace Ui
 			_mainLayout = new QVBoxLayout;
 			_mainLayout->setAlignment(Qt::AlignHCenter);
 			_mainLayout->addWidget(_dummyLabel);
-			/*_mainLayout->addWidget(_syncGroup);
-			_mainLayout->addSpacing(12);
-			_mainLayout->addWidget(_progressGroup);
-			_mainLayout->addSpacing(12);
-			_mainLayout->addWidget(_buttonGroup);
-			_mainLayout->addStretch(1);*/
 			setLayout(_mainLayout);
 			return;
 		}
@@ -46,13 +40,14 @@ namespace Ui
 		_passwordEdit->setEchoMode(QLineEdit::Password);
 		_passwordEdit->setEnabled(!settings->isOAuthUsing);
 
+#ifdef WM_VERSION_FULL
 		_keyLabel = new QLabel(tr("<b>Activation Key:</b>"));
 		_keyEdit = new QLineEdit;
 		_keyEdit->setText(settings->key);
 
 		_keyUrl = new QLabel(tr("<a href=\"http://jmediamanager.com/index.php?option=com_jcs&view=jcs&layout=form&Itemid=95&lang=ru\">Get activation key</a>"));
 		_keyUrl->setOpenExternalLinks(true);
-
+#endif
 		_startPluginButton = new QPushButton(tr("Connect"));
 		_stopPluginButton = new QPushButton(tr("Disconnect"));
 
@@ -143,9 +138,11 @@ namespace Ui
 		_authLayout->addWidget(_passwordLabel, 2, 0);
 		_authLayout->addWidget(_passwordEdit, 2, 1);
 		_authLayout->addWidget(_oauthCheckBox, 3, 0);
+#ifdef WM_VERSION_FULL
 		_authLayout->addWidget(_keyLabel, 4, 0);
 		_authLayout->addWidget(_keyEdit, 4, 1);
 		_authLayout->addWidget(_keyUrl, 5, 1);
+#endif
 		_authGroup->setLayout(_authLayout);
 
 		_syncGroup = new QGroupBox(tr("Sync"));
@@ -223,8 +220,9 @@ namespace Ui
 			_urlEdit->setEnabled(false);
 			_nameEdit->setEnabled(false);
 			_passwordEdit->setEnabled(false);
+#ifdef WM_VERSION_FULL
 			_keyEdit->setEnabled(false);
-
+#endif
 			_startPluginButton->setEnabled(false);
 			_stopPluginButton->setEnabled(false);
 
@@ -251,8 +249,11 @@ namespace Ui
 		_urlLabel->setText(tr("Server address:"));
 		_nameLabel->setText(tr("Login:"));
 		_passwordLabel->setText(tr("Password:"));
-		_keyLabel->setText(tr("<b>Activation Key:</b>"));
 
+#ifdef WM_VERSION_FULL
+		_keyLabel->setText(tr("<b>Activation Key:</b>"));
+		_keyUrl->setText(tr("<a href=\"http://jmediamanager.com/index.php?option=com_jcs&view=jcs&layout=form&Itemid=95&lang=ru\">Get activation key</a>"));
+#endif
 		_startPluginButton->setText(tr("Connect"));
 		_stopPluginButton->setText(tr("Disconnect"));
 
@@ -287,8 +288,6 @@ namespace Ui
 		_syncGroup->setTitle(tr("Sync"));
 		_progressGroup->setTitle(tr("Status:"));
 		_statusLabel->setText(tr("Plugin status:"));
-
-		_keyUrl->setText(tr("<a href=\"http://jmediamanager.com/index.php?option=com_jcs&view=jcs&layout=form&Itemid=95&lang=ru\">Get activation key</a>"));
 
 		if(!_driver)
 		{
@@ -390,7 +389,10 @@ namespace Ui
 		pluginSettings.syncPeriod.setNum(getSyncPeriod());
 		pluginSettings.userName = _nameEdit->text();
 		pluginSettings.userPassword = _passwordEdit->text();
+
+#ifdef WM_VERSION_FULL
 		pluginSettings.key = _keyEdit->text();
+#endif
 		pluginSettings.isOAuthUsing = _oauthCheckBox->isChecked();
 
 		if(pluginSettings.serverUrl == "")
@@ -411,16 +413,19 @@ namespace Ui
 				tr("Enter password"), QMessageBox::Ok);
 			return;
 		}
+#ifdef WM_VERSION_FULL
 		else if(!isKeyValueValid(pluginSettings))
 		{
 			return;
 		}
+#endif
 
 		_urlEdit->setEnabled(false);
 		_nameEdit->setEnabled(false);
 		_passwordEdit->setEnabled(false);
+#ifdef WM_VERSION_FULL
 		_keyEdit->setEnabled(false);
-
+#endif
 		_startPluginButton->setEnabled(false);
 		_stopPluginButton->setEnabled(true);
 
@@ -540,8 +545,9 @@ namespace Ui
 				_urlEdit->setEnabled(true);
 				_nameEdit->setEnabled(!_oauthCheckBox->isChecked());
 				_passwordEdit->setEnabled(!_oauthCheckBox->isChecked());
+#ifdef WM_VERSION_FULL
 				_keyEdit->setEnabled(true);
-
+#endif
 				_startPluginButton->setEnabled(true);
 				_stopPluginButton->setEnabled(false);
 
