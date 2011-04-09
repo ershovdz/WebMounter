@@ -11,7 +11,7 @@
 #define LVFS_DRIVER_H "linux_lvfs_driver.h"
 #endif
 
-//#define WM_VERSION_FULL
+#define WM_VERSION_FULL
 
 namespace Common
 {

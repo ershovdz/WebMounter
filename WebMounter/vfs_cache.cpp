@@ -55,6 +55,8 @@ namespace Data
 		{
 			//query.exec("PRAGMA synchronous=OFF");
 
+			query.exec("DROP table Elements");
+
 			bool isOk = query.exec("create table Elements (path varchar(256),"
 				"elemid varchar(256),"
 				"parentid varchar(256),"
@@ -111,9 +113,8 @@ namespace Data
 				}
 				else
 				{
-					delete _VFSCacheInstance;
-					_VFSCacheInstance = 0;
-					return 0;
+					_VFSCacheInstance->initDB();
+					return _VFSCacheInstance;
 				}
 			}
 			else

@@ -19,7 +19,12 @@ namespace Ui
 		_keyUrl->setVisible(false);
 #endif
 		_oauthCheckBox->setChecked(true);
-		_oauthCheckBox->setVisible(true);
+		_oauthCheckBox->setVisible(false);
+
+		_nameLabel->setVisible(false);
+		_nameEdit->setVisible(false);
+		_passwordLabel->setVisible(false);
+		_passwordEdit->setVisible(false);
 
 		_oauthObj = new YafOAuth();
 		connect(_oauthObj, SIGNAL(authFinished(RESULT, const QString&, const QString&)), this, SLOT(oAuthFinished(RESULT, const QString&, const QString&)));
@@ -34,6 +39,11 @@ namespace Ui
 	{
 		PluginView::updateView(progress, state);
 		_urlEdit->setEnabled(false);
+
+		_nameLabel->setVisible(false);
+		_nameEdit->setVisible(false);
+		_passwordLabel->setVisible(false);
+		_passwordEdit->setVisible(false);
 
 		PluginSettings pluginSettings; 
 		WebMounter::getSettingStorage()->getData(pluginSettings, "Yandex.Fotki");
