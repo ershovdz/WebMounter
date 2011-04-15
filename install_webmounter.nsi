@@ -1,5 +1,5 @@
 ;!define VERSION "0.3 DE(build 107)"
-!define VERSION "0.3.1 (build 2)"
+!define VERSION "0.3.2 (build 1)"
 
 !define MULTIUSER_EXECUTIONLEVEL Highest
 ;!define MULTIUSER_NOUNINSTALL ;Uncomment if no uninstaller is created

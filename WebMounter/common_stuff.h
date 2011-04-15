@@ -3,6 +3,8 @@
 
 #include <qglobal.h>
 
+#define VERSION "ver. 0.3.2"
+
 #ifdef Q_OS_WIN
 #include <windows.h>
 #define LVFS_DRIVER_H "win_lvfs_driver.h"

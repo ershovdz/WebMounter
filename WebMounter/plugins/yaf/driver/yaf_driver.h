@@ -50,6 +50,7 @@ namespace RemoteDriver
 		virtual void syncHandler();
 		virtual void stopSyncHandler();
 
+		QString getElementPath(QList<VFSElement>& elements, VFSElement& element);
 		int findParentIndex(const QList<VFSElement>& elemList, const VFSElement& elem);
 		void markNameDuplicates(QList<VFSElement>& elemList);
 		void handleNameDuplicates(QList<VFSElement>& elemList);

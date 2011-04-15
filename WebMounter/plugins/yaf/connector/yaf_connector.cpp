@@ -300,6 +300,7 @@ namespace Connector
 			curl_formadd(&post, &last, CURLFORM_COPYNAME, "title", CURLFORM_COPYCONTENTS, titleArray.constData(), CURLFORM_END);
 			curl_formadd(&post, &last, CURLFORM_COPYNAME, "album", CURLFORM_COPYCONTENTS, qPrintable(parentId), CURLFORM_END);
 			curl_formadd(&post, &last, CURLFORM_COPYNAME, "access_type", CURLFORM_COPYCONTENTS, qPrintable(access), CURLFORM_END);
+			curl_formadd(&post, &last, CURLFORM_COPYNAME, "yaru", CURLFORM_COPYCONTENTS, "0", CURLFORM_END);
 
 			headerlist = curl_slist_append(headerlist, qPrintable(expect));
 

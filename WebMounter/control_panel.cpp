@@ -130,9 +130,14 @@ namespace Ui
 		_horizontalLayout->addWidget(_contentsWidget);
 		_horizontalLayout->addWidget(_pagesWidget);
 
+		QLabel* version = new QLabel(VERSION);
+		version->setDisabled(true);
+
 		_buttonsLayout = new QHBoxLayout;
-		_buttonsLayout->addStretch(1);
-		_buttonsLayout->addWidget(_closeButton);
+		//_buttonsLayout->addStretch(1);
+		_buttonsLayout->addSpacing(15);
+		_buttonsLayout->addWidget(version, 1, Qt::AlignHCenter);
+		_buttonsLayout->addWidget(_closeButton, 1, Qt::AlignRight);
 
 		_mainLayout = new QVBoxLayout;
 		_mainLayout->addLayout(_horizontalLayout);

@@ -336,6 +336,37 @@ namespace RemoteDriver
 		return err;
 	}
 
+	QString YafRVFSDriver::getElementPath(QList<VFSElement>& elements, VFSElement& element)
+	{
+		QString parentId = element.getParentId();
+		QString rootPath = QFileInfo(Common::WebMounter::getSettingStorage()->getAppStoragePath() 
+							+ QDir::separator() 
+							+ _pluginName).absoluteFilePath(); 
+		
+		if(ROOT_ID == element.getId())
+		{
+			return element.getPath();
+		}
+		if(ROOT_ID == parentId)
+		{
+			return QFileInfo(rootPath + QDir::separator() + element.getName())
+				.absoluteFilePath();	
+		}
+		else
+		{
+			for (unsigned int i = 0; i < elements.count(); ++i) 
+			{
+				if(elements[i].getId() == parentId)
+				{
+					return QFileInfo(getElementPath(elements, elements[i]) + QDir::separator() + element.getName())
+						.absoluteFilePath();		
+				}
+			}
+			
+		}
+		return "";
+	}
+
 	RESULT YafRVFSDriver::getAlbums(QList<VFSElement>& elements)
 	{
 		RESULT err = eERROR;
@@ -376,41 +407,26 @@ namespace RemoteDriver
 					pos += rx.matchedLength();
 					pos = rx.indexIn(xmlResp, pos);
 				}
-
-				for(int k=0; k<elements.count(); k++)
-				{
-					if(elements[k].getParentId() != ROOT_ID)
-					{
-						int index = findParentIndex(elements, elements[k]);
-						QString parentPath = elements[index].getPath();
-
-						while(!parentPath.length())
-						{
-							index = findParentIndex(elements, elements[index]);
-							if(index < 0)
-								return eERROR;
-
-							parentPath = elements[index].getPath();
-						}
-
-						QString path = elements[index].getPath() + QString(QDir::separator()) + elements[k].getName();
-						QFileInfo fInfo(path);
-						elements[k].setPath(fInfo.absoluteFilePath());
-					}
-				}
 			}
 
 			if(err != eNO_ERROR || !entriesFound)
 				break;
 
 			QDateTime dt = QDateTime::fromString(elements[elements.count()-1].getModified(), "yyyy-MM-ddThh:mm:ssZ");
-			QTime time(dt.time().hour(), dt.time().minute(), dt.time().second() - 1);
-			dt.setTime(time);
+			dt = dt.addSecs(-1); 
+			/*QTime time(dt.time().hour(), dt.time().minute(), dt.time().second() - 1);
+			dt.setTime(time);*/
 			dateTime = dt.toString("yyyy-MM-ddThh:mm:ssZ");
 		}
 
 		if(err != eERROR)
 		{
+			//Populate path for elemenets
+			for(int k=0, count = elements.count(); k < count; k++)
+			{
+				elements[k].setPath(QFileInfo(getElementPath(elements, elements[k])).absoluteFilePath());
+			}
+
 			handleNameDuplicates(elements);
 		}
 
@@ -442,7 +458,9 @@ namespace RemoteDriver
 			bool entriesFound = false;
 			QString xmlResp = "";
 			QString path = QString("photos/updated;%1/").arg(dateTime);
+			
 			err = _httpConnector->getTreeElements(path, xmlResp);
+			
 			if(!err)
 			{
 				QString pattern = QString::fromAscii("<entry>(.*)</entry>");
@@ -460,22 +478,9 @@ namespace RemoteDriver
 
 					if(elem.getId() != elements[elements.count() - 1].getId())
 					{
-						QString path;
-						int i = findParentIndex(elements, elem);
-						if(i < 0)
-						{
-							elem.setParentId(ROOT_ID);
-							QString rootPath = path = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator());
-							path = rootPath + QString(QDir::separator()) + elem.getName();
-						}
-						else
-						{
-							path = elements[i].getPath() + QString(QDir::separator()) + elem.getName();
-						}
-
-						QFileInfo fInfo(path);
-						elem.setPath(fInfo.absoluteFilePath());
 						elem.setDownloaded(false);
+
+
 						elements.append(elem);
 					}
 
@@ -488,13 +493,34 @@ namespace RemoteDriver
 				break;
 
 			QDateTime dt = QDateTime::fromString(elements[elements.count()-1].getModified(), "yyyy-MM-ddThh:mm:ssZ");
-			QTime time(dt.time().hour(), dt.time().minute(), dt.time().second() - 1);
-			dt.setTime(time);
+			dt = dt.addSecs(-2); 
+			/*QTime time(dt.time().hour(), dt.time().minute(), dt.time().second());
+			dt.setTime(time);*/
 			dateTime = dt.toString("yyyy-MM-ddThh:mm:ssZ");
 		}
 
 		if(err != eERROR)
 		{
+			for(int k=0, count = elements.count(); k < count; k++)
+			{
+				if(elements[k].getType() == VFSElement::FILE)
+				{
+					QString path;
+					int i = findParentIndex(elements, elements[k]);
+					if(i < 0)
+					{
+						return eERROR;
+					}
+					else
+					{
+						path = elements[i].getPath() + QString(QDir::separator()) + elements[k].getName();
+					}
+
+					QFileInfo fInfo(path);
+					elements[k].setPath(fInfo.absoluteFilePath());
+				}
+			}
+
 			handleNameDuplicates(elements);
 		}
 
@@ -537,6 +563,8 @@ namespace RemoteDriver
 
 	void YafRVFSDriver::parseAlbumEntry(QString& xmlEntry, VFSElement& elem)
 	{
+		QString temp;
+
 		elem.setType(VFSElement::DIRECTORY);
 		elem.setPluginName(_pluginName);
 
@@ -547,7 +575,23 @@ namespace RemoteDriver
 		rx.setPatternSyntax(QRegExp::RegExp);
 
 		rx.indexIn(xmlEntry);
-		elem.setName(rx.cap(1));
+		temp = rx.cap(1);
+		if(temp.endsWith("."))
+		{
+			temp = temp.mid(0, temp.length() - 1);  
+		}
+		temp = temp.replace("?", "");
+		temp = temp.replace(":", " ");
+		temp = temp.replace("\"", "'");
+		temp = temp.replace("|", " ");
+		temp = temp.replace("*", " ");
+		temp = temp.replace("\\", " ");
+		temp = temp.replace("/", " ");
+		temp = temp.replace("<", " ");
+		temp = temp.replace(">", " ");
+		temp = temp.replace("©", " ");
+		
+		elem.setName(temp);
 
 		rx.setPattern("album:(.*)</id>");
 		rx.indexIn(xmlEntry);
@@ -579,6 +623,7 @@ namespace RemoteDriver
 
 	void YafRVFSDriver::parsePhotoEntry(QString& xmlEntry, VFSElement& elem)
 	{
+		QString temp;
 		elem.setType(VFSElement::FILE);
 		elem.setPluginName(_pluginName);
 
@@ -589,7 +634,36 @@ namespace RemoteDriver
 		rx.setPatternSyntax(QRegExp::RegExp);
 
 		rx.indexIn(xmlEntry);
-		elem.setName(rx.cap(1));
+
+		temp = rx.cap(1);
+		if(temp.endsWith("."))
+		{
+			temp = temp.mid(0, temp.length() - 1);  
+		}
+		temp = temp.replace("?", "");
+		temp = temp.replace(":", " ");
+		temp = temp.replace("\"", "'");
+		temp = temp.replace("|", " ");
+		temp = temp.replace("*", " ");
+		temp = temp.replace("\\", " ");
+		temp = temp.replace("/", " ");
+		temp = temp.replace("<", " ");
+		temp = temp.replace(">", " ");
+		temp = temp.replace("©", " ");
+		elem.setName(temp);
+
+		int offset = elem.getName().lastIndexOf(".");
+		QString ext = elem.getName().mid(offset + 1).toLower();
+
+		if(offset == -1 
+			|| (ext != "bmp" 
+			&& ext != "jpg"
+			&& ext != "jpeg"
+			&& ext != "png"
+			&& ext != "gif"))
+		{
+			elem.setName(elem.getName() + ".jpg");
+		}
 
 		rx.setPattern("photo:(.*)</id>");
 		rx.indexIn(xmlEntry);
@@ -599,9 +673,9 @@ namespace RemoteDriver
 		rx.indexIn(xmlEntry);
 		elem.setModified(rx.cap(1));
 
-		rx.setPattern("/album/(.*)/\" rel=\"album\" />");
+		rx.setPattern("api-fotki.yandex.ru/api/users/(.*)/album/(.*)/\" rel=\"album\" />");
 		rx.indexIn(xmlEntry);
-		elem.setParentId(rx.cap(1));
+		elem.setParentId(rx.cap(2));
 
 		rx.setPattern("<content src=\"(.*)\" type=");
 		rx.indexIn(xmlEntry);
@@ -615,6 +689,8 @@ namespace RemoteDriver
 		QString pluginStoragePath = settings->getAppStoragePath() + QString(QDir::separator()) + _pluginName;
 		QFileInfo fInfo(pluginStoragePath);
 		UINT uNotDownloaded = 0;
+		PluginSettings plSettings;
+		settings->getData(plSettings, _pluginName);
 
 		_driverMutex.lock();
 		if(_state != eSyncStopping)
@@ -685,18 +761,36 @@ namespace RemoteDriver
 					}
 				}
 
+				{ 	LOCK(_driverMutex);
+					if(_state != eSyncStopping)
+					{
+						updateState(30, RemoteDriver::eSync);
+					}
+				}
+
 				// Add newly created elements
 				for(int i=0; i<elements.count(); i++)
 				{
 					vfsCache->insert(elements[i]);
 				}
 
+				{ 	LOCK(_driverMutex);
+					if(_state != eSyncStopping)
+					{
+						updateState(40, RemoteDriver::eSync);
+					}
+				}
+
 				QString rootPath = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator()) + _pluginName;
 				QFileInfo fInfo(rootPath);
 				syncCacheWithFileSystem(fInfo.absoluteFilePath());
 
-				PluginSettings plSettings;
-				settings->getData(plSettings, _pluginName);
+				{ 	LOCK(_driverMutex);
+					if(_state != eSyncStopping)
+					{
+						updateState(50, RemoteDriver::eSync);
+					}
+				}
 
 				if(plSettings.bFullSync)
 				{

@@ -53,7 +53,7 @@ namespace Data
 
 		if(_DB.isOpen())
 		{
-			//query.exec("PRAGMA synchronous=OFF");
+			query.exec("PRAGMA synchronous=OFF");
 
 			query.exec("DROP table Elements");
 

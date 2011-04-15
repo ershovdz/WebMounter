@@ -119,14 +119,44 @@ int RVFSDriver::removeFolder(QDir& dir)
 void RVFSDriver::syncCacheWithFileSystem(const QString& path)
 {
 	VFSCache* vfsCache = WebMounter::getCache();
-
 	QDir dir(path);
+	VFSCache::iterator parent = vfsCache->find(path);
+	if(parent == vfsCache->end()) 
+		return;
+
+	for(VFSCache::iterator iter = vfsCache->begin(); iter != vfsCache->end(); ++iter)
+	{
+		if(iter->getParentId() != parent->getId()) continue;
+		
+		if(iter->getType() == VFSElement::DIRECTORY)
+		{
+			if(!dir.exists(iter->getPath())) 
+				dir.mkpath(iter->getPath());
+		}
+		else if(iter->getType() == VFSElement::FILE)
+		{
+			QFile file(iter->getPath());
+			if(!file.exists())
+			{
+				bool res = file.open(QIODevice::WriteOnly);
+				file.close();
+				vfsCache->setFlag(iter, VFSElement::eFl_None, VFSElement::eFl_Downloaded);
+			}
+			else if(file.size() == 0 
+				&& iter->getFlags() != VFSElement::eFl_None 
+				&& iter->getFlags() != VFSElement::eFl_NameDup)
+			{
+				vfsCache->setFlag(iter, VFSElement::eFl_None, VFSElement::eFl_Downloaded);
+			}
+		}
+	}
+
 	QStringList lstDirs = dir.entryList(QDir::Dirs | QDir::AllDirs | QDir::NoDotAndDotDot);
 	QStringList lstFiles = dir.entryList(QDir::Files);
 
 	foreach (QString entry, lstFiles)
 	{
-		QString entryAbsPath = dir.absolutePath() + "/" + entry;
+		QString entryAbsPath = QFileInfo(dir.absolutePath() + "/" + entry).absoluteFilePath();
 
 		if(vfsCache->find(entryAbsPath) == vfsCache->end())
 		{
@@ -140,7 +170,7 @@ void RVFSDriver::syncCacheWithFileSystem(const QString& path)
 
 	foreach (QString entry, lstDirs)
 	{
-		QString entryAbsPath = dir.absolutePath() + "/" + entry;
+		QString entryAbsPath = QFileInfo(dir.absolutePath() + "/" + entry).absoluteFilePath();
 
 		if(vfsCache->find(entryAbsPath) == vfsCache->end())
 		{
@@ -149,25 +179,6 @@ void RVFSDriver::syncCacheWithFileSystem(const QString& path)
 		else
 		{
 			syncCacheWithFileSystem(entryAbsPath);
-		}
-	}
-
-	for(VFSCache::iterator iter = vfsCache->begin(); iter != vfsCache->end(); ++iter)
-	{
-		if(iter->getType() == VFSElement::DIRECTORY)
-		{
-			if(!dir.exists(iter->getPath())) 
-				dir.mkpath(iter->getPath());
-		}
-		else if(iter->getType() == VFSElement::FILE)
-		{
-			QFile file(iter->getPath());
-			if(!file.exists() || file.size() == 0)
-			{
-				file.open(QIODevice::WriteOnly);
-				file.close();
-				vfsCache->setFlag(iter, VFSElement::eFl_None, VFSElement::eFl_Downloaded);
-			}
 		}
 	}
 }
