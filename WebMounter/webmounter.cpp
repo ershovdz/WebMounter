@@ -75,7 +75,7 @@ void WebMounter::startApp()
 			dir.mkdir(_globalSettings->getAppStoragePath() + "\\Joomla.Gallery");
 		}
 	
-	#ifdef WM_VERSION_FULL
+	#ifdef WM_FULL_VERSION
 		if(!dir.exists(_globalSettings->getAppStoragePath() + "\\Vkontakte"))
 		{
 			dir.mkdir(_globalSettings->getAppStoragePath() + "\\Vkontakte");
@@ -97,7 +97,7 @@ void WebMounter::startApp()
 		
 		_pluginList.insert(PluginList_Pair("Joomla.Article", new RemoteDriver::JmmRVFSDriver("Joomla.Article")));
 		_pluginList.insert(PluginList_Pair("Joomla.Gallery", new RemoteDriver::JmmRVFSDriver("Joomla.Gallery")));
-	#ifdef WM_VERSION_FULL
+	#ifdef WM_FULL_VERSION
 		_pluginList.insert(PluginList_Pair(QString("Yandex.Fotki"), new RemoteDriver::YafRVFSDriver("Yandex.Fotki")));
 		_pluginList.insert(PluginList_Pair(QString("Vkontakte"), new RemoteDriver::VkRVFSDriver("Vkontakte")));
 	#endif

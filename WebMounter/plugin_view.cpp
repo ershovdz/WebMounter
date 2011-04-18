@@ -40,7 +40,7 @@ namespace Ui
 		_passwordEdit->setEchoMode(QLineEdit::Password);
 		_passwordEdit->setEnabled(!settings->isOAuthUsing);
 
-#ifdef WM_VERSION_FULL
+#ifdef WM_FULL_VERSION
 		_keyLabel = new QLabel(tr("<b>Activation Key:</b>"));
 		_keyEdit = new QLineEdit;
 		_keyEdit->setText(settings->key);
@@ -138,7 +138,7 @@ namespace Ui
 		_authLayout->addWidget(_passwordLabel, 2, 0);
 		_authLayout->addWidget(_passwordEdit, 2, 1);
 		_authLayout->addWidget(_oauthCheckBox, 3, 0);
-#ifdef WM_VERSION_FULL
+#ifdef WM_FULL_VERSION
 		_authLayout->addWidget(_keyLabel, 4, 0);
 		_authLayout->addWidget(_keyEdit, 4, 1);
 		_authLayout->addWidget(_keyUrl, 5, 1);
@@ -220,7 +220,7 @@ namespace Ui
 			_urlEdit->setEnabled(false);
 			_nameEdit->setEnabled(false);
 			_passwordEdit->setEnabled(false);
-#ifdef WM_VERSION_FULL
+#ifdef WM_FULL_VERSION
 			_keyEdit->setEnabled(false);
 #endif
 			_startPluginButton->setEnabled(false);
@@ -250,7 +250,7 @@ namespace Ui
 		_nameLabel->setText(tr("Login:"));
 		_passwordLabel->setText(tr("Password:"));
 
-#ifdef WM_VERSION_FULL
+#ifdef WM_FULL_VERSION
 		_keyLabel->setText(tr("<b>Activation Key:</b>"));
 		_keyUrl->setText(tr("<a href=\"http://jmediamanager.com/index.php?option=com_jcs&view=jcs&layout=form&Itemid=95&lang=ru\">Get activation key</a>"));
 #endif
@@ -390,7 +390,7 @@ namespace Ui
 		pluginSettings.userName = _nameEdit->text();
 		pluginSettings.userPassword = _passwordEdit->text();
 
-#ifdef WM_VERSION_FULL
+#ifdef WM_FULL_VERSION
 		pluginSettings.key = _keyEdit->text();
 #endif
 		pluginSettings.isOAuthUsing = _oauthCheckBox->isChecked();
@@ -413,7 +413,7 @@ namespace Ui
 				tr("Enter password"), QMessageBox::Ok);
 			return;
 		}
-#ifdef WM_VERSION_FULL
+#ifdef WM_FULL_VERSION
 		else if(!isKeyValueValid(pluginSettings))
 		{
 			return;
@@ -423,7 +423,7 @@ namespace Ui
 		_urlEdit->setEnabled(false);
 		_nameEdit->setEnabled(false);
 		_passwordEdit->setEnabled(false);
-#ifdef WM_VERSION_FULL
+#ifdef WM_FULL_VERSION
 		_keyEdit->setEnabled(false);
 #endif
 		_startPluginButton->setEnabled(false);
@@ -545,7 +545,7 @@ namespace Ui
 				_urlEdit->setEnabled(true);
 				_nameEdit->setEnabled(!_oauthCheckBox->isChecked());
 				_passwordEdit->setEnabled(!_oauthCheckBox->isChecked());
-#ifdef WM_VERSION_FULL
+#ifdef WM_FULL_VERSION
 				_keyEdit->setEnabled(true);
 #endif
 				_startPluginButton->setEnabled(true);

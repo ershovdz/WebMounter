@@ -86,7 +86,7 @@ namespace Ui
 		//QCheckBox *showIconCheckBox;
 
 		GeneralView*  _generalView;
-#ifdef WM_VERSION_FULL
+#ifdef WM_FULL_VERSION
 		PluginView*	  _vkView;
 		PluginView*	  _yafView;
 		

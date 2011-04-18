@@ -121,6 +121,7 @@ void RVFSDriver::syncCacheWithFileSystem(const QString& path)
 	VFSCache* vfsCache = WebMounter::getCache();
 	QDir dir(path);
 	VFSCache::iterator parent = vfsCache->find(path);
+	
 	if(parent == vfsCache->end()) 
 		return;
 

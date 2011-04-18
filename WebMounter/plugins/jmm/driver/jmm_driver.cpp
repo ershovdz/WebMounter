@@ -618,7 +618,7 @@ namespace RemoteDriver
 		try
 		{
 			SettingStorage* settings = WebMounter::getSettingStorage();
-			QString pluginStoragePath = settings->getAppStoragePath() + QDir::separator() + _pluginName;
+			QString pluginStoragePath = QFileInfo(settings->getAppStoragePath() + QDir::separator() + _pluginName).absoluteFilePath();
 			QFileInfo treeFile = settings->getAppSettingStoragePath() + QDir::separator() + _pluginName + QDir::separator() + QString("tree.xml");
 			QString treeFilePath = treeFile.absoluteFilePath();
 
@@ -647,6 +647,27 @@ namespace RemoteDriver
 			VFSCache* vfsCache = WebMounter::getCache();
 
 			vfsCache->flush();
+
+			VFSCache::iterator iter = vfsCache->find(pluginStoragePath);
+			if(iter == vfsCache->end())
+			{
+				VFSElement elem(VFSElement::DIRECTORY
+								, pluginStoragePath
+								, _pluginName
+								, ""
+								, ""
+								, ""
+								, ROOT_ID
+								, ROOT_ID
+								, ""
+								, _pluginName);
+
+				vfsCache->insert(elem, true, false);
+			}
+			else
+			{
+				vfsCache->setFlag(iter, VFSElement::eFl_Dirty, VFSElement::eFl_None, false);
+			}
 
 			if(!_httpConnector.getTreeElements(treeFilePath, _pluginName))
 			{
@@ -722,7 +743,7 @@ namespace RemoteDriver
 
 	RESULT JmmRVFSDriver::checkKey(const PluginSettings& pluginSettings)
 	{
-#ifndef WM_VERSION_FULL
+#ifndef WM_FULL_VERSION
 		return eNO_ERROR;
 #endif
 

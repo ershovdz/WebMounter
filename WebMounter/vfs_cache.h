@@ -169,7 +169,7 @@ namespace Data
 			
 		}
 
-		void setFlag(iterator& iter, uint set, uint unset = VFSElement::eFl_None);
+		void setFlag(iterator& iter, uint set, uint unset = VFSElement::eFl_None, bool updateDB = true);
 
 	private:
 		RESULT initDB();

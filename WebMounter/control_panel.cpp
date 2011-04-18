@@ -50,7 +50,7 @@ namespace Ui
 		GeneralSettings generalSettings;
 
 		Common::WebMounter::getSettingStorage()->getData(googleSettings, "Google.Docs");
-	#ifdef WM_VERSION_FULL
+	#ifdef WM_FULL_VERSION
 		Common::WebMounter::getSettingStorage()->getData(yafSettings, "Yandex.Fotki");
 		Common::WebMounter::getSettingStorage()->getData(vkSettings, "Vkontakte");
 	#endif
@@ -99,7 +99,7 @@ namespace Ui
 		
 		_generalView = new GeneralView(generalSettings, this);
 	
-	#ifdef WM_VERSION_FULL	
+	#ifdef WM_FULL_VERSION	
 		_vkView		 = new VkView(&vkSettings,  QString(tr("Vkontakte")));
 		_yafView	 = new YafView(&yafSettings,  QString(tr("Yandex.Fotki")));
 	#endif
@@ -109,7 +109,7 @@ namespace Ui
 		//_odnView	 = new PluginView(0,  QString(tr("Odnoklassniki")));
 
 		_pagesWidget->addWidget(_generalView);
-	#ifdef WM_VERSION_FULL	
+	#ifdef WM_FULL_VERSION	
 		_pagesWidget->addWidget(_vkView);
 		_pagesWidget->addWidget(_yafView);
 	#endif	
@@ -175,7 +175,7 @@ namespace Ui
 
 		_configButton->setText(tr("Configuration"));
 		
-	#ifdef WM_VERSION_FULL	
+	#ifdef WM_FULL_VERSION	
 		_vkButton->setText(tr("Vkontakte"));
 		_yafButton->setText(tr("Yandex Fotki"));
 	#endif
@@ -200,7 +200,7 @@ namespace Ui
 		_configButton->setTextAlignment(Qt::AlignHCenter);
 		_configButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	
-	#ifdef WM_VERSION_FULL	
+	#ifdef WM_FULL_VERSION	
 		_vkButton = new QListWidgetItem(_contentsWidget);
 		_vkButton->setIcon(QIcon(":/Resources/vk.png"));
 		_vkButton->setText(tr("Vkontakte"));

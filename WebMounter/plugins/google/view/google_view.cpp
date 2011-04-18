@@ -11,7 +11,7 @@ namespace Ui
 	{
 		_urlEdit->setText("docs.google.com");
 		_urlEdit->setEnabled(false);
-#ifdef WM_VERSION_FULL
+#ifdef WM_FULL_VERSION
 		_keyLabel->setVisible(false);
 		_keyEdit->setVisible(false);
 		_keyUrl->setVisible(false);

@@ -244,11 +244,12 @@ namespace Data
 		}
 	}
 	
-	void VFSCache::setFlag(iterator& iter, uint set, uint unset)
+	void VFSCache::setFlag(iterator& iter, uint set, uint unset, bool updateDB)
 	{
 		iter.getNatureIter()->second->setDirty(true);
 		iter.getNatureIter()->second->setFlags(set, unset);
-		flush();
+		if(updateDB) 
+			flush();
 	}
 
 	RESULT VFSCache::erasePlugin(const QString& pluginName)

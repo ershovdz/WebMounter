@@ -12,7 +12,7 @@ namespace Ui
 		_urlEdit->setText("vkontakte.ru");
 		_urlEdit->setEnabled(false);
 
-#ifdef WM_VERSION_FULL
+#ifdef WM_FULL_VERSION
 		_keyUrl->setText(tr("<a href=\"http://jmediamanager.com/index.php?option=com_wrapper&view=wrapper&Itemid=102&lang=ru\">Get activation key</a>"));
 #endif
 	}
@@ -31,7 +31,7 @@ namespace Ui
 	void VkView::changeLang()
 	{
 		PluginView::changeLang();
-#ifdef WM_VERSION_FULL
+#ifdef WM_FULL_VERSION
 		_keyUrl->setText(tr("<a href=\"http://jmediamanager.com/index.php?option=com_wrapper&view=wrapper&Itemid=102&lang=ru\">Get activation key</a>"));
 #endif
 	}
