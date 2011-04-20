@@ -368,7 +368,6 @@ namespace Common
 			QtConcurrent::run(boost::bind(&RemoteDriver::RVFSDriver::deleteFile, _1, _2), driver, fInfo.absoluteFilePath());
 			res = eNO_ERROR;
 		}
-
 		return res;
 	}
 
