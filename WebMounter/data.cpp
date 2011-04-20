@@ -20,7 +20,7 @@ namespace Data
 		if(storagePath == "")
 		{
 			storagePath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-			storagePath += "\\" + _settings.applicationName() + "\\" + "storage";
+			storagePath += QDir::separator() + _settings.applicationName() + QDir::separator() + "storage";
 			
 			_settings.setValue("general/appStoragePath", storagePath);
 		}
@@ -28,7 +28,7 @@ namespace Data
 		if(settingStoragePath == "")
 		{
 			settingStoragePath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-			settingStoragePath += "\\" + _settings.applicationName() + "\\" + "settings";
+			settingStoragePath += QDir::separator() + _settings.applicationName() + QDir::separator() + "settings";
 			
 			_settings.setValue("general/appSettingStoragePath", settingStoragePath);
 		}

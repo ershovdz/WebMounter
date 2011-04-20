@@ -28,9 +28,9 @@ namespace Data
 		_localDBPath = localDBPath;
 
 		_DB = QSqlDatabase::addDatabase("QSQLITE", "webmounter");
-		_DB.setDatabaseName(localDBPath + "\\webmounter.db");
+		_DB.setDatabaseName(localDBPath + QDir::separator() + "webmounter.db");
 
-		if(!QFile::exists(localDBPath + "\\webmounter.db")) // Database does not exist yet
+		if(!QFile::exists(localDBPath + QDir::separator() + "webmounter.db")) // Database does not exist yet
 		{
 			_DB.open(); // Open db and create db file.
 			initDB(); // Populate database with plugin tables

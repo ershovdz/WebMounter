@@ -50,9 +50,9 @@ void WebMounter::startApp()
 		
 		_globalSettings = SettingStorage::getStorage();
 
-		if(!dir.exists(QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "\\WebMounter"))
+		if(!dir.exists(QDesktopServices::storageLocation(QDesktopServices::DataLocation) + QDir::separator() + "WebMounter"))
 		{
-			dir.mkdir(QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "\\WebMounter");
+			dir.mkdir(QDesktopServices::storageLocation(QDesktopServices::DataLocation) + QDir::separator() + "WebMounter");
 		}
 
 		if(!dir.exists(_globalSettings->getAppStoragePath()))
@@ -65,30 +65,30 @@ void WebMounter::startApp()
 			dir.mkdir(_globalSettings->getAppSettingStoragePath());
 		}
 
-		if(!dir.exists(_globalSettings->getAppStoragePath() + "\\Joomla.Article"))
+		if(!dir.exists(_globalSettings->getAppStoragePath() + QDir::separator() + "Joomla.Article"))
 		{
-			dir.mkdir(_globalSettings->getAppStoragePath() + "\\Joomla.Article");
+			dir.mkdir(_globalSettings->getAppStoragePath() + QDir::separator() + "Joomla.Article");
 		}
 
-		if(!dir.exists(_globalSettings->getAppStoragePath() + "\\Joomla.Gallery"))
+		if(!dir.exists(_globalSettings->getAppStoragePath() + QDir::separator() + "Joomla.Gallery"))
 		{
-			dir.mkdir(_globalSettings->getAppStoragePath() + "\\Joomla.Gallery");
+			dir.mkdir(_globalSettings->getAppStoragePath() + QDir::separator() + "Joomla.Gallery");
 		}
 	
 	#ifdef WM_FULL_VERSION
-		if(!dir.exists(_globalSettings->getAppStoragePath() + "\\Vkontakte"))
+		if(!dir.exists(_globalSettings->getAppStoragePath() + QDir::separator() + "Vkontakte"))
 		{
-			dir.mkdir(_globalSettings->getAppStoragePath() + "\\Vkontakte");
+			dir.mkdir(_globalSettings->getAppStoragePath() + QDir::separator() + "Vkontakte");
 		}
-		if(!dir.exists(_globalSettings->getAppStoragePath() + "\\Yandex.Fotki"))
+		if(!dir.exists(_globalSettings->getAppStoragePath() + QDir::separator() + "Yandex.Fotki"))
 		{
-			dir.mkdir(_globalSettings->getAppStoragePath() + "\\Yandex.Fotki");
+			dir.mkdir(_globalSettings->getAppStoragePath() + QDir::separator() + "Yandex.Fotki");
 		}
 	#endif
 	
-		if(!dir.exists(_globalSettings->getAppStoragePath() + "\\Google.Docs"))
+		if(!dir.exists(_globalSettings->getAppStoragePath() + QDir::separator() + "Google.Docs"))
 		{
-			dir.mkdir(_globalSettings->getAppStoragePath() + "\\Google.Docs");
+			dir.mkdir(_globalSettings->getAppStoragePath() + QDir::separator() + "Google.Docs");
 		}
 
 		
