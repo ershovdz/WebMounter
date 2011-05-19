@@ -1,0 +1,4 @@
+/usr/bin/*
+usr/share/webmounter/webmounter_*.qm
+usr/share/applications/*
+usr/share/pixmaps/*
