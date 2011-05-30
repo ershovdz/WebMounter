@@ -55,7 +55,8 @@ unix {
 	lib.path = /usr/lib/pkgconfig
 
 	INSTALLS += sources \
-				qmfiles
+				qmfiles \
+				lib
 }
 
 INSTALLS += target

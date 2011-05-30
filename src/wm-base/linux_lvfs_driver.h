@@ -108,6 +108,7 @@ namespace LocalDriver
 			eNONE = 0,
 			eCreation
 		} _curOperation;
+		Ui::NotificationDevice* _notificationDevice;
 
 	public:
 		static LVFSDriver* createDriver(FileProxy*);
@@ -117,6 +118,7 @@ namespace LocalDriver
 		static void stopDriver();
 		int fuseMainCustom(int argc, char *argv[],
 		const struct fuse_operations *op, void *user_data);
+		static int fuseUmount();
 	};
 }
 #endif //LVFSDriver_H

@@ -31,7 +31,10 @@ namespace LocalDriver
 
 	LVFSDriver::~LVFSDriver(void)
 	{
+		_notificationDevice = NULL;
+		stopDriver();
 	}
+
 	LVFSDriver::LVFSDriver(FileProxy * pProxy)
 	{
 		_pFileProxy = pProxy;
@@ -42,7 +45,7 @@ namespace LocalDriver
 		if( !isRunning() )
 		{
 			_rootDirectory = generalSettings.appStoragePath;
-			_mountPoint = QDir::homePath() + QDir::separator() + QString::fromUtf8("fuse") + QDir::separator();
+			_mountPoint = QDir::homePath() + QDir::separator() + QString::fromUtf8("WebMounter") + QDir::separator();
 			QDir dir;
 			dir.mkpath(_mountPoint);
 
@@ -376,7 +379,7 @@ namespace LocalDriver
 	{
 		try
 		{
-			Ui::NotificationDevice* notificationDevice = Common::WebMounter::getNotificationDevice();
+			_notificationDevice = Common::WebMounter::getNotificationDevice();
 
 			int status;
 			unsigned long command;
@@ -415,6 +418,7 @@ namespace LocalDriver
 			_driverOperations.init = LVFSDriver::fuseInit;
 			_driverOperations.access = NULL;
 			_driverOperations.utimens = LVFSDriver::fuseUtimens;
+			_driverOperations.fgetattr = NULL;
 
 			int argc = 4;
 			printf("mount point =%s\n", _mountPoint.toUtf8().data());
@@ -427,15 +431,23 @@ namespace LocalDriver
 
 			emit mounted();
 
-			Notification msg(Notification::eINFO, tr("Info"), tr("Disk is mounted\n"));
-			notificationDevice->showNotification(msg);
+			if(_notificationDevice)
+			{
+				Notification msg(Notification::eINFO, tr("Info"), tr("Disk is mounted\n"));
+				_notificationDevice->showNotification(msg);
+			}
+
+			LVFSDriver::fuseUmount();
 
 			status = fuseMainCustom(argc, argv, &_driverOperations, NULL);
 
 			emit unmounted();
 
-			msg = Notification(Notification::eINFO, tr("Info"), tr("Disk is unmounted\n"));
-			notificationDevice->showNotification(msg);
+			if(_notificationDevice)
+			{
+				Notification msg(Notification::eINFO, tr("Info"), tr("Disk is unmounted\n"));
+				_notificationDevice->showNotification(msg);
+			}
 
 			delete[] mnt;
 			/*			switch (status)
@@ -522,9 +534,7 @@ namespace LocalDriver
 	{
 		if(_pDriverInstance->isRunning())
 		{
-			QString cmd("fusermount " + _mountPoint + " -u");
-			int err = system(cmd.toUtf8().data());
-			if(err)
+			if(LVFSDriver::fuseUmount())
 			{
 				Ui::Notification msg(Ui::Notification::eERROR, tr("Error"), tr("Device is busy. Can not be unmounted\n"));
 				Ui::NotificationDevice* notificationDevice = Common::WebMounter::getNotificationDevice();
@@ -554,6 +564,12 @@ namespace LocalDriver
 	{
 		strcpy(dest, _pDriverInstance->_root);
 		strncat(dest, path, PATH_MAX);
+	}
+
+	int LVFSDriver::fuseUmount()
+	{
+		QString cmd("fusermount " + _mountPoint + " -u");
+		return system(cmd.toUtf8().data());
 	}
 };
 

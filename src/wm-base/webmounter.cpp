@@ -35,6 +35,7 @@ WebMounter::WebMounter(void)
 WebMounter::~WebMounter(void)
 {
 	if(_vfsCache) delete _vfsCache; // to release DB connection
+	delete _lvfsDriver;
 }
 
 RemoteDriver::RVFSDriver* WebMounter::getPlugin(const QString& pluginName)
