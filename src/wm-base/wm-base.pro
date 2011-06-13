@@ -35,7 +35,9 @@ HEADERS_EXPORT += common_stuff.h \
 	rvfs_driver.h \
 	reg_exp.h \
 	plugin_interface.h \
-	notification_device.h
+	notification_device.h \
+	lvfs_driver.h \
+	file_proxy.h
 
 win32 {
 	HEADERS += win_lvfs_driver.h
