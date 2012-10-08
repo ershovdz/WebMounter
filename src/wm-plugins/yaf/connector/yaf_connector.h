@@ -21,7 +21,8 @@ namespace Connector
 			, const QString& password
 			, const QString& proxy
 			, const QString& proxyLoginPwd
-			, bool isOAuth);
+			, bool isOAuth
+			, const QString& token);
 		RESULT auth();
 		RESULT getTreeElements(const QString& path, QString& response);
 		RESULT downloadFile(const QString& url, const QString& path);

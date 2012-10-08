@@ -11,7 +11,7 @@ namespace Connector
 	using namespace Common;
 
 	// VkHTTPConnector
-	QString VkHTTPConnector::_appId = "2051542";
+	QString VkHTTPConnector::_appId = "2950346";
 
 	RESULT VkHTTPConnector::uploadFile(const QString& path, const QString& title, const QString& parentId, QString& response)
 	{
@@ -155,163 +155,38 @@ namespace Connector
 	void VkHTTPConnector::setSettings(const QString& login
 		, const QString& password
 		, const QString& proxy
-		, const QString& proxyLoginPwd)
+		, const QString& proxyLoginPwd
+		, bool isOAuth
+		, const QString& token)
 	{
 		_login = login;
 		_password = password;
 		_proxy = proxy;
 		_proxy_login_pwd = proxyLoginPwd;
-	}
-
-	RESULT VkHTTPConnector::auth()
-	{
-		return authStep1();
-	}
-
-	RESULT VkHTTPConnector::authStep1()
-	{
-		RESULT res = eERROR;
-
-		QString header = "";
-		QString post = QString::fromAscii("app=2051542&layout=popup&type=browser&settings=4");
-		QString response;
-		res = execQuery("http://vkontakte.ru/login.php", header, post, &response);
-
-		if(res == eNO_ERROR)
-		{
-			_hash = RegExp::getByPattern("name=\"app_hash\" value=\"(.*)\" />", response);
-
-			return authStep2();
-		}
-
-		return res;
-	}
-
-	RESULT VkHTTPConnector::authStep2()
-	{
-		RESULT res = eERROR;
-
-		QString header = "";
-		QString post = QString("app=2051542&app_hash=%1&vk=&email=%2&pass=%3").arg(_hash).arg(_login).arg(_password);
-		QString response;
-		res = execQuery("http://login.vk.com/?act=login", header, post, &response);
-
-		if(res == eNO_ERROR)
-		{
-			_s = RegExp::getByPattern("name=\'s\' value=\'(.*)\'", response);
-			_hash = RegExp::getByPattern("name=\"app_hash\" value=\"(.*)\"", response);
-			_id = RegExp::getByPattern("Set-Cookie: l=(.*); path", response);
-			_p = RegExp::getByPattern("Set-Cookie: p=(.*); path=", response);
-
-			if(_s == "" || _hash == "" || _id == "" || _p == "")
-				res = eERROR;
-			else
-				return authStep3();
-		}
-
-		return res;
-	}
-
-	RESULT VkHTTPConnector::authStep3()
-	{
-		RESULT res = eERROR;
-
-		QString header = "";
-		QString post = QString("s=%1&act=auth_result&m=4&permanent=1&expire=&app=2051542&app_hash=%2").arg(_s).arg(_hash);
-		QString response;
-		res = execQuery("http://vkontakte.ru/login.php", header, post, &response);
-
-		if(res == eNO_ERROR) 
-		{
-			return authStep4();
-		}
-
-		return res;
-	}
-
-	RESULT VkHTTPConnector::authStep4()
-	{
-		RESULT res = eERROR;
-
-		QString header = QString::fromAscii("Cookie: remixchk=5; remixsid=%1").arg(_s);
-		QString post;
-		QString response;
-		res = execQuery("http://vkontakte.ru/login.php?app=2051542&layout=popup&type=browser&settings=4", header, post, &response);
-		if(res == eNO_ERROR)
-		{
-			if(_responseCode == 302)
-			{
-				_session._mid = RegExp::getByPattern("%22mid%22%3A(.*)%2C%22sid%22", response);
-				_session._sid = RegExp::getByPattern("%22sid%22%3A%22(.*)%22%2C%22secret%22", response);
-				_session._secret = RegExp::getByPattern("%22secret%22%3A%22(.*)%22%2C%22expire%22", response);
-				_session._expire = RegExp::getByPattern("%22expire%22%3A(.*)%2C%22sig%22", response);
-			}
-			else if(_responseCode == 200)
-			{
-				_hash = RegExp::getByPattern("var auth_hash = \'(.*)\';", response);
-				_settings_hash = RegExp::getByPattern("var app_settings_hash = \'(.*)\';", response);
-				return authStep5();
-			}
-		}
-
-		return res;
-	}
-
-	RESULT VkHTTPConnector::authStep5()
-	{
-		RESULT res = eERROR;
-
-		QString header = QString::fromAscii("Cookie: s=1; l=%1; p=%2").arg(_id).arg(_p);
-		QString post = "";
-		QString response;
-		res = execQuery("http://login.vk.com/?vk=", header, post, &response);
-
-		if(res == eNO_ERROR)
-		{
-			_s = RegExp::getByPattern("id=\'s\' value=\'(.*)\'", response);
-
-			return authStep6();
-		}
-
-		return res;
-	}
-
-	RESULT VkHTTPConnector::authStep6()
-	{
-		RESULT res = eERROR;
-
-		QString header = QString::fromAscii("Cookie: remixchk=5; remixsid=%1").arg(_s);
-		QString post = QString::fromAscii("act=a_auth&app=2051542&hash=%1&permanent=1").arg(_hash);
-		QString response;
-		res = execQuery("http://vkontakte.ru/login.php", header, post, &response);
-
-		if(res == eNO_ERROR)
-		{
-			return authStep7();
-		}
-
-		return res;
-	}
-
-	RESULT VkHTTPConnector::authStep7()
-	{
-		RESULT res = eERROR;
-
-		QString header = QString::fromAscii("Cookie: remixchk=5; remixsid=%1").arg(_s);
-		QString post = QString::fromAscii("addMember=1&app_settings_4=1&hash=%1&id=2051542").arg(_settings_hash);
-		QString response;
-		res = execQuery("http://vkontakte.ru/apps.php?act=a_save_settings", header, post, &response);
-
-		if(res == eNO_ERROR)
-		{
-			// There will be captcha here in case account was not activated via SMS. Need to check
-			return authStep4();
-		}
-
-		return res;
+		_isOAuth = isOAuth;
+		_token = token;
 	}
 
 	QString VkHTTPConnector::genQuery(const QString &method, const QStringList &params)
+	{
+		QStringList paramsList;
+		//paramsList.append("api_id="+_appId);
+		//paramsList.append("/" + method);
+		paramsList.append("access_token=" + _token);
+//		paramsList.append("format=XML");
+		if (!params.isEmpty()) 
+		{
+			paramsList << params;
+		}
+		//paramsList.sort();
+
+		paramsList.replaceInStrings("&","%26");
+		paramsList.replaceInStrings("+","%2B");
+
+		return paramsList.join("&");
+	}
+
+/*	QString VkHTTPConnector::genQuery(const QString &method, const QStringList &params)
 	{
 		QStringList paramsList;
 		paramsList.append("api_id="+_appId);
@@ -338,6 +213,7 @@ namespace Connector
 
 		return paramsList.join("&");
 	}
+*/
 
 	RESULT VkHTTPConnector::execQuery(const QString &url, const QString &header, const QString &postFields, QString* response)
 	{
@@ -357,6 +233,8 @@ namespace Connector
 
 			curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(url));
 			curl_easy_setopt(p_curl, CURLOPT_VERBOSE, 1L);
+			curl_easy_setopt(p_curl, CURLOPT_SSL_VERIFYPEER, 0L);
+			curl_easy_setopt(p_curl, CURLOPT_SSL_VERIFYHOST, 0L);
 
 			struct curl_slist *chunk = NULL;
 			chunk = curl_slist_append(chunk, "Cache-Control: no-store, no-cache, must-revalidate");
@@ -378,6 +256,7 @@ namespace Connector
 			curl_easy_setopt(p_curl, CURLOPT_HEADERDATA, response);
 			curl_easy_setopt(p_curl, CURLOPT_WRITEFUNCTION, writeStr);
 			curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, response);
+			curl_easy_setopt(p_curl, CURLOPT_FOLLOWLOCATION, 1L);
 
 			CURLcode _error = curl_easy_perform(p_curl);
 			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &_responseCode);
@@ -392,7 +271,7 @@ namespace Connector
 		QStringList params;
 		QString query = genQuery("photos.getAlbums",params);
 
-		return execQuery("http://api.vkontakte.ru/api.php", "", query, &response);
+		return execQuery("https://api.vk.com/method/photos.getAlbums.xml", "", query, &response);
 	}
 
 	RESULT VkHTTPConnector::getPhotos(int offset, QString& response)
@@ -402,7 +281,7 @@ namespace Connector
 		params.append("count=100");
 		QString query = genQuery("photos.getAll",params);
 
-		return execQuery("http://api.vkontakte.ru/api.php", "", query, &response);
+		return execQuery("https://api.vk.com/method/photos.getAll.xml", "", query, &response);
 	}
 
 	RESULT VkHTTPConnector::downloadFile(const QString& url, const QString& path)

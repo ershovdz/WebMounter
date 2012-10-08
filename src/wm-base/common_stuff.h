@@ -3,7 +3,7 @@
 
 #include <qglobal.h>
 
-#define VERSION "ver 0.3.2"
+#define VERSION "0.3.2"
 
 #ifdef Q_OS_WIN
 #include <windows.h>

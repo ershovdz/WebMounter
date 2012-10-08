@@ -141,8 +141,8 @@ namespace Ui
 
 		_view->load(QUrl("https://oauth.yandex.ru/authorize?response_type=token&client_id=e56c86e3da064686bbac48edbfb00fae"));
 		_view->show();
-		if (!_oAuthTimer->isActive())
-			_oAuthTimer->start(20*1000);
+		//if (!_oAuthTimer->isActive())
+		//	_oAuthTimer->start(20*1000);
 	}
 
 	void YafOAuth::finished(RESULT error)

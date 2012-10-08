@@ -21,9 +21,9 @@ namespace Connector
 			, const QString& password 
 			, const QString& proxy = ""//"proxy.te.mera.ru:8080"
 			, const QString& proxyLoginPwd = ""//"login:password"
-			);
+			, bool isOAuth = true
+			, const QString& token = "");
 		RESULT downloadFiles(QList <QString>& urlList, QList <QString>& pathList);
-		RESULT auth();
 		RESULT getAlbums(QString& response);
 		RESULT getPhotos(int offset, QString& response);
 		RESULT uploadFile(const QString& path, const QString& title, const QString& parentId, QString& response);
@@ -33,15 +33,8 @@ namespace Connector
 		RESULT createDirectory(const QString& title, QString& response);
 		RESULT moveFile(const QString& id, const QString& oldParentId, const QString& newParentId);
 		RESULT renameAlbum(const QString& id, const QString& newTitle);
+		void setToken(const QString& token);
 	private:
-		RESULT authStep1();
-		RESULT authStep2();
-		RESULT authStep3();
-		RESULT authStep4();
-		RESULT authStep5();
-		RESULT authStep6();
-		RESULT authStep7();
-
 		QString genQuery(const QString &method, const QStringList &params);
 		RESULT execQuery(const QString &url, const QString &header, const QString &postFields, QString* response);
 
@@ -73,6 +66,8 @@ namespace Connector
 		QString _password;
 		QString _proxy;
 		QString _proxy_login_pwd;
+		bool _isOAuth;
+		QString _token;
 		QMutex _connectorMutex;
 
 		QString _id;

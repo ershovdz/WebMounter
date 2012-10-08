@@ -62,3 +62,7 @@ OBJECTS_DIR += ../build/bin
 
 RESOURCES += controlpanel.qrc
 INSTALLS += target
+# include autoupdater
+!include("./updater/Fervor.pri") {
+    error("Unable to include autoupdater.")
+}

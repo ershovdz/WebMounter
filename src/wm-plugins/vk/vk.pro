@@ -1,3 +1,4 @@
+QT += network webkit
 TEMPLATE        = lib
 CONFIG         += plugin
 
@@ -6,12 +7,14 @@ INCLUDEPATH     += ../../wm-base ../../wm-ui
 HEADERS         = vk_plugin.h \
 	./connector/vk_connector.h \
 	./driver/vk_driver.h \
-	./view/vk_view.h
+	./view/vk_view.h \
+	./view/vk_oauth.h
 
 SOURCES         = vk_plugin.cpp \
 	./connector/vk_connector.cpp \
 	./driver/vk_driver.cpp \
-	./view/vk_view.cpp
+	./view/vk_view.cpp \
+	./view/vk_oauth.cpp 
 
 win32 {
 	INCLUDEPATH += $(BOOST_DIR) $(LIBCURL_DIR)\include

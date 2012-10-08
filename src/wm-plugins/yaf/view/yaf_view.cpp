@@ -47,7 +47,7 @@ namespace Ui
 
 		PluginSettings pluginSettings; 
 		Common::WebMounter::getSettingStorage()->getData(pluginSettings, "Yandex.Fotki");
-		if(pluginSettings.isOAuthUsing && (state == RemoteDriver::eAuthInProgress) && progress == 0) // Started to authenticate
+		if(pluginSettings.isOAuthUsing && pluginSettings.oAuthToken == "" && (state == RemoteDriver::eAuthInProgress) && progress == 0) // Started to authenticate
 		{
 			_oauthObj->authenticate();
 		}
@@ -58,7 +58,8 @@ namespace Ui
 		PluginSettings pluginSettings; 
 		Common::WebMounter::getSettingStorage()->getData(pluginSettings, "Yandex.Fotki");
 		pluginSettings.userName = login;
+		pluginSettings.oAuthToken = token;
 
-		static_cast<YafRVFSDriver*>(_driver)->connectHandlerStage2(error, pluginSettings, token);
+		static_cast<YafRVFSDriver*>(_driver)->connectHandlerStage2(error, pluginSettings);
 	}
 }

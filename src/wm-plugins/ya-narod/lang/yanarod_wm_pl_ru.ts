@@ -4,49 +4,65 @@
 <context>
     <name>RemoteDriver::YafRVFSDriver</name>
     <message>
-        <location filename="../driver/yaf_driver.cpp" line="120"/>
-        <location filename="../driver/yaf_driver.cpp" line="125"/>
         <source>Info</source>
-        <translation>Информация</translation>
+        <translation type="obsolete">Информация</translation>
     </message>
     <message>
-        <location filename="../driver/yaf_driver.cpp" line="120"/>
         <source>This file extension is not supported !
 </source>
-        <translation>Данный тип файлов не поддерживается!</translation>
+        <translation type="obsolete">Данный тип файлов не поддерживается!</translation>
     </message>
     <message>
-        <location filename="../driver/yaf_driver.cpp" line="125"/>
         <source>This file will be changed locally!
 </source>
-        <translation>Файл будет изменен локально!</translation>
+        <translation type="obsolete">Файл будет изменен локально!</translation>
     </message>
     <message>
-        <location filename="../driver/yaf_driver.cpp" line="177"/>
-        <location filename="../driver/yaf_driver.cpp" line="808"/>
-        <location filename="../driver/yaf_driver.cpp" line="905"/>
-        <location filename="../driver/yaf_driver.cpp" line="940"/>
         <source>Error</source>
-        <translation>Ошибка</translation>
+        <translation type="obsolete">Ошибка</translation>
     </message>
     <message>
-        <location filename="../driver/yaf_driver.cpp" line="178"/>
         <source>File upload failed (</source>
-        <translation>Загрузка файла завершилась неудачей (</translation>
+        <translation type="obsolete">Загрузка файла завершилась неудачей (</translation>
     </message>
     <message>
-        <location filename="../driver/yaf_driver.cpp" line="808"/>
         <source>Sync failed !
 </source>
-        <translation>Синхронизация завершилась неудачей!</translation>
+        <translation type="obsolete">Синхронизация завершилась неудачей!</translation>
     </message>
     <message>
-        <location filename="../driver/yaf_driver.cpp" line="905"/>
-        <location filename="../driver/yaf_driver.cpp" line="940"/>
         <source>Authorization failed !
 Please check proxy settings on Configuration tab and check settings on corresponding plugin tab...
 </source>
-        <translation>Авторизация завершилась неудачей! Проверьте настройки прокси на вкладке &quot;Конфигурация&quot; и настройки плагина на соответствующей вкладке...</translation>
+        <translation type="obsolete">Авторизация завершилась неудачей! Проверьте настройки прокси на вкладке &quot;Конфигурация&quot; и настройки плагина на соответствующей вкладке...</translation>
+    </message>
+</context>
+<context>
+    <name>RemoteDriver::YandexNarodRVFSDriver</name>
+    <message>
+        <location filename="../driver/yandex_narod_driver.cpp" line="168"/>
+        <location filename="../driver/yandex_narod_driver.cpp" line="405"/>
+        <location filename="../driver/yandex_narod_driver.cpp" line="499"/>
+        <source>Error</source>
+        <translation type="unfinished">Ошибка</translation>
+    </message>
+    <message>
+        <location filename="../driver/yandex_narod_driver.cpp" line="169"/>
+        <source>File upload failed (</source>
+        <translation type="unfinished">Загрузка файла завершилась неудачей (</translation>
+    </message>
+    <message>
+        <location filename="../driver/yandex_narod_driver.cpp" line="405"/>
+        <source>Sync failed !
+</source>
+        <translation type="unfinished">Синхронизация завершилась неудачей!</translation>
+    </message>
+    <message>
+        <location filename="../driver/yandex_narod_driver.cpp" line="499"/>
+        <source>Authorization failed !
+Please check proxy settings on Configuration tab and check settings on corresponding plugin tab...
+</source>
+        <translation type="unfinished">Авторизация завершилась неудачей! Проверьте настройки прокси на вкладке &quot;Конфигурация&quot; и настройки плагина на соответствующей вкладке...</translation>
     </message>
 </context>
 <context>

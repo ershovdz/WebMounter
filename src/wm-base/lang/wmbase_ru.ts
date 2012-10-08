@@ -4,29 +4,24 @@
 <context>
     <name>LocalDriver::LVFSDriver</name>
     <message>
-        <location filename="../linux_lvfs_driver.cpp" line="430"/>
-        <location filename="../linux_lvfs_driver.cpp" line="437"/>
         <location filename="../win_lvfs_driver.cpp" line="1299"/>
         <location filename="../win_lvfs_driver.cpp" line="1354"/>
         <source>Info</source>
         <translation>Информация</translation>
     </message>
     <message>
-        <location filename="../linux_lvfs_driver.cpp" line="430"/>
         <location filename="../win_lvfs_driver.cpp" line="1299"/>
         <source>Disk is mounted
 </source>
         <translation>Диск смонтирован</translation>
     </message>
     <message>
-        <location filename="../linux_lvfs_driver.cpp" line="437"/>
         <location filename="../win_lvfs_driver.cpp" line="1354"/>
         <source>Disk is unmounted
 </source>
         <translation>Диск отмонтирован</translation>
     </message>
     <message>
-        <location filename="../linux_lvfs_driver.cpp" line="529"/>
         <location filename="../win_lvfs_driver.cpp" line="1311"/>
         <location filename="../win_lvfs_driver.cpp" line="1318"/>
         <location filename="../win_lvfs_driver.cpp" line="1326"/>
@@ -37,10 +32,9 @@
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../linux_lvfs_driver.cpp" line="529"/>
         <source>Device is busy. Can not be unmounted
 </source>
-        <translation>Устройство занято. Не может быть отмонтровано</translation>
+        <translation type="obsolete">Устройство занято. Не может быть отмонтровано</translation>
     </message>
     <message>
         <location filename="../win_lvfs_driver.cpp" line="1311"/>
@@ -82,6 +76,8 @@
 <context>
     <name>QObject</name>
     <message>
+        <location filename="../file_proxy.h" line="65"/>
+        <location filename="../file_proxy.h" line="91"/>
         <location filename="../file_proxy.cpp" line="83"/>
         <location filename="../file_proxy.cpp" line="198"/>
         <location filename="../file_proxy.cpp" line="242"/>
@@ -94,8 +90,6 @@
         <location filename="../file_proxy.cpp" line="500"/>
         <location filename="../file_proxy.cpp" line="506"/>
         <location filename="../file_proxy.cpp" line="514"/>
-        <location filename="../file_proxy.h" line="65"/>
-        <location filename="../file_proxy.h" line="91"/>
         <source>Info</source>
         <translation>Информация</translation>
     </message>
@@ -178,26 +172,47 @@ Plugin has to be in connected state.
 <context>
     <name>RVFSDriver</name>
     <message>
+        <source>Error</source>
+        <translation type="obsolete">Ошибка</translation>
+    </message>
+    <message>
+        <source>Downloading failed  !
+</source>
+        <translation type="obsolete">Скачивание завершилось неудачей!</translation>
+    </message>
+    <message>
+        <source>Info</source>
+        <translation type="obsolete">Информация</translation>
+    </message>
+    <message>
+        <source>Downloading is stopped !
+</source>
+        <translation type="obsolete">Скачивание остановлено!</translation>
+    </message>
+</context>
+<context>
+    <name>RemoteDriver::RVFSDriver</name>
+    <message>
         <location filename="../rvfs_driver.cpp" line="61"/>
         <source>Error</source>
-        <translation>Ошибка</translation>
+        <translation type="unfinished">Ошибка</translation>
     </message>
     <message>
         <location filename="../rvfs_driver.cpp" line="61"/>
         <source>Downloading failed  !
 </source>
-        <translation>Скачивание завершилось неудачей!</translation>
+        <translation type="unfinished">Скачивание завершилось неудачей!</translation>
     </message>
     <message>
         <location filename="../rvfs_driver.cpp" line="203"/>
         <source>Info</source>
-        <translation>Информация</translation>
+        <translation type="unfinished">Информация</translation>
     </message>
     <message>
         <location filename="../rvfs_driver.cpp" line="203"/>
         <source>Downloading is stopped !
 </source>
-        <translation>Скачивание остановлено!</translation>
+        <translation type="unfinished">Скачивание остановлено!</translation>
     </message>
 </context>
 </TS>

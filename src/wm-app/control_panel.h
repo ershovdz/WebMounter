@@ -1,24 +1,22 @@
 #ifndef CONTROLPANEL_H
 #define CONTROLPANEL_H
 
-#include <QtGui/QMainWindow>
-//#include "ui_webdisk.h"
-
 #include "tray_notification_device.h"
+#include "plugin_view.h"
 
+#include <QtGui/QMainWindow>
 #include <QSystemTrayIcon>
 #include <QDialog>
 #include <QTranslator>
-
 #include <QtGui>
 
-
-#include "plugin_view.h"
+class FvAvailableUpdate;
 
 namespace Ui
 {
 	class GeneralView;
-	
+	class FvUpdateWindow;
+
 	class ControlPanel : public QDialog
 	{
 		Q_OBJECT
@@ -39,13 +37,13 @@ namespace Ui
 			void showTrayMsg(int, const QString&, const QString&);
 			void changeLanguage(const QString&);
 
-		//public slots:
+			//public slots:
 			virtual void showNotification(const Notification& msg);
 
-		private slots:
-			void setIcon(int index);
-			void iconActivated(QSystemTrayIcon::ActivationReason reason);
-			void messageClicked();
+			private slots:
+				void setIcon(int index);
+				void iconActivated(QSystemTrayIcon::ActivationReason reason);
+				void messageClicked();
 
 	private:
 		void recreateAllWidgets();
@@ -57,22 +55,17 @@ namespace Ui
 
 		static QString translationDir();
 		void initializeTranslators(const QString& locale);
+		void createIcons();
+		void initUpdater();
+		void createUpdateWindow();
+
 	private:
-
-		//QGroupBox *iconGroupBox;
-		// QLabel *iconLabel;
-		//QComboBox *iconComboBox;
-		//QCheckBox *showIconCheckBox;
-
 		GeneralView*  _generalView;
 		QList<PluginView*> _pluginViewList;
-
 		QVBoxLayout *_mainLayout;
-		QHBoxLayout *_buttonsLayout;
+		QBoxLayout *_buttonsLayout;
 		QHBoxLayout *_horizontalLayout;
-		QPushButton *_closeButton;
-		QTranslator _translator;
-		QList<QTranslator*> _pluginTransList;
+		QList<QTranslator*> _transList;
 		QGroupBox *messageGroupBox;
 		QLabel *typeLabel;
 		QLabel *durationLabel;
@@ -85,32 +78,31 @@ namespace Ui
 		QTextEdit *bodyEdit;
 		QPushButton *showMessageButton;
 		QPushButton *showMessageButton2;
-
-		//QAction *_minimizeAction;
-		//QAction *_maximizeAction;
+		QListWidget *_contentsWidget;
+		QStackedWidget *_pagesWidget;
 		QAction *_restoreAction;
 		QAction *_quitAction;
-
 		QSystemTrayIcon *trayIcon;
-
 		QMenu *trayIconMenu;
 
 		QList<QListWidgetItem*> _pluginButtonsList;
 		QListWidgetItem *_configButton;
-
 		bool _bShowOnCloseMessage;
-
 		TrayNotificationDevice* _pNotificationDevice;
+		QLabel* _version;
+		QPushButton* _checkUpdateButton;
+		FvUpdateWindow* _updateWindow;
+		QLabel* _checkUpdateResultLabel;
 
 		public slots:
 			void changePage(QListWidgetItem *current, QListWidgetItem *previous);
 
-	private:
-		void createIcons();
-
-		QListWidget *_contentsWidget;
-		QStackedWidget *_pagesWidget;
-
+			private slots:
+				void onUpdateClicked();
+				void onUpdates(FvAvailableUpdate* update);
+				void onNoUpdates();
+				void onHideCheckingResult();
+				void onCloseApp(QString);
 	};
 }
 

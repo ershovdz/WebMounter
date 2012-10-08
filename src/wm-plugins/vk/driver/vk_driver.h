@@ -21,10 +21,11 @@ namespace RemoteDriver
 	public:
 		VkRVFSDriver(const QString& pluginName);
 		virtual ~VkRVFSDriver(void);
+		void connectHandlerStage2(RESULT error, PluginSettings pluginSettings);
 	
 	public:
 		virtual RESULT downloadFiles() {return RVFSDriver::downloadFiles();};
-                virtual void updateDownloadStatus(RESULT downloadResult, const unsigned int uDownloaded, const unsigned int uNotDownloaded);
+		virtual void updateDownloadStatus(RESULT downloadResult, const unsigned int uDownloaded, const unsigned int uNotDownloaded);
 		virtual RESULT downloadFiles(QList <QString>& urlList, QList <QString>& pathList);
 		virtual RESULT uploadFile(const QString& path, const QString& title,  const QString& id, const QString& parentId);
 		virtual RESULT modifyFile(const QString&);
@@ -50,7 +51,6 @@ namespace RemoteDriver
 		virtual void disconnectHandler();
 		virtual void syncHandler();
 		virtual void stopSyncHandler();
-		virtual RESULT checkKey(const PluginSettings& pluginSettings);
 
 		int findParentIndex(const QList<VFSElement>& elemList, const VFSElement& elem);
 		void markNameDuplicates(QList<VFSElement>& elemList);
@@ -62,7 +62,6 @@ namespace RemoteDriver
 		QWaitCondition _forceSync;
 		QMutex _syncMutex;
 		QMutex _driverMutex;
-		bool _isDemo;
 	};
 }
 

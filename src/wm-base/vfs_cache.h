@@ -13,7 +13,6 @@
 
 #include <QMutex>
 #include <QMutexLocker>
-
 #include "boost/shared_ptr.hpp"
 
 using Common::RESULT;

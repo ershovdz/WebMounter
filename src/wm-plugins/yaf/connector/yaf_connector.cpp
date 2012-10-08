@@ -70,13 +70,15 @@ namespace Connector
 		, const QString& password
 		, const QString& proxy
 		, const QString& proxyLoginPwd
-		, bool isOAuth)
+		, bool isOAuth
+		, const QString& token)
 	{
-		_login = login.left(login.lastIndexOf("@"));
+                _login = login;
 		_password = password;
 		_proxy = proxy;
 		_proxy_login_pwd = proxyLoginPwd;
 		_isOAuth = isOAuth;
+		_token = token;
 	}
 
 	int YafHTTPConnector::execQuery(const QString &url, const QString &header, const QString& postFields, QString* response)

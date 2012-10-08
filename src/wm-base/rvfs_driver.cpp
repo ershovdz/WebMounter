@@ -6,7 +6,7 @@
 using namespace RemoteDriver;
 using namespace Common;
 
-RESULT RVFSDriver::createFile(const QString& path, const QString& title,  const QString& id, const QString& parentId)
+RESULT RVFSDriver::createFile(const QString& /*path*/, const QString& /*title*/,  const QString& /*id*/, const QString& /*parentId*/)
 {
 	return eNO_ERROR;
 }

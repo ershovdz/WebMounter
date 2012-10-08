@@ -88,6 +88,7 @@ namespace Data
 		_settings.setValue("lastSync", settings.lastSync);
 		_settings.setValue("key", settings.key);
 		_settings.setValue("isOAuthUsing", settings.isOAuthUsing);
+		_settings.setValue("oAuthToken", settings.oAuthToken);
 		_settings.endGroup();
 	}
 
@@ -130,6 +131,7 @@ namespace Data
 		settings.bAutoSync  = _settings.value("autoSync", false).toBool();
 		settings.syncPeriod = _settings.value("syncPeriod", "86400").toString();
 		settings.isOAuthUsing = _settings.value("isOAuthUsing", false).toBool();
+		settings.oAuthToken = _settings.value("oAuthToken", "").toString();
 
 		if(!settings.bAutoSync)
 		{
@@ -137,7 +139,7 @@ namespace Data
 		}
 		settings.lastSync   = _settings.value("lastSync", "").toString();
 		settings.key		= _settings.value("key", "").toString();
-
+		
 		_settings.endGroup();
 	}
 };

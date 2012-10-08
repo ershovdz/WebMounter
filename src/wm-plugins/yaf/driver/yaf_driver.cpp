@@ -72,7 +72,7 @@ namespace RemoteDriver
 		RESULT res = _httpConnector->downloadFiles(urlList, pathList);
 		if(res == eERROR)
 		{
-                        unsigned int retryDownloadCounter = 0;
+			unsigned int retryDownloadCounter = 0;
 			while(res == eERROR && retryDownloadCounter < MAX_DOWNLOAD_RETRY)
 			{
 				res = _httpConnector->downloadFiles(urlList, pathList);
@@ -880,6 +880,7 @@ namespace RemoteDriver
  				, generalSettings.proxyAddress
  				, generalSettings.proxyLogin + ":" + generalSettings.proxyPassword
  				, pluginSettings.isOAuthUsing
+				, pluginSettings.oAuthToken
  				);
 
 			if(_state != eSyncStopping)
@@ -887,29 +888,20 @@ namespace RemoteDriver
 				updateState(0, eAuthInProgress);
 			}
 
-			if(!pluginSettings.isOAuthUsing)
+			if(pluginSettings.isOAuthUsing && pluginSettings.oAuthToken != "")
 			{
- 				if(_httpConnector->auth() == eNO_ERROR)
- 				{
- 					if(_state != eSyncStopping)
- 					{
- 						updateState(100, eAuthorized);
- 					}
- 
- 					start(); // run sync thread
- 				}
- 				else
- 				{
- 					updateState(100, eNotConnected);
- 
- 					notifyUser(Ui::Notification::eCRITICAL, tr("Error"), tr("Authorization failed !\n"
- 						"Please check proxy settings on Configuration tab and check settings on corresponding plugin tab...\n"));
- 				}
-			}		
+				updateState(100, eAuthorized);
+
+				start(); // run sync thread				
+			}
+			else
+			{
+				updateState(0, eAuthInProgress);
+			}
 		}
 	}
 
-	void YafRVFSDriver::connectHandlerStage2(RESULT error, PluginSettings pluginSettings, const QString& token)
+	void YafRVFSDriver::connectHandlerStage2(RESULT error, PluginSettings pluginSettings)
 	{
 		if(error == eNO_ERROR && _state == eAuthInProgress)
 		{
@@ -924,8 +916,8 @@ namespace RemoteDriver
  				, generalSettings.proxyAddress
  				, generalSettings.proxyLogin + ":" + generalSettings.proxyPassword
  				, pluginSettings.isOAuthUsing
+				, pluginSettings.oAuthToken
  				);
- 			_httpConnector->setToken(token);
 			if(_state != eSyncStopping)
 			{
 				updateState(100, eAuthorized);

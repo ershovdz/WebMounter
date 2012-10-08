@@ -20,7 +20,7 @@ namespace RemoteDriver
 	public:
 		YafRVFSDriver(const QString& pluginName);
 		virtual ~YafRVFSDriver(void);
-		void connectHandlerStage2(RESULT error, PluginSettings pluginSettings, const QString& token);
+		void connectHandlerStage2(RESULT error, PluginSettings pluginSettings);
 	
 	public:
 		virtual RESULT downloadFiles() {return RVFSDriver::downloadFiles();};

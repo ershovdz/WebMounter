@@ -4,116 +4,116 @@
 <context>
     <name>Ui::GeneralView</name>
     <message>
-        <location filename="../general_view.cpp" line="18"/>
-        <location filename="../general_view.cpp" line="205"/>
+        <location filename="../general_view.cpp" line="21"/>
+        <location filename="../general_view.cpp" line="212"/>
         <source>Language:</source>
         <translation>Язык:</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="21"/>
-        <location filename="../general_view.cpp" line="210"/>
+        <location filename="../general_view.cpp" line="24"/>
+        <location filename="../general_view.cpp" line="217"/>
         <source>English</source>
         <translation>Английский</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="22"/>
-        <location filename="../general_view.cpp" line="211"/>
+        <location filename="../general_view.cpp" line="25"/>
+        <location filename="../general_view.cpp" line="218"/>
         <source>Russian</source>
         <translation>Русский</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="28"/>
-        <location filename="../general_view.cpp" line="216"/>
+        <location filename="../general_view.cpp" line="31"/>
+        <location filename="../general_view.cpp" line="223"/>
         <source>Cache Directory:</source>
         <translation>Директория кэша:</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="29"/>
-        <location filename="../general_view.cpp" line="217"/>
+        <location filename="../general_view.cpp" line="32"/>
+        <location filename="../general_view.cpp" line="224"/>
         <source>&amp;Browse...</source>
         <translation>&amp;Выбрать...</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="41"/>
-        <location filename="../general_view.cpp" line="220"/>
+        <location filename="../general_view.cpp" line="44"/>
+        <location filename="../general_view.cpp" line="227"/>
         <source>Drive:</source>
         <translation>Диск:</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="44"/>
-        <location filename="../general_view.cpp" line="222"/>
+        <location filename="../general_view.cpp" line="47"/>
+        <location filename="../general_view.cpp" line="229"/>
         <source>Accept settings</source>
         <translation>Применить настройки</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="47"/>
-        <location filename="../general_view.cpp" line="225"/>
+        <location filename="../general_view.cpp" line="50"/>
+        <location filename="../general_view.cpp" line="232"/>
         <source>Proxy address:port (e.g. myproxy.ru:8080):</source>
         <translation>Адрес прокси:порт (например myproxy.ru:8080):</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="51"/>
-        <location filename="../general_view.cpp" line="226"/>
+        <location filename="../general_view.cpp" line="54"/>
+        <location filename="../general_view.cpp" line="233"/>
         <source>Proxy login:</source>
         <translation>Логин для прокси:</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="55"/>
-        <location filename="../general_view.cpp" line="227"/>
+        <location filename="../general_view.cpp" line="58"/>
+        <location filename="../general_view.cpp" line="234"/>
         <source>Password:</source>
         <translation>Пароль:</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="60"/>
-        <location filename="../general_view.cpp" line="229"/>
+        <location filename="../general_view.cpp" line="63"/>
+        <location filename="../general_view.cpp" line="236"/>
         <source>Proxy Configuration</source>
         <translation>Настройки прокси</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="71"/>
-        <location filename="../general_view.cpp" line="232"/>
+        <location filename="../general_view.cpp" line="74"/>
+        <location filename="../general_view.cpp" line="239"/>
         <source>Misc Settings</source>
         <translation>Разное</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="87"/>
-        <location filename="../general_view.cpp" line="236"/>
+        <location filename="../general_view.cpp" line="90"/>
+        <location filename="../general_view.cpp" line="243"/>
         <source>Status</source>
         <translation>Статус</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="89"/>
-        <location filename="../general_view.cpp" line="237"/>
+        <location filename="../general_view.cpp" line="92"/>
+        <location filename="../general_view.cpp" line="244"/>
         <source>Disk status:</source>
         <translation>Статус диска:</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="90"/>
-        <location filename="../general_view.cpp" line="173"/>
-        <location filename="../general_view.cpp" line="245"/>
+        <location filename="../general_view.cpp" line="93"/>
+        <location filename="../general_view.cpp" line="176"/>
+        <location filename="../general_view.cpp" line="252"/>
         <source>&lt;font color=&quot;red&quot;&gt;&lt;b&gt;Unmounted&lt;/b&gt;&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;red&quot;&gt;&lt;b&gt;Отмонтирован&lt;/b&gt;&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="98"/>
-        <location filename="../general_view.cpp" line="233"/>
+        <location filename="../general_view.cpp" line="101"/>
+        <location filename="../general_view.cpp" line="240"/>
         <source>Mount Disk</source>
         <translation>Смонтировать диск</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="99"/>
-        <location filename="../general_view.cpp" line="234"/>
+        <location filename="../general_view.cpp" line="102"/>
+        <location filename="../general_view.cpp" line="241"/>
         <source>Unmount Disk</source>
         <translation>Отмонтировать диск</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="167"/>
-        <location filename="../general_view.cpp" line="241"/>
+        <location filename="../general_view.cpp" line="170"/>
+        <location filename="../general_view.cpp" line="248"/>
         <source>&lt;font color=&quot;green&quot;&gt;&lt;b&gt;Mounted&lt;/b&gt;&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;green&quot;&gt;&lt;b&gt;Смонтирован&lt;/b&gt;&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="192"/>
+        <location filename="../general_view.cpp" line="195"/>
         <source>Find Files</source>
         <translation>Найти папку</translation>
     </message>
@@ -327,65 +327,65 @@
     </message>
     <message>
         <location filename="../plugin_view.cpp" line="306"/>
-        <location filename="../plugin_view.cpp" line="520"/>
+        <location filename="../plugin_view.cpp" line="519"/>
         <source>&lt;font color=&quot;green&quot;&gt;Authorized&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;green&quot;&gt;Авторизован&lt;/font&gt;</translation>
     </message>
     <message>
         <location filename="../plugin_view.cpp" line="311"/>
-        <location filename="../plugin_view.cpp" line="534"/>
+        <location filename="../plugin_view.cpp" line="532"/>
         <source>&lt;font color=&quot;green&quot;&gt;Connected&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;green&quot;&gt;Включен&lt;/font&gt;</translation>
     </message>
     <message>
         <location filename="../plugin_view.cpp" line="316"/>
-        <location filename="../plugin_view.cpp" line="566"/>
+        <location filename="../plugin_view.cpp" line="564"/>
         <source>&lt;font color=&quot;red&quot;&gt;Not Connected&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;red&quot;&gt;Выключен&lt;/font&gt;</translation>
     </message>
     <message>
         <location filename="../plugin_view.cpp" line="321"/>
-        <location filename="../plugin_view.cpp" line="580"/>
+        <location filename="../plugin_view.cpp" line="578"/>
         <source>&lt;font color=&quot;green&quot;&gt;Sync stopping...&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;green&quot;&gt;Остановка синхронизации...&lt;/font&gt;</translation>
     </message>
     <message>
         <location filename="../plugin_view.cpp" line="326"/>
         <location filename="../plugin_view.cpp" line="366"/>
-        <location filename="../plugin_view.cpp" line="594"/>
+        <location filename="../plugin_view.cpp" line="592"/>
         <source>&lt;font color=&quot;green&quot;&gt;Synchronization...&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;green&quot;&gt;Синхронизация...&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="400"/>
-        <location filename="../plugin_view.cpp" line="406"/>
-        <location filename="../plugin_view.cpp" line="412"/>
-        <location filename="../plugin_view.cpp" line="605"/>
+        <location filename="../plugin_view.cpp" line="401"/>
+        <location filename="../plugin_view.cpp" line="407"/>
+        <location filename="../plugin_view.cpp" line="413"/>
+        <location filename="../plugin_view.cpp" line="603"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="401"/>
+        <location filename="../plugin_view.cpp" line="402"/>
         <source>Enter server address</source>
         <translation>Введите адрес сервера</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="407"/>
+        <location filename="../plugin_view.cpp" line="408"/>
         <source>Enter login</source>
         <translation>Введите логин</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="413"/>
+        <location filename="../plugin_view.cpp" line="414"/>
         <source>Enter password</source>
         <translation>Введите пароль</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="441"/>
+        <location filename="../plugin_view.cpp" line="442"/>
         <source>&lt;font color=&quot;green&quot;&gt;Connecting...&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;green&quot;&gt;Соединение...&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="606"/>
+        <location filename="../plugin_view.cpp" line="604"/>
         <source>Enter activation key</source>
         <translation>Введите ключ активации</translation>
     </message>

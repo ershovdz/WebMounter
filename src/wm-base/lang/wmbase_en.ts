@@ -4,29 +4,24 @@
 <context>
     <name>LocalDriver::LVFSDriver</name>
     <message>
-        <location filename="../linux_lvfs_driver.cpp" line="430"/>
-        <location filename="../linux_lvfs_driver.cpp" line="437"/>
         <location filename="../win_lvfs_driver.cpp" line="1299"/>
         <location filename="../win_lvfs_driver.cpp" line="1354"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../linux_lvfs_driver.cpp" line="430"/>
         <location filename="../win_lvfs_driver.cpp" line="1299"/>
         <source>Disk is mounted
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../linux_lvfs_driver.cpp" line="437"/>
         <location filename="../win_lvfs_driver.cpp" line="1354"/>
         <source>Disk is unmounted
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../linux_lvfs_driver.cpp" line="529"/>
         <location filename="../win_lvfs_driver.cpp" line="1311"/>
         <location filename="../win_lvfs_driver.cpp" line="1318"/>
         <location filename="../win_lvfs_driver.cpp" line="1326"/>
@@ -34,12 +29,6 @@
         <location filename="../win_lvfs_driver.cpp" line="1340"/>
         <location filename="../win_lvfs_driver.cpp" line="1361"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../linux_lvfs_driver.cpp" line="529"/>
-        <source>Device is busy. Can not be unmounted
-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -82,6 +71,8 @@
 <context>
     <name>QObject</name>
     <message>
+        <location filename="../file_proxy.h" line="65"/>
+        <location filename="../file_proxy.h" line="91"/>
         <location filename="../file_proxy.cpp" line="83"/>
         <location filename="../file_proxy.cpp" line="198"/>
         <location filename="../file_proxy.cpp" line="242"/>
@@ -94,8 +85,6 @@
         <location filename="../file_proxy.cpp" line="500"/>
         <location filename="../file_proxy.cpp" line="506"/>
         <location filename="../file_proxy.cpp" line="514"/>
-        <location filename="../file_proxy.h" line="65"/>
-        <location filename="../file_proxy.h" line="91"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
@@ -176,7 +165,7 @@ Plugin has to be in connected state.
     </message>
 </context>
 <context>
-    <name>RVFSDriver</name>
+    <name>RemoteDriver::RVFSDriver</name>
     <message>
         <location filename="../rvfs_driver.cpp" line="61"/>
         <source>Error</source>

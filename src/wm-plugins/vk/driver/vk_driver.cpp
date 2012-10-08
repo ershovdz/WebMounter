@@ -7,7 +7,7 @@ namespace RemoteDriver
 	using namespace Common;
 	using namespace Connector;
 
-	VkRVFSDriver::VkRVFSDriver(const QString& pluginName) : _isDemo(true)
+	VkRVFSDriver::VkRVFSDriver(const QString& pluginName)
 	{
 		_state = RemoteDriver::eNotConnected;
 		_httpConnector = new VkHTTPConnector();
@@ -21,56 +21,6 @@ namespace RemoteDriver
 			//syncCacheWithFileSystem(fInfo.absoluteFilePath());
 		}
 	}
-
-	/*void VkRVFSDriver::syncCacheWithFileSystem(const QString& path)
-	{
-		VFSCache* vfsCache = WebMounter::getCache();
-
-		QDir dir(path);
-		QStringList lstDirs = dir.entryList(QDir::Dirs | QDir::AllDirs | QDir::NoDotAndDotDot);
-		QStringList lstFiles = dir.entryList(QDir::Files);
-
-		foreach (QString entry, lstFiles)
-		{
-			QString entryAbsPath = dir.absolutePath() + "/" + entry;
-			if(vfsCache->find(entryAbsPath) == vfsCache->end())
-			{
-				QFile::remove(entryAbsPath);
-			}
-		}
-
-		foreach (QString entry, lstDirs)
-		{
-			QString entryAbsPath = dir.absolutePath() + "/" + entry;
-
-			if(vfsCache->find(entryAbsPath) == vfsCache->end())
-			{
-				removeFolder(QDir(entryAbsPath));
-			}
-			else
-			{
-				syncCacheWithFileSystem(entryAbsPath);
-			}
-		}
-
-		for(VFSCache::iterator iter = vfsCache->begin(); iter != vfsCache->end(); ++iter)
-		{
-			if(iter->getType() == VFSElement::DIRECTORY)
-			{
-				if(!dir.exists(iter->getPath())) 
-					dir.mkdir(iter->getPath());
-			}
-			else if(iter->getType() == VFSElement::FILE)
-			{
-				if(!QFile::exists(iter->getPath()))
-				{
-					QFile file(iter->getPath());
-					file.open(QIODevice::WriteOnly);
-					file.close();
-				}
-			}
-		}
-	}*/
 
 	VkRVFSDriver::~VkRVFSDriver(void)
 	{
@@ -121,7 +71,7 @@ namespace RemoteDriver
 		RESULT res = _httpConnector->downloadFiles(urlList, pathList);
 		if(res == eERROR)
 		{
-                        unsigned int retryDownloadCounter = 0;
+			unsigned int retryDownloadCounter = 0;
 			while(res == eERROR && retryDownloadCounter < MAX_DOWNLOAD_RETRY)
 			{
 				res = _httpConnector->downloadFiles(urlList, pathList);
@@ -179,19 +129,16 @@ namespace RemoteDriver
 			return eNO_ERROR;
 		}
 
-		if(_isDemo)
+		VFSCache::iterator iter = WebMounter::getCache()->begin();
+		for(iter; iter != WebMounter::getCache()->end(); ++iter)
 		{
-			VFSCache::iterator iter = WebMounter::getCache()->begin();
-			for(iter; iter != WebMounter::getCache()->end(); ++iter)
+			if((iter->getPluginName() == _pluginName)
+				&&(iter->getFlags()&VFSElement::eFl_SelfMade)
+				&&(iter->getType() == VFSElement::FILE)
+				&&(iter->getParentId() == parentId)
+				)
 			{
-				if((iter->getPluginName() == _pluginName)
-					&&(iter->getFlags()&VFSElement::eFl_SelfMade)
-					&&(iter->getType() == VFSElement::FILE)
-					&&(iter->getParentId() == parentId)
-					)
-				{
-					count++;
-				}
+				count++;
 			}
 		}
 
@@ -392,49 +339,39 @@ namespace RemoteDriver
 	{
 		RESULT res = eERROR;
 		int count = 0;
-		if(_isDemo)
+		VFSCache::iterator iter = WebMounter::getCache()->begin();
+		for(iter; iter != WebMounter::getCache()->end(); ++iter)
 		{
-			VFSCache::iterator iter = WebMounter::getCache()->begin();
-			for(iter; iter != WebMounter::getCache()->end(); ++iter)
+			if((iter->getPluginName() == _pluginName)
+				&&(iter->getFlags()&VFSElement::eFl_SelfMade)
+				&&(iter->getType() == VFSElement::DIRECTORY))
 			{
-				if((iter->getPluginName() == _pluginName)
-					&&(iter->getFlags()&VFSElement::eFl_SelfMade)
-					&&(iter->getType() == VFSElement::DIRECTORY))
-				{
-					count++;
-				}
+				count++;
 			}
 		}
 
-		if(count < DEMO_ALBUMS_LIMIT)
+		if(parentId != ROOT_ID)
 		{
-			if(parentId != ROOT_ID)
-			{
-				return eERROR; // Creation of sub-albums is not supported
-			}
-
-			QString xmlResp;
-			res = _httpConnector->createDirectory(title, xmlResp);
-			if(!res)
-			{
-				VFSCache* vfsCache = WebMounter::getCache();
-				VFSElement elem;
-				parseAlbumEntry(xmlResp, elem);
-				elem.setParentId(ROOT_ID);
-
-				QString pluginStoragePath = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator()) + _pluginName;
-				QString path = pluginStoragePath + QString(QDir::separator()) + elem.getName();
-				QFileInfo fInfo(path);
-				elem.setPath(fInfo.absoluteFilePath());
-
-				elem.setFlags(VFSElement::eFl_SelfMade);
-
-				vfsCache->insert(elem);
-			}
+			return eERROR; // Creation of sub-albums is not supported
 		}
-		else
+
+		QString xmlResp;
+		res = _httpConnector->createDirectory(title, xmlResp);
+		if(!res)
 		{
-			notifyUser(Ui::Notification::eCRITICAL, RemoteDriver::VkRVFSDriver::tr("Error"),RemoteDriver::VkRVFSDriver::tr("Creation limit is reached! \nActivation key required.\n"));
+			VFSCache* vfsCache = WebMounter::getCache();
+			VFSElement elem;
+			parseAlbumEntry(xmlResp, elem);
+			elem.setParentId(ROOT_ID);
+
+			QString pluginStoragePath = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator()) + _pluginName;
+			QString path = pluginStoragePath + QString(QDir::separator()) + elem.getName();
+			QFileInfo fInfo(path);
+			elem.setPath(fInfo.absoluteFilePath());
+
+			elem.setFlags(VFSElement::eFl_SelfMade);
+
+			vfsCache->insert(elem);
 		}
 
 		return res;
@@ -665,6 +602,8 @@ namespace RemoteDriver
 		QString pluginStoragePath = settings->getAppStoragePath() + QString(QDir::separator()) + _pluginName;
 		QFileInfo fInfo(pluginStoragePath);
                 unsigned int uNotDownloaded = 0;
+		PluginSettings plSettings;
+		settings->getData(plSettings, _pluginName);
 
 		_driverMutex.lock();
 		if(_state != eSyncStopping)
@@ -751,13 +690,10 @@ namespace RemoteDriver
 					}
 				}
 
-				if(!_isDemo) 
-				{   // In demo mode there is no way to create elements outside the WebMounter 
-					// Add newly created elements
-					for(int i=0; i<elements.count(); i++)
-					{
-						vfsCache->insert(elements[i]);
-					}
+				// Add newly created elements
+				for(int i=0; i<elements.count(); i++)
+				{
+					vfsCache->insert(elements[i]);
 				}
 
 				QString rootPath = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator()) + _pluginName;
@@ -834,67 +770,6 @@ namespace RemoteDriver
 		}
 	}
 
-	//RESULT VkRVFSDriver::downloadFiles()
-	//{
-	//	QList <QString> urlToDownload;
-	//	QList <QString> pathToDownload;
-	//	VFSCache* vfsCache = WebMounter::getCache();
-	//	VFSCache::iterator iter = vfsCache->begin();
-	//	UINT uNotDownloaded = countNotDownloaded();
-	//	UINT uDownloaded = 0;
-	//	RESULT err = eERROR;
-	//	for(iter = vfsCache->begin(); iter != vfsCache->end(); ++iter)
-	//	{
-	//		if(this->_state == eSyncStopping)
-	//		{
-	//			notifyUser(Ui::Notification::eINFO, tr("Info"), tr("Synchronization is stopped !\n"));
-	//			//updateState(100, RemoteDriver::eConnected);
-	//			return eNO_ERROR;
-	//		}
-
-	//		if(iter->getPluginName() == _pluginName)
-	//		{
-	//			if(iter->getType() == VFSElement::FILE && !iter->isDownloaded())
-	//			{
-	//				QFile::remove(iter->getPath());
-
-	//				urlToDownload.append(iter->getSrcUrl());
-	//				pathToDownload.append(iter->getPath());
-
-	//				if(urlToDownload.size() == DOWNLOAD_CHUNK_SIZE)
-	//				{
-	//					err = downloadFiles(urlToDownload, pathToDownload);
-	//					UINT retryDownloadCounter = 0;
-	//					while(err == eERROR && retryDownloadCounter < MAX_DOWNLOAD_RETRY)
-	//					{
-	//						err = downloadFiles(urlToDownload, pathToDownload);
-	//						retryDownloadCounter++;
-	//					}
-
-	//					if(err)
-	//					{
-	//						updateDownloadStatus(err, uDownloaded, uNotDownloaded);
-	//						return err;
-	//					}
-	//					else
-	//					{
-	//						uDownloaded += urlToDownload.size();
-	//						updateDownloadStatus(err, uDownloaded, uNotDownloaded);
-	//						urlToDownload.clear();
-	//						pathToDownload.clear();
-	//					}
-	//				}
-	//			}
-	//		}
-	//	}
-
-	//	if(urlToDownload.size() > 0)
-	//	{
-	//		return downloadFiles(urlToDownload, pathToDownload);
-	//	}
-
-	//	return err;
-	//}
 
         void VkRVFSDriver::updateDownloadStatus(RESULT downloadResult, const unsigned int uDownloaded, const unsigned int uNotDownloaded)
 	{
@@ -930,13 +805,13 @@ namespace RemoteDriver
 			WebMounter::getSettingStorage()->getData(generalSettings);
 			WebMounter::getSettingStorage()->addSettings(pluginSettings);
 
-			_isDemo = (checkKey(pluginSettings) == eERROR);
-
 			_httpConnector->setSettings(
 				pluginSettings.userName
 				, pluginSettings.userPassword
 				, generalSettings.proxyAddress
 				, generalSettings.proxyLogin + ":" + generalSettings.proxyPassword
+ 				, pluginSettings.isOAuthUsing
+				, pluginSettings.oAuthToken
 				);
 
 			if(_state != eSyncStopping)
@@ -944,23 +819,49 @@ namespace RemoteDriver
 				updateState(0, eAuthInProgress);
 			}
 
-			if(_httpConnector->auth() == eNO_ERROR)
+			if(pluginSettings.isOAuthUsing && pluginSettings.oAuthToken != "")
 			{
-				if(_state != eSyncStopping)
-				{
-					updateState(100, eAuthorized);
-				}
+				updateState(100, eAuthorized);
 
-				start(); // run sync thread
+				start(); // run sync thread				
 			}
 			else
 			{
-				//disconnectHandler();
-				updateState(100, eNotConnected);
-
-				notifyUser(Ui::Notification::eCRITICAL,  RemoteDriver::VkRVFSDriver::tr("Error"),  RemoteDriver::VkRVFSDriver::tr("Authorization failed !\n"
-					"Please check proxy settings on Configuration tab and check settings on corresponding plugin tab...\n"));
+				updateState(0, eAuthInProgress);
 			}
+		}
+	}
+
+	void VkRVFSDriver::connectHandlerStage2(RESULT error, PluginSettings pluginSettings)
+	{
+		if(error == eNO_ERROR && _state == eAuthInProgress)
+		{
+			GeneralSettings generalSettings; 
+
+			WebMounter::getSettingStorage()->getData(generalSettings);
+			WebMounter::getSettingStorage()->addSettings(pluginSettings);
+
+ 			_httpConnector->setSettings(
+ 				pluginSettings.userName
+ 				, pluginSettings.userPassword
+ 				, generalSettings.proxyAddress
+ 				, generalSettings.proxyLogin + ":" + generalSettings.proxyPassword
+ 				, pluginSettings.isOAuthUsing
+				, pluginSettings.oAuthToken
+ 				);
+			if(_state != eSyncStopping)
+			{
+				updateState(100, eAuthorized);
+			}
+
+			start(); // run sync thread
+		}
+		else
+		{
+			updateState(100, eNotConnected);
+
+			notifyUser(Ui::Notification::eCRITICAL, tr("Error"), tr("Authorization failed !\n"
+				"Please check proxy settings on Configuration tab and check settings on corresponding plugin tab...\n"));
 		}
 	}
 
@@ -1022,39 +923,6 @@ namespace RemoteDriver
 		}
 		updateState(100, eConnected);
 		start(); // start sync thread again
-	}
-
-	RESULT VkRVFSDriver::checkKey(const PluginSettings& pluginSettings)
-	{
-		QCryptographicHash md5Hash(QCryptographicHash::Md5);
-		QCryptographicHash sha1Hash(QCryptographicHash::Sha1);
-
-		QString url = pluginSettings.serverUrl;
-
-		// Let's clear an url
-		url = url.simplified();
-		url = url.toLower();
-		url.remove(QRegExp("http://"));
-
-		if(url.endsWith("/"))
-		{
-			url.chop(1);
-		}
-
-		md5Hash.addData(QByteArray(qPrintable(pluginSettings.userName + "Sasha198779_")));
-		sha1Hash.addData(md5Hash.result().toHex().data());
-
-		QString validKey(sha1Hash.result().toHex().data());
-		validKey = validKey.mid(0, 7);
-
-		if(validKey == pluginSettings.key)
-		{
-			return eNO_ERROR;
-		}
-		else
-		{
-			return eERROR;
-		}
 	}
 
 	QString VkRVFSDriver::addPathSuffix(ElementType type, const QString& path, const QString& suffix)

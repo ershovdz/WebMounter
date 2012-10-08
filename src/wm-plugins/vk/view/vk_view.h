@@ -5,18 +5,21 @@
 
 namespace Ui
 {
+	class VkOAuth;
+
 	class VkView : public PluginView
 	{
 		Q_OBJECT
 	public:
 		VkView(const Data::PluginSettings* settings, const QString& title);
-		virtual void changeLang();
 
 	public slots:
 		virtual void updateView(int progress, int state);
-
+		void oAuthFinished(RESULT error, const QString& login, const QString& token);
 	private:
 		virtual bool isKeyValueValid(const Data::PluginSettings& settings);
+	private:
+ 		VkOAuth* _oauthObj;
 	};
 }
 

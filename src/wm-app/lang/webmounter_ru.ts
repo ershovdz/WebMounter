@@ -1,36 +1,228 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="ru_RU" sourcelanguage="en">
+<TS version="2.0" language="ru_RU">
+<context>
+    <name>FvDownloadManager</name>
+    <message>
+        <location filename="../updater/fvdownloadmanager.cpp" line="22"/>
+        <source>Another download is in progress</source>
+        <translation type="unfinished">Другая загрузка в прогрессе</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvdownloadmanager.cpp" line="28"/>
+        <source>Empty url</source>
+        <translation type="unfinished">Пустой url</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvdownloadmanager.cpp" line="112"/>
+        <source>Couldn&apos;t save file %1</source>
+        <translation type="unfinished">Файл %1 не может быть сохранен</translation>
+    </message>
+</context>
+<context>
+    <name>FvUpdater</name>
+    <message>
+        <location filename="../updater/fvupdater.cpp" line="232"/>
+        <source>Feed download failed: %1.</source>
+        <translation>Загрузка фида %1 завершилась неудачно</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdater.cpp" line="359"/>
+        <source>Feed parsing failed: %1 %2.</source>
+        <translation>Разбор фида завершился неудачно: %1,%2</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdater.cpp" line="386"/>
+        <source>Feed error: &quot;release notes&quot; link is empty</source>
+        <translation>Ссылка на фид &quot;описание релиза&quot; пустая</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdater.cpp" line="395"/>
+        <source>Feed error: invalid &quot;release notes&quot; link</source>
+        <translation>Некорректная ссылка на фид &quot;описание релиза&quot;</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdater.cpp" line="399"/>
+        <source>Feed error: invalid &quot;enclosure&quot; with the download link</source>
+        <translation>Некорректное расширение</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdater.cpp" line="407"/>
+        <source>No updates were found.</source>
+        <translation>Обновлений не найдено</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdater.cpp" line="447"/>
+        <source>Error</source>
+        <translation type="unfinished">Ошибка</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdater.cpp" line="463"/>
+        <source>Information</source>
+        <translation type="unfinished">Информация</translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../main.cpp" line="23"/>
+        <location filename="../main.cpp" line="38"/>
+        <source>WebMounter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="24"/>
+        <source>WebMounter is already running.</source>
+        <translation type="unfinished">WebMounter уже запущен</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="31"/>
+        <source>Systray</source>
+        <translation type="unfinished">Системный трей</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="32"/>
+        <source>I couldn&apos;t detect any system tray on this system.</source>
+        <translation type="unfinished">Системный трей в системе не обнаружен</translation>
+    </message>
+</context>
 <context>
     <name>Ui::ControlPanel</name>
     <message>
-        <location filename="../control_panel.cpp" line="105"/>
-        <location filename="../control_panel.cpp" line="150"/>
-        <source>Minimize</source>
-        <translation>Уменьшить</translation>
+        <location filename="../control_panel.cpp" line="116"/>
+        <source>version </source>
+        <translation type="unfinished">версия </translation>
     </message>
     <message>
-        <location filename="../control_panel.cpp" line="133"/>
-        <source>WebMounter</source>
-        <translation></translation>
+        <location filename="../control_panel.cpp" line="119"/>
+        <location filename="../control_panel.cpp" line="349"/>
+        <source>Checking...</source>
+        <translation type="unfinished">Проверка...</translation>
     </message>
     <message>
+        <location filename="../control_panel.cpp" line="124"/>
         <location filename="../control_panel.cpp" line="156"/>
+        <source>Check for updates...</source>
+        <translation type="unfinished">Проверить обновления</translation>
+    </message>
+    <message>
+        <location filename="../control_panel.cpp" line="141"/>
+        <source>WebMounter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../control_panel.cpp" line="157"/>
         <location filename="../control_panel.cpp" line="237"/>
         <source>&amp;Restore</source>
-        <translation>&amp;Восстановить</translation>
+        <translation type="unfinished">&amp;Восстановить</translation>
     </message>
     <message>
-        <location filename="../control_panel.cpp" line="158"/>
+        <location filename="../control_panel.cpp" line="159"/>
         <location filename="../control_panel.cpp" line="240"/>
         <source>&amp;Quit</source>
-        <translation>&amp;Выйти</translation>
+        <translation type="unfinished">&amp;Выйти</translation>
     </message>
     <message>
-        <location filename="../control_panel.cpp" line="160"/>
-        <location filename="../control_panel.cpp" line="172"/>
+        <location filename="../control_panel.cpp" line="161"/>
+        <location filename="../control_panel.cpp" line="173"/>
         <source>Configuration</source>
-        <translation>Конфигурация</translation>
+        <translation type="unfinished">Конфигурация</translation>
+    </message>
+    <message>
+        <location filename="../control_panel.cpp" line="342"/>
+        <source>No updates</source>
+        <translation type="unfinished">Обновлений не найдено</translation>
+    </message>
+    <message>
+        <location filename="../control_panel.cpp" line="358"/>
+        <source>Close app</source>
+        <translation type="unfinished">Закрыть</translation>
+    </message>
+    <message>
+        <location filename="../control_panel.cpp" line="359"/>
+        <source>WebMounter has to be closed to install updates. Click OK button to close it now.</source>
+        <translation type="unfinished">Необходимо закрыть WebMounter для установки обновлений. Пожалуйста, нажмите OK, чтобы закрыть приложение сейчас.</translation>
+    </message>
+    <message>
+        <location filename="../control_panel.cpp" line="375"/>
+        <source>Error</source>
+        <translation type="unfinished">Ошибка</translation>
+    </message>
+    <message>
+        <location filename="../control_panel.cpp" line="376"/>
+        <source>Installer file is corrupted</source>
+        <translation type="unfinished">Установочный файл некорректный</translation>
+    </message>
+</context>
+<context>
+    <name>Ui::FvUpdateWindow</name>
+    <message>
+        <location filename="../updater/fvupdatewindow.cpp" line="51"/>
+        <source>Canceled</source>
+        <translation type="unfinished">Остановлено</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdatewindow.cpp" line="104"/>
+        <source>Install Update</source>
+        <translation type="unfinished">Установить обновление</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdatewindow.cpp" line="108"/>
+        <source>Cancel</source>
+        <translation type="unfinished">Остановить</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateWindow</name>
+    <message>
+        <location filename="../updater/fvupdatewindow.ui" line="14"/>
+        <source>Software Update</source>
+        <translation type="unfinished">Обновление</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdatewindow.ui" line="28"/>
+        <source>A new version of %1 is available!</source>
+        <translation type="unfinished">Доступна новая версия %1</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdatewindow.ui" line="54"/>
+        <source>&lt;b&gt;%1 %2&lt;/b&gt; is now available - you have &lt;b&gt;%3&lt;/b&gt;. Would you like to download it now?</source>
+        <translation type="unfinished">&lt;b&gt;%1 %2&lt;/b&gt; доступна -в настоящий момент установлена&lt;b&gt;%3&lt;/b&gt;. Хотите скачать новую версию?</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdatewindow.ui" line="80"/>
+        <source>Release Notes:</source>
+        <translation type="unfinished">Описание релиза</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdatewindow.ui" line="93"/>
+        <source>about:blank</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdatewindow.ui" line="115"/>
+        <source>Skip This Version</source>
+        <translation type="unfinished">Пропустить</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdatewindow.ui" line="125"/>
+        <source>Downloading: </source>
+        <translation type="unfinished">Загрузка:</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdatewindow.ui" line="149"/>
+        <source>%p%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdatewindow.ui" line="162"/>
+        <source>Install Update</source>
+        <translation type="unfinished">Установить обновление</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdatewindow.ui" line="181"/>
+        <source>Remind Me Later</source>
+        <translation type="unfinished">Напомнить позднее</translation>
     </message>
 </context>
 </TS>

@@ -2,21 +2,20 @@
 
 #include "webmounter.h"
 #include "control_panel.h"
+#include "single_application.h"
+#include "common_stuff.h"
 
 #include <QtGui>
 #include <QtGui/QApplication>
 #include <QMutex>
 #include <QCryptographicHash>
 
-#include "single_application.h"
-
-
 int main(int argc, char *argv[])
 {
  	SingleApplication app(argc, argv);
- 
+  
  	QTranslator translator;
- 	bool result = translator.load(QString("webmounter_" + QLocale::system().name()));
+ 	translator.load(QString("webmounter_" + QLocale::system().name()));
  	QApplication::installTranslator(&translator);
  
  	if(!app.isSingle())
@@ -37,7 +36,9 @@ int main(int argc, char *argv[])
  
  	QApplication::setQuitOnLastWindowClosed(false);
  	app.setApplicationName(QObject::tr("WebMounter"));
- 	app.setOrganizationName(QString("JSoft"));
+ 	app.setApplicationVersion(VERSION);
+  app.setOrganizationName("WebMounter");
+  app.setOrganizationDomain("webmounter.ru");
  
  	QApplication::removeTranslator(&translator);
  

@@ -33,6 +33,7 @@ namespace Data
 		QString syncPeriod;
 		QString lastSync;
         bool isOAuthUsing;
+		QString oAuthToken; 
 		QString key;
 	};
 

@@ -1,3 +1,6 @@
+#ifndef __YAF_OAUTH_H__
+#define __YAF_OAUTH_H__
+
 #include <QtGui>
 #include <QNetworkReply>
 #include <QWebView>
@@ -43,3 +46,6 @@ namespace Ui
 		QTimer *_oAuthTimer;
 	};
 }
+
+
+#endif // __YAF_OAUTH_H__

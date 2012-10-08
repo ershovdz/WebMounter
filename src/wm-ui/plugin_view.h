@@ -19,6 +19,8 @@
 
 namespace Ui
 {
+	using namespace Common;
+
 	class WEBMOUNTER_UI_EXPORT PluginView : public View
 	{
 		Q_OBJECT

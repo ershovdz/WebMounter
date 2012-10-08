@@ -4,66 +4,64 @@
 <context>
     <name>RemoteDriver::VkRVFSDriver</name>
     <message>
-        <location filename="../driver/vk_driver.cpp" line="169"/>
-        <location filename="../driver/vk_driver.cpp" line="174"/>
+        <location filename="../driver/vk_driver.cpp" line="119"/>
+        <location filename="../driver/vk_driver.cpp" line="124"/>
         <source>Info</source>
         <translation>Информация</translation>
     </message>
     <message>
-        <location filename="../driver/vk_driver.cpp" line="169"/>
+        <location filename="../driver/vk_driver.cpp" line="119"/>
         <source>This file extension is not supported !
 </source>
         <translation>Данный тип файлов не поддерживается!</translation>
     </message>
     <message>
-        <location filename="../driver/vk_driver.cpp" line="174"/>
+        <location filename="../driver/vk_driver.cpp" line="124"/>
         <source>This file will be changed locally!
 </source>
         <translation>Файл будет изменен локально!</translation>
     </message>
     <message>
-        <location filename="../driver/vk_driver.cpp" line="235"/>
-        <location filename="../driver/vk_driver.cpp" line="245"/>
-        <location filename="../driver/vk_driver.cpp" line="437"/>
-        <location filename="../driver/vk_driver.cpp" line="788"/>
-        <location filename="../driver/vk_driver.cpp" line="912"/>
-        <location filename="../driver/vk_driver.cpp" line="961"/>
+        <location filename="../driver/vk_driver.cpp" line="182"/>
+        <location filename="../driver/vk_driver.cpp" line="192"/>
+        <location filename="../driver/vk_driver.cpp" line="722"/>
+        <location filename="../driver/vk_driver.cpp" line="785"/>
+        <location filename="../driver/vk_driver.cpp" line="850"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../driver/vk_driver.cpp" line="236"/>
+        <location filename="../driver/vk_driver.cpp" line="183"/>
         <source>File upload failed (</source>
         <translation>Загрузка файла завершилась неудачей (</translation>
     </message>
     <message>
-        <location filename="../driver/vk_driver.cpp" line="245"/>
+        <location filename="../driver/vk_driver.cpp" line="192"/>
         <source>An upload limit is reached! 
 Activation key required.
 </source>
         <translation>Достигнут лимит загрузки фотографий! Требуется ключ активации.</translation>
     </message>
     <message>
-        <location filename="../driver/vk_driver.cpp" line="437"/>
         <source>Creation limit is reached! 
 Activation key required.
 </source>
-        <translation>Достигнут лимит создания файлов! Требуется ключ активации.</translation>
+        <translation type="obsolete">Достигнут лимит создания файлов! Требуется ключ активации.</translation>
     </message>
     <message>
-        <location filename="../driver/vk_driver.cpp" line="788"/>
+        <location filename="../driver/vk_driver.cpp" line="722"/>
         <source>Sync failed !
 </source>
         <translation>Синхронизации завершилась неудачей!</translation>
     </message>
     <message>
-        <location filename="../driver/vk_driver.cpp" line="912"/>
+        <location filename="../driver/vk_driver.cpp" line="785"/>
         <source>Downloading failed  !
 </source>
         <translation>Скачивание завершилось неудачей!</translation>
     </message>
     <message>
-        <location filename="../driver/vk_driver.cpp" line="961"/>
+        <location filename="../driver/vk_driver.cpp" line="850"/>
         <source>Authorization failed !
 Please check proxy settings on Configuration tab and check settings on corresponding plugin tab...
 </source>
@@ -71,22 +69,26 @@ Please check proxy settings on Configuration tab and check settings on correspon
     </message>
 </context>
 <context>
+    <name>Ui::VkOAuth</name>
+    <message>
+        <location filename="../view/vk_oauth.cpp" line="32"/>
+        <source>Vkontakte | Authentication</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Ui::VkView</name>
     <message>
-        <location filename="../view/vk_view.cpp" line="16"/>
-        <location filename="../view/vk_view.cpp" line="35"/>
         <source>&lt;a href=&quot;http://jmediamanager.com/index.php?option=com_wrapper&amp;view=wrapper&amp;Itemid=102&amp;lang=ru&quot;&gt;Get activation key&lt;/a&gt;</source>
-        <translation>&lt;a href=&quot;http://jmediamanager.com/index.php?option=com_wrapper&amp;view=wrapper&amp;Itemid=102&amp;lang=ru&quot;&gt;Получить ключ активации&lt;/a&gt;</translation>
+        <translation type="obsolete">&lt;a href=&quot;http://jmediamanager.com/index.php?option=com_wrapper&amp;view=wrapper&amp;Itemid=102&amp;lang=ru&quot;&gt;Получить ключ активации&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../view/vk_view.cpp" line="24"/>
         <source>Warning</source>
-        <translation>Предупреждение</translation>
+        <translation type="obsolete">Предупреждение</translation>
     </message>
     <message>
-        <location filename="../view/vk_view.cpp" line="25"/>
         <source>Activation key is not valid. The program is now working in demo mode.</source>
-        <translation>Ключ активации некорректный. Включен демо-режим работы программы.</translation>
+        <translation type="obsolete">Ключ активации некорректный. Включен демо-режим работы программы.</translation>
     </message>
 </context>
 </TS>

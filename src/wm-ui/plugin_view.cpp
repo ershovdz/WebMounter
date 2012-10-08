@@ -381,14 +381,19 @@ namespace Ui
 	void PluginView::startPluginClicked(bool)
 	{
 		Data::PluginSettings pluginSettings;
+		WebMounter::getSettingStorage()->getData(pluginSettings, _pluginName);
 
 		pluginSettings.bAutoSync = _autoSyncCheckBox->isChecked();
 		pluginSettings.bFullSync = _fullSyncRadioButton->isChecked();
 		pluginSettings.pluginName = _pluginName;
 		pluginSettings.serverUrl = _urlEdit->text();
 		pluginSettings.syncPeriod.setNum(getSyncPeriod());
-		pluginSettings.userName = _nameEdit->text();
-		pluginSettings.userPassword = _passwordEdit->text();
+
+                if(_nameEdit->isEnabled())
+                {
+                    pluginSettings.userName = _nameEdit->text();
+                    pluginSettings.userPassword = _passwordEdit->text();
+                }
 
 #ifdef WM_FULL_VERSION
 		pluginSettings.key = _keyEdit->text();
@@ -506,7 +511,6 @@ namespace Ui
 				if(_driverState == RemoteDriver::eNotConnected)
 				{
 					_driverState = RemoteDriver::eAuthInProgress;
-
 					_statusValue->setText(tr("<font color=\"green\">Authorization...</font>"));
 				}
 				break;
@@ -516,7 +520,6 @@ namespace Ui
 				if(_driverState == RemoteDriver::eAuthInProgress)
 				{
 					_driverState = RemoteDriver::eAuthorized;
-
 					_statusValue->setText(tr("<font color=\"green\">Authorized</font>"));
 				}
 				break;
@@ -530,7 +533,6 @@ namespace Ui
 
 					_startSyncButton->setEnabled(true);
 					_stopSyncButton->setEnabled(false);
-
 					_statusValue->setText(tr("<font color=\"green\">Connected</font>"));
 
 					_progressBar->setValue(0);
