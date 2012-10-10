@@ -46,4 +46,9 @@ QIcon* OdnPlugin::getIcon()
 	return NULL;
 }
 
+QString OdnPlugin::getTranslationFile(const QString& locale)
+{
+	return QString("odn_wm_pl_" + locale);
+}
+
 Q_EXPORT_PLUGIN2(wm-odn-plugin, OdnPlugin);

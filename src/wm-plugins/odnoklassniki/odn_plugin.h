@@ -21,6 +21,7 @@ private:
 	virtual void* getView();
 	virtual void* getSettings();
 	virtual QIcon* getIcon();
+	virtual QString getTranslationFile(const QString& locale);
 private:
 	Ui::PluginView* _view;
 };

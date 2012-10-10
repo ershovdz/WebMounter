@@ -1,7 +1,6 @@
 TEMPLATE        = lib
 CONFIG         += plugin
 
-QT             += core network gui sql webkit
 HEADERS         = odn_plugin.h
 
 SOURCES         = odn_plugin.cpp 
