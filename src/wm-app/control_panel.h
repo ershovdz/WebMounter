@@ -84,6 +84,7 @@ namespace Ui
 		QAction *_quitAction;
 		QSystemTrayIcon *trayIcon;
 		QMenu *trayIconMenu;
+		QPushButton *_closeButton;
 
 		QList<QListWidgetItem*> _pluginButtonsList;
 		QListWidgetItem *_configButton;

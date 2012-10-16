@@ -102,8 +102,8 @@ namespace Ui
 			_pagesWidget->addWidget(view);
 		}
 
-		//_closeButton = new QPushButton(tr("Minimize"));
-		//connect(_closeButton, SIGNAL(clicked()), this, SLOT(close()));
+		_closeButton = new QPushButton(tr("Minimize"));
+		connect(_closeButton, SIGNAL(clicked()), this, SLOT(close()));
 
 		createIcons();
 

@@ -13,6 +13,9 @@ namespace RemoteDriver
 {
 	#define DEMO_ALBUMS_LIMIT			2
 	#define DEMO_PHOTOS_PER_ALBUM_LIMIT	5
+	
+	#define ERROR_NONE					0
+	#define ERROR_AUTH_FAILED			5
 
 	class VkRVFSDriver : public RVFSDriver
 	{
@@ -38,7 +41,7 @@ namespace RemoteDriver
 		virtual RESULT sync();
 		virtual bool areFileAttributesValid(const QString& path, unsigned long attributes);
 	private:
-		RESULT getAlbums(QList<VFSElement>& elements);
+		RESULT getAlbums(QList<VFSElement>& elements, int& errorCode);
 		RESULT getPhotos(QList<VFSElement>& elements);
 
 		void parseAlbumEntry(QString& xmlEntry, VFSElement& elem);

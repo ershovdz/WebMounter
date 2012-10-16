@@ -48,7 +48,7 @@ namespace Ui
 
 		PluginSettings pluginSettings; 
 		Common::WebMounter::getSettingStorage()->getData(pluginSettings, "Vkontakte");
-		if(pluginSettings.isOAuthUsing && pluginSettings.oAuthToken == "" && (state == RemoteDriver::eAuthInProgress) && progress == 0) // Started to authenticate
+		if(pluginSettings.isOAuthUsing && (state == RemoteDriver::eAuthInProgress) && progress == 0) // Started to authenticate
 		{
 			_oauthObj->authenticate();
 		}

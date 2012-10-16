@@ -24,7 +24,7 @@ namespace Connector
 			, bool isOAuth = true
 			, const QString& token = "");
 		RESULT downloadFiles(QList <QString>& urlList, QList <QString>& pathList);
-		RESULT getAlbums(QString& response);
+		RESULT getAlbums(QString& response, int& errorCode);
 		RESULT getPhotos(int offset, QString& response);
 		RESULT uploadFile(const QString& path, const QString& title, const QString& parentId, QString& response);
 		RESULT downloadFile(const QString& url, const QString& path);

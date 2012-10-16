@@ -377,10 +377,10 @@ namespace RemoteDriver
 		return res;
 	}
 
-	RESULT VkRVFSDriver::getAlbums(QList<VFSElement>& elements)
+	RESULT VkRVFSDriver::getAlbums(QList<VFSElement>& elements, int& errorCode)
 	{
 		QString xmlResp;
-		RESULT err = _httpConnector->getAlbums(xmlResp);
+		RESULT err = _httpConnector->getAlbums(xmlResp, errorCode);
 		if(!err)
 		{
 			QString pattern = QString::fromAscii("<album>(.*)</album>");
@@ -410,7 +410,7 @@ namespace RemoteDriver
 				pos += rx.matchedLength();
 			}
 		}
-
+		
 		if(err != eERROR)
 		{
 			handleNameDuplicates(elements);
@@ -467,13 +467,10 @@ namespace RemoteDriver
 					if(i < 0)
 					{
 						elem.setParentId(ROOT_ID);
-						QString rootPath = path = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator());
-						path = rootPath + QString(QDir::separator()) + elem.getName();
+						i = 0;
 					}
-					else
-					{
-						path = elements[i].getPath() + QString(QDir::separator()) + elem.getName();
-					}
+					
+					path = elements[i].getPath() + QString(QDir::separator()) + elem.getName();
 
 					QFileInfo fInfo(path);
 					elem.setPath(fInfo.absoluteFilePath());
@@ -514,7 +511,8 @@ namespace RemoteDriver
 
 		elements.append(elem);
 
-		RESULT res = getAlbums(elements);
+		int errorCode;
+		RESULT res = getAlbums(elements, errorCode);
 		if(!res)
 		{
 			res = getPhotos(elements);
@@ -628,7 +626,8 @@ namespace RemoteDriver
 		elements.append(elem);
 
 		// Handle albums
-		res = getAlbums(elements);
+		int errorCode = 0;
+		res = getAlbums(elements, errorCode);
 		if(!res)
 		{
 			_driverMutex.lock();
@@ -717,12 +716,22 @@ namespace RemoteDriver
 				vfsCache->flush();
 			}
 		}
+
 		if(res == eERROR)
 		{
-			stopPlugin();
-
-			notifyUser(Ui::Notification::eCRITICAL, tr("Error"), tr("Sync failed !\n"));
-			//updateState(100, RemoteDriver::eNotConnected);
+			if(errorCode == ERROR_AUTH_FAILED)
+			{
+				plSettings.oAuthToken="";
+				settings->addSettings(plSettings);
+				stopPlugin();
+				startPlugin(plSettings);
+				//updateState(0, RemoteDriver::eAuthInProgress);
+			}
+			else
+			{
+				stopPlugin();
+				notifyUser(Ui::Notification::eCRITICAL, tr("Error"), tr("Sync failed !\n"));
+			}
 		}
 
 		return res;
@@ -819,7 +828,7 @@ namespace RemoteDriver
 				updateState(0, eAuthInProgress);
 			}
 
-			if(pluginSettings.isOAuthUsing && pluginSettings.oAuthToken != "")
+			/*if(pluginSettings.isOAuthUsing && pluginSettings.oAuthToken != "")
 			{
 				updateState(100, eAuthorized);
 
@@ -828,7 +837,7 @@ namespace RemoteDriver
 			else
 			{
 				updateState(0, eAuthInProgress);
-			}
+			}*/
 		}
 	}
 

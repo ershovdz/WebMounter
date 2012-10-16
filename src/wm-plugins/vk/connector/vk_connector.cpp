@@ -15,13 +15,14 @@ namespace Connector
 
 	RESULT VkHTTPConnector::uploadFile(const QString& path, const QString& title, const QString& parentId, QString& response)
 	{
+		RESULT res = eNO_ERROR;
 		QString uploadUrl = getUploadServer(parentId);
-		RESULT res = uploadPhoto(uploadUrl, path);
+		res = uploadPhoto(uploadUrl, path);
 		if(res == eNO_ERROR)
 		{
 			res = savePhoto(parentId, response);
 		}
-
+		
 		return res;
 	}
 
@@ -33,21 +34,20 @@ namespace Connector
 		QString query;
 		query = genQuery("photos.getUploadServer",params);
 		QString response;
-		int err = execQuery("http://api.vkontakte.ru/api.php", "", query, &response);
+		int err = execQuery("https://api.vk.com/method/photos.getUploadServer.xml", "", query, &response);
 
 		if(!err)
 		{
 			res = RegExp::getByPattern("<upload_url>(.*)</upload_url>", response);
 			res.replace("&amp;", "&");
 		}
-
+		
 		return res;
 	}
 
 	RESULT VkHTTPConnector::uploadPhoto(const QString& uploadServer, const QString& path)
 	{
 		RESULT res = eERROR;
-
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
@@ -85,9 +85,12 @@ namespace Connector
 			CURLcode _error = curl_easy_perform(p_curl);
 			if(!_error)
 			{
-				_upload._photos_list = RegExp::getByPattern("\"photos_list\": \"(.*)\", \"aid\"", response);
-				_upload._server = RegExp::getByPattern("\"server\": \"(.*)\", \"photos_list\"", response);
-				_upload._hash = RegExp::getByPattern("\"hash\": \"(.*)\"", response);
+				_upload._photos_list = RegExp::getByPattern("\"photos_list\"(.*)\"aid\"", response);
+				_upload._photos_list = _upload._photos_list.mid(2, _upload._photos_list.length() - 4);
+				_upload._photos_list.remove("\\");
+				_upload._server = RegExp::getByPattern("\"server\"(.*)\"photos_list\"", response);
+				_upload._server = _upload._server.mid(1, _upload._server.length()-2);
+				_upload._hash = response.mid(response.indexOf("hash") + 7, response.lastIndexOf("}")-response.indexOf("hash") - 8);
 			}
 
 			res = (_error == CURLE_OK) ? eNO_ERROR: eERROR;
@@ -100,6 +103,7 @@ namespace Connector
 
 	RESULT VkHTTPConnector::savePhoto(const QString& parentId, QString& response)
 	{
+		RESULT res = eERROR;
 		QStringList params;
 		params.append("aid=" + parentId);
 
@@ -115,7 +119,8 @@ namespace Connector
 		QString query;
 		query = genQuery("photos.save",params);
 
-		RESULT res = execQuery("http://api.vkontakte.ru/api.php", "", query, &response);
+		res = execQuery("https://api.vk.com/method/photos.save.xml", "", query, &response);
+
 		return res;
 	}
 
@@ -170,50 +175,18 @@ namespace Connector
 	QString VkHTTPConnector::genQuery(const QString &method, const QStringList &params)
 	{
 		QStringList paramsList;
-		//paramsList.append("api_id="+_appId);
-		//paramsList.append("/" + method);
+
 		paramsList.append("access_token=" + _token);
-//		paramsList.append("format=XML");
 		if (!params.isEmpty()) 
 		{
 			paramsList << params;
 		}
-		//paramsList.sort();
 
 		paramsList.replaceInStrings("&","%26");
 		paramsList.replaceInStrings("+","%2B");
 
 		return paramsList.join("&");
 	}
-
-/*	QString VkHTTPConnector::genQuery(const QString &method, const QStringList &params)
-	{
-		QStringList paramsList;
-		paramsList.append("api_id="+_appId);
-		paramsList.append("method="+method);
-		paramsList.append("v=3.0");
-		paramsList.append("format=XML");
-		if (!params.isEmpty()) 
-		{
-			paramsList << params;
-		}
-		paramsList.sort();
-
-		QString sig;
-		sig = _session._mid;
-		sig += paramsList.join("");
-		sig += _session._secret;
-		sig = QCryptographicHash::hash(sig.toUtf8(), QCryptographicHash::Md5).toHex();
-
-		paramsList.append("sig="+sig);
-		paramsList.append("sid="+_session._sid);
-
-		paramsList.replaceInStrings("&","%26");
-		paramsList.replaceInStrings("+","%2B");
-
-		return paramsList.join("&");
-	}
-*/
 
 	RESULT VkHTTPConnector::execQuery(const QString &url, const QString &header, const QString &postFields, QString* response)
 	{
@@ -263,32 +236,44 @@ namespace Connector
 			res = (_error == CURLE_OK) ? eNO_ERROR: eERROR;
 			curl_easy_cleanup(p_curl);
 		}
+
 		return res;
 	}
 
-	RESULT VkHTTPConnector::getAlbums(QString& response)
+	RESULT VkHTTPConnector::getAlbums(QString& response, int& errorCode)
 	{
+		RESULT res = eERROR;
 		QStringList params;
 		QString query = genQuery("photos.getAlbums",params);
 
-		return execQuery("https://api.vk.com/method/photos.getAlbums.xml", "", query, &response);
+		res = execQuery("https://api.vk.com/method/photos.getAlbums.xml", "", query, &response);
+		if(response.indexOf("error") != -1)
+		{
+			res = eERROR;
+			QString errorStr = RegExp::getByPattern("<error_code>(.*)</error_code>", response);
+			errorCode = errorStr.length() ? errorStr.toInt() : 0;
+		}
+
+		return res;
 	}
 
 	RESULT VkHTTPConnector::getPhotos(int offset, QString& response)
 	{
+		RESULT res = eERROR;
 		QStringList params;
 		params.append("offset=" + QString::number(offset));
 		params.append("count=100");
 		QString query = genQuery("photos.getAll",params);
 
-		return execQuery("https://api.vk.com/method/photos.getAll.xml", "", query, &response);
+		res = execQuery("https://api.vk.com/method/photos.getAll.xml", "", query, &response);
+
+		return res;
 	}
 
 	RESULT VkHTTPConnector::downloadFile(const QString& url, const QString& path)
 	{
-		QMutexLocker locker(&_connectorMutex);
-
 		RESULT res = eERROR;
+		QMutexLocker locker(&_connectorMutex);
 
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
@@ -314,9 +299,9 @@ namespace Connector
 
 	RESULT VkHTTPConnector::downloadFiles(QList <QString>& urlList, QList <QString>& pathList)
 	{
-		QMutexLocker locker(&_connectorMutex);
-		
 		RESULT res = eNO_ERROR;
+		QMutexLocker locker(&_connectorMutex);
+				
 		QList <CURL*> curls;
 		CURLM* p_mcurl = curl_multi_init();
 
@@ -376,41 +361,49 @@ namespace Connector
 		}
 
 		curl_multi_cleanup(p_mcurl);
+
 		return res;
 	}
 
 	RESULT VkHTTPConnector::deleteFile(const QString& id)
 	{
-		QString header = QString::fromAscii("Cookie: remixchk=5; remixsid=%1").arg(_s);
-		QString postParams = QString::fromAscii("act=a_delete_photo&pid=%1_%2").arg(_id).arg(id);
+		RESULT res = eERROR; 
+		QStringList params;
+		params.append("pid=" + id);
+		QString query = genQuery("photos.delete",params);
 		QString response;
-		return execQuery("http://vkontakte.ru/photos.php", header, postParams, &response);
+		res = execQuery("https://api.vk.com/method/photos.delete.xml", "", query, &response);
+		QString errorStr = RegExp::getByPattern("<response>(.*)</response>", response);
+		if(errorStr.length() != 0)
+		{
+			res = errorStr.toInt() == 1 ? eNO_ERROR : eERROR;
+		}
+		return res;
 	}
 
 	RESULT VkHTTPConnector::createDirectory(const QString& title, QString& response)
 	{
+		RESULT res = eERROR;
 		QStringList params;
 		params.append("title="+title);
 		QString query = genQuery("photos.createAlbum",params);
+		res = execQuery("https://api.vk.com/method/photos.createAlbum.xml", "", query, &response);
 
-		return execQuery("http://api.vkontakte.ru/api.php", "", query, &response);
+		return res;
 	}
 
 	RESULT VkHTTPConnector::deleteAlbum(const QString& id)
 	{
 		RESULT res = eERROR;
-
-		QString header = QString::fromAscii("Cookie: remixchk=5; remixsid=")+_s;
-		QString url = "http://vkontakte.ru/photos.php?act=delete&id=" + id + "&oid=" + _id;
+		QStringList params;
+		params.append("aid=" + id);
+		QString query = genQuery("photos.deleteAlbum",params);
 		QString response;
-		res = execQuery(url, header, "", &response);
-		if(res == eNO_ERROR)
+		res = execQuery("https://api.vk.com/method/photos.deleteAlbum.xml", "", query, &response);
+		QString errorStr = RegExp::getByPattern("<response>(.*)</response>", response);
+		if(errorStr.length() != 0)
 		{
-			QString delHash = RegExp::getByPattern("name=\"hash\" value=\"(.*)\"", response);
-			QString postParams = "id=" + id + "&oid=" + _id + "&act=do_delete&hash=" + delHash;
-			QString url1 = "http://vkontakte.ru/photos.php";
-			QString response;
-			res = execQuery(url1, header, postParams, &response);
+			res = errorStr.toInt() == 1 ? eNO_ERROR : eERROR;
 		}
 
 		return res;
@@ -418,23 +411,39 @@ namespace Connector
 
 	RESULT VkHTTPConnector::moveFile(const QString& id, const QString& oldParentId, const QString& newParentId)
 	{
+		RESULT res = eERROR;
 		QStringList params;
 		params.append("pid=" + id);
 		params.append("target_aid=" + newParentId);
 		QString query = genQuery("photos.move",params);
 
 		QString response;
-		return execQuery("http://api.vkontakte.ru/api.php", "", query, &response);
+		res = execQuery("https://api.vk.com/method/photos.move.xml", "", query, &response);
+		QString errorStr = RegExp::getByPattern("<response list=\"true\">(.*)</response>", response);
+		if(errorStr.length() != 0)
+		{
+			res = errorStr.toInt() == 1 ? eNO_ERROR : eERROR;
+		}
+
+		return res;
 	}
 
 	RESULT VkHTTPConnector::renameAlbum(const QString& id, const QString& newTitle)
 	{
+		RESULT res = eERROR;
 		QStringList params;
 		params.append("aid=" + id);
 		params.append("title=" + newTitle);
 		QString query = genQuery("photos.editAlbum",params);
 
 		QString response;
-		return execQuery("http://api.vkontakte.ru/api.php", "", query, &response);
+		res = execQuery("https://api.vk.com/method/photos.editAlbum.xml", "", query, &response);
+		QString errorStr = RegExp::getByPattern("<response list=\"true\">(.*)</response>", response);
+		if(errorStr.length() != 0)
+		{
+			res = errorStr.toInt() == 1 ? eNO_ERROR : eERROR;
+		}
+
+		return res;
 	}
 }
