@@ -19,9 +19,9 @@ SOURCES         = yandex_disk_plugin.cpp \
 win32 {
 	INCLUDEPATH += $(BOOST_DIR) $(LIBCURL_DIR)\include
 
-	QMAKE_LIBDIR += $(LIBCURL_DIR)\lib\DLL-Debug 
+	QMAKE_LIBDIR += $(LIBCURL_DIR)\lib\DLL-Release 
 
-	LIBS += -llibcurld -lwmbase -lwmui
+	LIBS += -llibcurl_imp -lwmbase -lwmui
 }
 else {
 	LIBS += -lcurl

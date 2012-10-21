@@ -1,5 +1,4 @@
-;!define VERSION "0.3 DE(build 107)"
-!define VERSION "0.4.0"
+!define VERSION "0.4.1"
 
 !define MULTIUSER_EXECUTIONLEVEL Highest
 ;!define MULTIUSER_NOUNINSTALL ;Uncomment if no uninstaller is created
@@ -43,28 +42,30 @@ Icon ".\bin\drive.ico"
 !macro WebMounter
 
   SetOutPath $PROGRAMFILES32\WebMounter\bin
-    File .\bin\libcurld.dll
-    File .\bin\phonond4.dll
-    File .\bin\QtCored4.dll
-    File .\bin\QtGuid4.dll
-    File .\bin\QtNetworkd4.dll
-    File .\bin\QtWebKitd4.dll
-    File .\bin\phonond4.dll
-    File .\bin\QtSqld4.dll
+    File .\bin\libcurl.dll
+    File .\bin\phonon4.dll
+    File .\bin\QtCore4.dll
+    File .\bin\QtGui4.dll
+    File .\bin\QtNetwork4.dll
+    File .\bin\QtWebKit4.dll
+    File .\bin\phonon4.dll
+    File .\bin\QtSql4.dll
     File .\bin\wmbase.dll
     File .\bin\wmui.dll
     File .\bin\WebMounter.exe
+	File .\bin\msvcp100.dll
+	File .\bin\msvcr100.dll
     File .\bin\drive.ico
     File .\bin\libeay32.dll
     File .\bin\libssl32.dll
-    File .\bin\QtXmld4.dll
+    File .\bin\QtXml4.dll
     File .\bin\ssleay32.dll
 
   SetOutPath $PROGRAMFILES32\WebMounter\lib\plugins
-    File .\lib\plugins\wm-vk-plugind.dll
-    File .\lib\plugins\wm-ya-disk-plugind.dll
-    File .\lib\plugins\wm-ya-narod-plugind.dll
-    File .\lib\plugins\wm-yandex-plugind.dll
+    File .\lib\plugins\wm-vk-plugin.dll
+    File .\lib\plugins\wm-ya-disk-plugin.dll
+    File .\lib\plugins\wm-ya-narod-plugin.dll
+    File .\lib\plugins\wm-yandex-plugin.dll
 
   SetOutPath $PROGRAMFILES32\WebMounter\share\webmounter
     File .\share\webmounter\vk_wm_pl_en.qm
@@ -83,23 +84,18 @@ Icon ".\bin\drive.ico"
     File .\share\webmounter\wmui_ru.qm
 	
   SetOutPath $PROGRAMFILES32\WebMounter\bin\sqldrivers
-    File .\bin\sqldrivers\qsqlited4.dll
+    File .\bin\sqldrivers\qsqlite4.dll
 !macroend
 
 
 !macro X86Files os
 
   SetOutPath $PROGRAMFILES32\Dokan\DokanLibrary
-    File .\dokan\DokanLibrary\readme.txt
-    File .\dokan\DokanLibrary\readme.ja.txt
-    File .\dokan\DokanLibrary\license.gpl.txt
-    File .\dokan\DokanLibrary\license.lgpl.txt
-    File .\dokan\DokanLibrary\license.mit.txt
-    File .\dokan\DokanLibrary\dokanctl.exe
-    File .\dokan\DokanLibrary\mounter.exe
+    File .\dokan\${os}\dokanctrl\dokanctl.exe
+    File .\dokan\${os}\mounter\mounter.exe
 
   SetOutPath $SYSDIR
-    File .\dokan\dokan.dll
+    File .\dokan\${os}\dll\dokan.dll
 
 !macroend
 
@@ -162,14 +158,14 @@ Icon ".\bin\drive.ico"
 
 !macro X86Driver os
   SetOutPath $SYSDIR\drivers
-    File .\dokan\dokan.sys
+    File .\dokan\${os}\sys\dokan.sys
 !macroend
 
 !macro X64Driver os
   ${DisableX64FSRedirection}
 
   SetOutPath $SYSDIR\drivers
-    File .\dokan\dokan.sys
+    File .\dokan\x64\${os}\sys\dokan.sys
 
   ${EnableX64FSRedirection}
 !macroend
@@ -227,6 +223,8 @@ Section "Dokan Library x86" section_x86
     !insertmacro X86Files "wnet"
   ${ElseIf} ${IsWinXp}
     !insertmacro X86Files "wxp"
+  ${Else}
+	!insertmacro X86Files "win7" ; may be it's win8 ?
   ${EndIf}
 SectionEnd
 
@@ -241,6 +239,8 @@ Section "Dokan Driver x86" section_x86_driver
     !insertmacro X86Driver "wnet"
   ${ElseIf} ${IsWinXp}
     !insertmacro X86Driver "wxp"
+  ${Else}
+	!insertmacro X86Driver "win7" ; may be it's win8 ?
   ${EndIf}
   !insertmacro DokanSetup
 SectionEnd
@@ -256,6 +256,8 @@ Section "Dokan Driver x64" section_x64_driver
     !insertmacro X64Driver "wlh"
   ${ElseIf} ${IsWin2003}
     !insertmacro X64Driver "wnet"
+  ${Else}
+	!insertmacro X64Driver "win7" ; may be it's win8 ?
   ${EndIf}
   !insertmacro DokanSetup
 SectionEnd
@@ -336,9 +338,9 @@ Function .onInit
     ${ElseIf} ${IsWin2008}
     ${ElseIf} ${IsWin2008R2}
     ${ElseIf} ${IsWin7}
-    ${Else}
-      MessageBox MB_OK "$(notSupportOS64)"
-      Abort
+    ; ${Else}
+      ; MessageBox MB_OK "$(notSupportOS64)"
+      ; Abort
     ${EndIf}
   ${Else}
     ${If} ${IsWinXP}
@@ -346,9 +348,9 @@ Function .onInit
     ${ElseIf} ${IsWinVista}
     ${ElseIf} ${IsWin2008}
     ${ElseIf} ${IsWin7}
-    ${Else}
-      MessageBox MB_OK "$(notSupportOS86)"
-      Abort
+    ; ${Else}
+      ; MessageBox MB_OK "$(notSupportOS86)"
+      ; Abort
     ${EndIf}
   ${EndIf}
 

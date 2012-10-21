@@ -123,7 +123,7 @@ namespace Ui
 		_view->load(QUrl("https://oauth.vk.com/authorize?client_id=2950346&scope=4&response_type=token"));
 		_view->show();
 		if (!_oAuthTimer->isActive())
-			_oAuthTimer->start(20*1000);
+			_oAuthTimer->start(60*1000);
 	}
 
 	void VkOAuth::finished(RESULT error)

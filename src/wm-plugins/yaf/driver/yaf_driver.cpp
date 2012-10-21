@@ -888,7 +888,7 @@ namespace RemoteDriver
 				updateState(0, eAuthInProgress);
 			}
 
-			if(pluginSettings.isOAuthUsing && pluginSettings.oAuthToken != "")
+			/*if(pluginSettings.isOAuthUsing && pluginSettings.oAuthToken != "")
 			{
 				updateState(100, eAuthorized);
 
@@ -897,7 +897,7 @@ namespace RemoteDriver
 			else
 			{
 				updateState(0, eAuthInProgress);
-			}
+			}*/
 		}
 	}
 
