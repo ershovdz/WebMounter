@@ -14,7 +14,10 @@ namespace Ui
 		: QWidget(parent)
 	{
 		bool result = _translator.load(QString("wmui_" + settings.appLang), translationDir());
-		QApplication::installTranslator(&_translator);
+		if(result)
+		{
+			QApplication::installTranslator(&_translator);
+		}	
 
 		_state = 0;
 		_parent = parent;
@@ -207,8 +210,11 @@ namespace Ui
 
 		QApplication::removeTranslator(&_translator);
 		bool result = _translator.load(QString("wmui_" + indexToLocale(index)), translationDir());
-		QApplication::installTranslator(&_translator);
-
+		if(result)
+		{
+			QApplication::installTranslator(&_translator);
+		}
+		
 		_langLabel->setText(tr("Language:"));
 
 		disconnect(_langCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(changeLang(int)));

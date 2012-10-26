@@ -8,9 +8,9 @@ namespace Ui
 {
 	using namespace Common;
 
-	void WebView::closeEvent(QCloseEvent *event)
+	void WebView::closeEvent(QCloseEvent* /*event*/)
 	{
-		emit finished(eERROR);
+		emit finished(eERROR_CANCEL);
 	}
 
 
@@ -112,7 +112,7 @@ namespace Ui
 		}
 	}
 
-	void YafOAuth::ignoreSSL(QNetworkReply * reply, const QList<QSslError> & list)
+	void YafOAuth::ignoreSSL(QNetworkReply * reply, const QList<QSslError>& /*list*/)
 	{
 		reply->ignoreSslErrors();
 	}
@@ -159,6 +159,6 @@ namespace Ui
 		delete _view;
 		_view = NULL;
 
-		emit authFinished(eERROR, "", "");
+		emit authFinished(eERROR_GENERAL, "", "");
 	}
 }

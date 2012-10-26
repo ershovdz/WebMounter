@@ -98,7 +98,7 @@ int RVFSDriver::removeFolder(QDir& dir)
 	
 		QFile::Permissions permissions = QFile::permissions(entryAbsPath);
 		permissions |= (QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
-		bool err = QFile::setPermissions(entryAbsPath, permissions);
+		QFile::setPermissions(entryAbsPath, permissions);
 
 		QFile::remove(entryAbsPath);
 	}
@@ -140,7 +140,7 @@ void RVFSDriver::syncCacheWithFileSystem(const QString& path)
 			QFile file(iter->getPath());
 			if(!file.exists())
 			{
-				bool res = file.open(QIODevice::WriteOnly);
+				file.open(QIODevice::WriteOnly);
 				file.close();
 				vfsCache->setFlag(iter, VFSElement::eFl_None, VFSElement::eFl_Downloaded);
 			}
@@ -164,7 +164,7 @@ void RVFSDriver::syncCacheWithFileSystem(const QString& path)
 		{
 			QFile::Permissions permissions = QFile::permissions(entryAbsPath);
 			permissions |= (QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
-			bool err = QFile::setPermissions(entryAbsPath, permissions);
+			QFile::setPermissions(entryAbsPath, permissions);
 
 			QFile::remove(entryAbsPath);
 		}
@@ -258,7 +258,7 @@ void RVFSDriver::notifyUser(Ui::Notification::_Types type, QString title, QStrin
 *********************** Handlers for slots *****************************							  
 ***********************************************************************/
 
-void RVFSDriver::connectHandler(PluginSettings& pluginSettings)
+void RVFSDriver::connectHandler(PluginSettings& /*pluginSettings*/)
 {
 	updateState(100, eAuthInProgress);
 

@@ -4,7 +4,7 @@
 
 namespace Ui
 {
-	PluginView::PluginView(const Data::PluginSettings* settings, const QString& title)
+	PluginView::PluginView(const Data::PluginSettings* settings, const QString& /*title*/)
 	{
 		_driver = 0;
 		
@@ -441,7 +441,7 @@ namespace Ui
 		_partSyncRadioButton->setEnabled(false);
 		_fullSyncRadioButton->setEnabled(false);
 
-		//_autoSyncCheckBox->setEnabled(false);
+		_autoSyncCheckBox->setEnabled(false);
 
 		_statusValue->setText(tr("<font color=\"green\">Connecting...</font>"));
 
@@ -563,8 +563,6 @@ namespace Ui
 
 				_syncPeriodBox->setEnabled(_autoSyncCheckBox->isChecked());
 		
-				_autoSyncCheckBox->setEnabled(false);
-
 				_statusValue->setText(tr("<font color=\"red\">Not Connected</font>"));
 
 				_progressBar->setValue(0);

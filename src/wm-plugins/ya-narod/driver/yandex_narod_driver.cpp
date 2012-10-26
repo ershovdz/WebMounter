@@ -65,16 +65,16 @@ namespace RemoteDriver
 				}
 				else
 				{
-					return eERROR;
+					return eERROR_GENERAL;
 				}
 			}
 		}
 		
 		RESULT res = _httpConnector->downloadFiles(urlList, pathList);
-		if(res == eERROR)
+		if(res != eNO_ERROR)
 		{
                         unsigned int retryDownloadCounter = 0;
-			while(res == eERROR && retryDownloadCounter < MAX_DOWNLOAD_RETRY)
+			while(res != eNO_ERROR && retryDownloadCounter < MAX_DOWNLOAD_RETRY)
 			{
 				res = _httpConnector->downloadFiles(urlList, pathList);
 				retryDownloadCounter++;
@@ -90,7 +90,7 @@ namespace RemoteDriver
 
 				if(iter != vfsCache->end())
 				{
-					if(res == eERROR)
+					if(res != eNO_ERROR)
 					{
 						vfsCache->setFlag(iter, VFSElement::eFl_None, VFSElement::eFl_Downloading);
 					}
@@ -107,7 +107,7 @@ namespace RemoteDriver
 		return res;
 	}
 
-	RESULT YandexNarodRVFSDriver::uploadFile(const QString& path, const QString& title,  const QString& Id, const QString& parentId)
+	RESULT YandexNarodRVFSDriver::uploadFile(const QString& path, const QString& title,  const QString& /*Id*/, const QString& parentId)
 	{
 		QString xmlResp;
 		QString id = ROOT_ID;
@@ -116,7 +116,7 @@ namespace RemoteDriver
 		RESULT err = _httpConnector->uploadFile(path, title, parentId, xmlResp);
                 unsigned int retryUploadCounter = 0;
 
-		while(err == eERROR && retryUploadCounter < MAX_UPLOAD_RETRY)
+		while(err != eNO_ERROR && retryUploadCounter < MAX_UPLOAD_RETRY)
 		{
 			err = _httpConnector->uploadFile(path, title, parentId, xmlResp);
 			retryUploadCounter++;
@@ -158,7 +158,7 @@ namespace RemoteDriver
 
 					QFile::Permissions permissions = QFile::permissions(elem.getPath());
 					permissions &= ~(QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
-					bool err = QFile::setPermissions(elem.getPath(), permissions);
+					QFile::setPermissions(elem.getPath(), permissions);
 				}
 			}
 		}
@@ -175,24 +175,24 @@ namespace RemoteDriver
 
 	RESULT YandexNarodRVFSDriver::modifyFile(const QString&)
 	{
-		return eERROR;
+		return eERROR_NOT_SUPPORTED;
 	}
 
-	RESULT YandexNarodRVFSDriver::renameElement(const QString& path, const QString& newTitle)
+	RESULT YandexNarodRVFSDriver::renameElement(const QString& /*path*/, const QString& /*newTitle*/)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_NOT_SUPPORTED;
 		return res;
 	}
 
-	RESULT YandexNarodRVFSDriver::deleteDirectory(const QString& path)
+	RESULT YandexNarodRVFSDriver::deleteDirectory(const QString& /*path*/)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_NOT_SUPPORTED;
 		return res;
 	}
 
 	RESULT YandexNarodRVFSDriver::deleteFile(const QString& path)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		QFileInfo qInfo(path);
 		VFSCache* cache = WebMounter::getCache();
 		VFSCache::iterator elem = cache->find(qInfo.absoluteFilePath());
@@ -211,27 +211,26 @@ namespace RemoteDriver
 		return res;
 	}
 
-	RESULT YandexNarodRVFSDriver::moveElement(const QString& path, const QString& newParentId)
+	RESULT YandexNarodRVFSDriver::moveElement(const QString& /*path*/, const QString& /*newParentId*/)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_NOT_SUPPORTED;
 		return res;
 	}
 
-	RESULT YandexNarodRVFSDriver::createDirectory(const QString& path, const QString& parentId, const QString& title)
+	RESULT YandexNarodRVFSDriver::createDirectory(const QString& /*path*/, const QString& /*parentId*/, const QString& /*title*/)
 	{
-		RESULT err = eERROR;
+		RESULT err = eERROR_NOT_SUPPORTED;
 		return err;
 	}
 
 	RESULT YandexNarodRVFSDriver::getFiles(QList<VFSElement>& elements)
 	{
-		RESULT err = eERROR;
+		RESULT err = eERROR_GENERAL;
 		QString xmlResp = "";
 		err = _httpConnector->getFiles(xmlResp);
 
 		if(!err)
 		{
-			int filesnum = 0;
 			xmlResp.replace("<wbr/>", "");
 			int cpos=0;
 			QRegExp rx("class=\"\\S+icon\\s(\\S+)\"[^<]+<img[^<]+</i[^<]+</td[^<]+<td[^<]+<input[^v]+value=\"(\\d+)\"[^<]+</td[^<]+<td[^<]+<span\\sclass='b-fname'><a\\shref=\"(\\S+)\">([^<]+)");
@@ -243,10 +242,7 @@ namespace RemoteDriver
 				elem.setPluginName(_pluginName);
 
 				elem.setName(rx.cap(4));
-				const char* name = elem.getName().toUtf8().data();
-
 				elem.setId(rx.cap(2));
-
 				elem.setSrcUrl(rx.cap(3));
 
 				elem.setParentId(ROOT_ID);
@@ -269,13 +265,13 @@ namespace RemoteDriver
 
 	RESULT YandexNarodRVFSDriver::getElements()
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		return res;
 	}
 
 	RESULT YandexNarodRVFSDriver::sync()
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		SettingStorage* settings = WebMounter::getSettingStorage();
 		QString pluginStoragePath = settings->getAppStoragePath() + QString(QDir::separator()) + _pluginName;
 		QFileInfo fInfo(pluginStoragePath);
@@ -316,8 +312,6 @@ namespace RemoteDriver
 			VFSCache::iterator iter = vfsCache->begin();
 			for(iter; iter != vfsCache->end(); ++iter)
 			{
-				const char* pppp = iter->getPluginName().toUtf8().data();
-				const char* uuu = iter->getPath().toUtf8().data();
 				if(iter->getPluginName() == _pluginName)
 				{
 					bool found = false;
@@ -332,7 +326,7 @@ namespace RemoteDriver
 							{
 								if(iter->getType() == VFSElement::DIRECTORY)
 								{
-									bool err = qDir.rename(iter->getPath(), elements[i].getPath());
+									qDir.rename(iter->getPath(), elements[i].getPath());
 								}
 								break;
 							}
@@ -362,9 +356,6 @@ namespace RemoteDriver
 			for(int i=0; i<elements.count(); i++)
 			{
 				vfsCache->insert(elements[i]);
-				const char* name = elements[i].getName().toUtf8().data();
-				const char* path = elements[i].getPath().toUtf8().data();
-				int a = 0;
 			}
 
 			{ 	LOCK(_driverMutex);
@@ -376,13 +367,6 @@ namespace RemoteDriver
 
 			QString rootPath = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator()) + _pluginName;
 			QFileInfo fInfo(rootPath);
-			const char* pathStr = rootPath.toUtf8().data();
-
-			for(VFSCache::iterator iter111 = vfsCache->begin(); iter111 != vfsCache->end(); ++iter111)
-			{
-				const char* ppp = iter111->getPath().toUtf8().data();
-				int a = 0;
-			}
 
 			syncCacheWithFileSystem(fInfo.absoluteFilePath());
 
@@ -399,7 +383,7 @@ namespace RemoteDriver
 			}
 		}
 
-		if(res == eERROR)
+		if(res != eNO_ERROR)
 		{
 			stopPlugin();
 			notifyUser(Ui::Notification::eCRITICAL, tr("Error"), tr("Sync failed !\n"));
@@ -444,7 +428,7 @@ namespace RemoteDriver
 
 			_syncMutex.lock();
 
-			bool result = _forceSync.wait(&_syncMutex, sync_period * 1000);
+			_forceSync.wait(&_syncMutex, sync_period * 1000);
 
 			_syncMutex.unlock();
 
@@ -562,7 +546,7 @@ namespace RemoteDriver
 		start(); // start sync thread again
 	}
 
-	bool YandexNarodRVFSDriver::areFileAttributesValid(const QString& path, unsigned long attributes)
+	bool YandexNarodRVFSDriver::areFileAttributesValid(const QString& /*path*/, unsigned long /*attributes*/)
 	{
 		return true;///////////(attributes & FILE_ATTRIBUTE_READONLY);
 	}

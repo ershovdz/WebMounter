@@ -8,9 +8,9 @@ namespace Ui
 {
 	using namespace Common;
 
-	void WebView::closeEvent(QCloseEvent *event)
+	void WebView::closeEvent(QCloseEvent* /*event*/)
 	{
-		emit finished(eERROR);
+		emit finished(eERROR_CANCEL);
 	}
 
 
@@ -61,6 +61,13 @@ namespace Ui
 
 				emit authFinished(eNO_ERROR, "", _token);
 			}
+			else if(url.contains("err=2"))
+			{
+				delete _view;
+				_view = NULL;
+
+				emit authFinished(eERROR_CANCEL, "", "");
+			}
 		}
 	}
 
@@ -93,7 +100,7 @@ namespace Ui
 		}
 	}
 
-	void VkOAuth::ignoreSSL(QNetworkReply * reply, const QList<QSslError> & list)
+	void VkOAuth::ignoreSSL(QNetworkReply* reply, const QList<QSslError>& /*list*/)
 	{
 		reply->ignoreSslErrors();
 	}
@@ -140,6 +147,6 @@ namespace Ui
 		delete _view;
 		_view = NULL;
 
-		emit authFinished(eERROR, "", "");
+		emit authFinished(eERROR_GENERAL, "", "");
 	}
 }

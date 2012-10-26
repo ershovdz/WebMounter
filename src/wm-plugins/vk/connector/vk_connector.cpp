@@ -13,7 +13,7 @@ namespace Connector
 	// VkHTTPConnector
 	QString VkHTTPConnector::_appId = "2950346";
 
-	RESULT VkHTTPConnector::uploadFile(const QString& path, const QString& title, const QString& parentId, QString& response)
+	RESULT VkHTTPConnector::uploadFile(const QString& path, const QString& /*title*/, const QString& parentId, QString& response)
 	{
 		RESULT res = eNO_ERROR;
 		QString uploadUrl = getUploadServer(parentId);
@@ -47,7 +47,7 @@ namespace Connector
 
 	RESULT VkHTTPConnector::uploadPhoto(const QString& uploadServer, const QString& path)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
@@ -93,7 +93,7 @@ namespace Connector
 				_upload._hash = response.mid(response.indexOf("hash") + 7, response.lastIndexOf("}")-response.indexOf("hash") - 8);
 			}
 
-			res = (_error == CURLE_OK) ? eNO_ERROR: eERROR;
+			res = (_error == CURLE_OK) ? eNO_ERROR: eERROR_GENERAL;
 			curl_formfree(post);
 			curl_easy_cleanup(p_curl);
 		}
@@ -103,7 +103,7 @@ namespace Connector
 
 	RESULT VkHTTPConnector::savePhoto(const QString& parentId, QString& response)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		QStringList params;
 		params.append("aid=" + parentId);
 
@@ -172,7 +172,7 @@ namespace Connector
 		_token = token;
 	}
 
-	QString VkHTTPConnector::genQuery(const QString &method, const QStringList &params)
+	QString VkHTTPConnector::genQuery(const QString& /*method*/, const QStringList &params)
 	{
 		QStringList paramsList;
 
@@ -190,14 +190,11 @@ namespace Connector
 
 	RESULT VkHTTPConnector::execQuery(const QString &url, const QString &header, const QString &postFields, QString* response)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
-			struct curl_httppost *post = NULL;
-			struct curl_httppost *last = NULL;
-
  			if((_proxy != "") && (_proxy != ":"))
  			{
  				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
@@ -233,7 +230,7 @@ namespace Connector
 
 			CURLcode _error = curl_easy_perform(p_curl);
 			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &_responseCode);
-			res = (_error == CURLE_OK) ? eNO_ERROR: eERROR;
+			res = (_error == CURLE_OK) ? eNO_ERROR: eERROR_GENERAL;
 			curl_easy_cleanup(p_curl);
 		}
 
@@ -242,14 +239,14 @@ namespace Connector
 
 	RESULT VkHTTPConnector::getAlbums(QString& response, int& errorCode)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		QStringList params;
 		QString query = genQuery("photos.getAlbums",params);
 
 		res = execQuery("https://api.vk.com/method/photos.getAlbums.xml", "", query, &response);
 		if(response.indexOf("error") != -1)
 		{
-			res = eERROR;
+			res = eERROR_GENERAL;
 			QString errorStr = RegExp::getByPattern("<error_code>(.*)</error_code>", response);
 			errorCode = errorStr.length() ? errorStr.toInt() : 0;
 		}
@@ -259,7 +256,7 @@ namespace Connector
 
 	RESULT VkHTTPConnector::getPhotos(int offset, QString& response)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		QStringList params;
 		params.append("offset=" + QString::number(offset));
 		params.append("count=100");
@@ -272,7 +269,7 @@ namespace Connector
 
 	RESULT VkHTTPConnector::downloadFile(const QString& url, const QString& path)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		QMutexLocker locker(&_connectorMutex);
 
 		CURL* p_curl = curl_easy_init();
@@ -290,7 +287,7 @@ namespace Connector
 			curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, &path);
 
 			CURLcode err = curl_easy_perform(p_curl);
-			res = (err == CURLE_OK) ? eNO_ERROR: eERROR;
+			res = (err == CURLE_OK) ? eNO_ERROR: eERROR_GENERAL;
 			curl_easy_cleanup(p_curl);
 		}
 
@@ -343,11 +340,11 @@ namespace Connector
 		do
 		{
 			CURLMsg* msg = curl_multi_info_read(p_mcurl, &msgs_in_queue);
-			if((RESULT)msg->data.result == eERROR)
+			if((RESULT)msg->data.result != eNO_ERROR)
 			{
 				if(curl_easy_perform(msg->easy_handle) != CURLE_OK)
 				{
-					res = eERROR;
+					res = eERROR_GENERAL;
 					break;
 				}
 			}
@@ -367,7 +364,7 @@ namespace Connector
 
 	RESULT VkHTTPConnector::deleteFile(const QString& id)
 	{
-		RESULT res = eERROR; 
+		RESULT res = eERROR_GENERAL; 
 		QStringList params;
 		params.append("pid=" + id);
 		QString query = genQuery("photos.delete",params);
@@ -376,14 +373,14 @@ namespace Connector
 		QString errorStr = RegExp::getByPattern("<response>(.*)</response>", response);
 		if(errorStr.length() != 0)
 		{
-			res = errorStr.toInt() == 1 ? eNO_ERROR : eERROR;
+			res = errorStr.toInt() == 1 ? eNO_ERROR : eERROR_GENERAL;
 		}
 		return res;
 	}
 
 	RESULT VkHTTPConnector::createDirectory(const QString& title, QString& response)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		QStringList params;
 		params.append("title="+title);
 		QString query = genQuery("photos.createAlbum",params);
@@ -394,7 +391,7 @@ namespace Connector
 
 	RESULT VkHTTPConnector::deleteAlbum(const QString& id)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		QStringList params;
 		params.append("aid=" + id);
 		QString query = genQuery("photos.deleteAlbum",params);
@@ -403,15 +400,15 @@ namespace Connector
 		QString errorStr = RegExp::getByPattern("<response>(.*)</response>", response);
 		if(errorStr.length() != 0)
 		{
-			res = errorStr.toInt() == 1 ? eNO_ERROR : eERROR;
+			res = errorStr.toInt() == 1 ? eNO_ERROR : eERROR_GENERAL;
 		}
 
 		return res;
 	}
 
-	RESULT VkHTTPConnector::moveFile(const QString& id, const QString& oldParentId, const QString& newParentId)
+	RESULT VkHTTPConnector::moveFile(const QString& id, const QString& /*oldParentId*/, const QString& newParentId)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		QStringList params;
 		params.append("pid=" + id);
 		params.append("target_aid=" + newParentId);
@@ -422,7 +419,7 @@ namespace Connector
 		QString errorStr = RegExp::getByPattern("<response list=\"true\">(.*)</response>", response);
 		if(errorStr.length() != 0)
 		{
-			res = errorStr.toInt() == 1 ? eNO_ERROR : eERROR;
+			res = errorStr.toInt() == 1 ? eNO_ERROR : eERROR_GENERAL;
 		}
 
 		return res;
@@ -430,7 +427,7 @@ namespace Connector
 
 	RESULT VkHTTPConnector::renameAlbum(const QString& id, const QString& newTitle)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		QStringList params;
 		params.append("aid=" + id);
 		params.append("title=" + newTitle);
@@ -441,7 +438,7 @@ namespace Connector
 		QString errorStr = RegExp::getByPattern("<response list=\"true\">(.*)</response>", response);
 		if(errorStr.length() != 0)
 		{
-			res = errorStr.toInt() == 1 ? eNO_ERROR : eERROR;
+			res = errorStr.toInt() == 1 ? eNO_ERROR : eERROR_GENERAL;
 		}
 
 		return res;

@@ -37,9 +37,6 @@ namespace Connector
 		static size_t writeStr(void *ptr, size_t size, size_t count, void *response);
 		static size_t fwrite_b(void *ptr, size_t size, size_t count, void *path); 
 		static size_t readStr(void *ptr, size_t size, size_t nmemb, void *stream);
-		RESULT getCredentials();
-		RESULT postCredentials();
-		std::string encrypt(const char* public_key, std::string text);
 		int execQuery(const QString &url, const QString &header, const QString &postFields, QString* response);
 	private:
 		struct sPutData

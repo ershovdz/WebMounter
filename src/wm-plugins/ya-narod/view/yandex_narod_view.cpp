@@ -36,7 +36,7 @@ namespace Ui
 		_urlEdit->setEnabled(false);
 	}
 
-	void YandexNarodView::oAuthFinished(RESULT error, const QString& login, const QString& token)
+	void YandexNarodView::oAuthFinished(RESULT /*error*/, const QString& /*login*/, const QString& /*token*/)
 	{
 //		PluginSettings pluginSettings;
 //		Common::WebMounter::getSettingStorage()->getData(pluginSettings, "Yandex.Fotki");

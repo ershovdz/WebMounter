@@ -816,9 +816,7 @@ namespace Data
 		unsigned short lm;
 		// must ensure that any data block would be < key's modulus
 		// hence -1
-		int portion_len = (prkface.m.bits() - 1)  / 8;
-		unsigned iii = prkface.m.bits();
-		int a = (512-1)/8;
+		unsigned int portion_len = (prkface.m.bits() - 1)  / 8;
 		char prev_crypted[(512-1)/8];
 		memset(&prev_crypted, 0, portion_len);
 
@@ -859,7 +857,7 @@ namespace Data
 
 		// must ensure that any data block would be < key's modulus
 		// hence -1
-		int portion_len = (prkface.m.bits() - 1)  / 8;
+		unsigned int portion_len = (prkface.m.bits() - 1)  / 8;
 		char prev_crypted[(512-1)/8];
 		memset(&prev_crypted, 0, portion_len);
 

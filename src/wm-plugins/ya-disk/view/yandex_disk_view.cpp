@@ -55,11 +55,18 @@ namespace Ui
 
 	void YaDiskView::oAuthFinished(RESULT error, const QString& login, const QString& token)
 	{
-		PluginSettings pluginSettings; 
-		Common::WebMounter::getSettingStorage()->getData(pluginSettings, "Yandex.Disk");
-		pluginSettings.userName = login;
-		pluginSettings.oAuthToken = token;
+		if(error == eERROR_CANCEL)
+		{
+			emit disconnectPlugin();
+		}
+		else
+		{
+			PluginSettings pluginSettings; 
+			Common::WebMounter::getSettingStorage()->getData(pluginSettings, "Yandex.Disk");
+			pluginSettings.userName = login;
+			pluginSettings.oAuthToken = token;
 
-		static_cast<YaDiskRVFSDriver*>(_driver)->connectHandlerStage2(error, pluginSettings);
+			static_cast<YaDiskRVFSDriver*>(_driver)->connectHandlerStage2(error, pluginSettings);
+		}
 	}
 }

@@ -58,7 +58,6 @@ QIcon* YaDiskPlugin::getIcon()
 
 QString YaDiskPlugin::getTranslationFile(const QString& locale)
 {
-	char* loc = locale.toUtf8().data();
 	QString file("yandex_disk_wm_pl_" + locale);
 	return file;
 }

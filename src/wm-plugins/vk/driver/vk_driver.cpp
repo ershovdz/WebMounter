@@ -63,16 +63,16 @@ namespace RemoteDriver
 				}
 				else
 				{
-					return eERROR;
+					return eERROR_GENERAL;
 				}
 			}
 		}
 		
 		RESULT res = _httpConnector->downloadFiles(urlList, pathList);
-		if(res == eERROR)
+		if(res != eNO_ERROR)
 		{
 			unsigned int retryDownloadCounter = 0;
-			while(res == eERROR && retryDownloadCounter < MAX_DOWNLOAD_RETRY)
+			while(res != eNO_ERROR && retryDownloadCounter < MAX_DOWNLOAD_RETRY)
 			{
 				res = _httpConnector->downloadFiles(urlList, pathList);
 				retryDownloadCounter++;
@@ -88,7 +88,7 @@ namespace RemoteDriver
 
 				if(iter != vfsCache->end())
 				{
-					if(res == eERROR)
+					if(res != eNO_ERROR)
 					{
 						vfsCache->setFlag(iter, VFSElement::eFl_None, VFSElement::eFl_Downloading);
 					}
@@ -107,7 +107,7 @@ namespace RemoteDriver
 
 	RESULT VkRVFSDriver::uploadFile(const QString& path, const QString& title, const QString& id, const QString& parentId)
 	{
-		RESULT err = eERROR;
+		RESULT err = eERROR_GENERAL;
 		int count = 0;
 
 		QFileInfo fInfo(path);
@@ -117,12 +117,12 @@ namespace RemoteDriver
 		if(suffix != "jpg" && suffix != "jpeg" && suffix != "png" && suffix != "gif")
 		{
 			notifyUser(Ui::Notification::eINFO, RemoteDriver::VkRVFSDriver::tr("Info"), RemoteDriver::VkRVFSDriver::tr("This file extension is not supported !\n"));
-			return eERROR;
+			return eERROR_GENERAL;
 		}
 		else if(id != ROOT_ID)
 		{
 			notifyUser(Ui::Notification::eINFO, tr("Info"), tr("This file will be changed locally!\n"));
-			return eERROR;
+			return eERROR_GENERAL;
 		}
 		else if (fInfo.size() == 0)
 		{
@@ -148,7 +148,7 @@ namespace RemoteDriver
                         unsigned int retryUploadCounter = 0;
 			
 			err = _httpConnector->uploadFile(path, title, parentId, xmlResp);
-			while(err == eERROR && retryUploadCounter < MAX_UPLOAD_RETRY)
+			while(err != eNO_ERROR && retryUploadCounter < MAX_UPLOAD_RETRY)
 			{
 				err = _httpConnector->uploadFile(path, title, parentId, xmlResp);
 				retryUploadCounter++;
@@ -173,8 +173,7 @@ namespace RemoteDriver
 
 				QFile::Permissions permissions = QFile::permissions(elem.getPath());
 				permissions &= ~(QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
-				bool errPerm = QFile::setPermissions(elem.getPath(), permissions);
-
+				QFile::setPermissions(elem.getPath(), permissions);
 			}
 			else
 			{
@@ -203,12 +202,12 @@ namespace RemoteDriver
 
 	RESULT VkRVFSDriver::modifyFile(const QString&)
 	{
-		return eERROR;
+		return eERROR_GENERAL;
 	}
 
 	RESULT VkRVFSDriver::renameElement(const QString& path, const QString& newTitle)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		QFileInfo qInfo(path);
 		VFSCache* cache = WebMounter::getCache();
 		VFSCache::iterator elem = cache->find(qInfo.absoluteFilePath());
@@ -251,7 +250,7 @@ namespace RemoteDriver
 
 	RESULT VkRVFSDriver::deleteDirectory(const QString& path)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		QDir qDirFrom(path);
 		VFSCache* cache = WebMounter::getCache();
 		VFSCache::iterator elem = cache->find(qDirFrom.absolutePath());
@@ -259,7 +258,7 @@ namespace RemoteDriver
 		if(elem != cache->end() && elem->getType() == VFSElement::DIRECTORY)
 		{
 			res = _httpConnector->deleteAlbum(elem->getId());
-			if(res != eERROR)
+			if(res == eNO_ERROR)
 			{
 				cache->erase(elem);
 			}
@@ -269,7 +268,7 @@ namespace RemoteDriver
 
 	RESULT VkRVFSDriver::deleteFile(const QString& path)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		QFileInfo qInfo(path);
 		VFSCache* cache = WebMounter::getCache();
 		VFSCache::iterator elem = cache->find(qInfo.absoluteFilePath());
@@ -290,7 +289,7 @@ namespace RemoteDriver
 
 	RESULT VkRVFSDriver::moveElement(const QString& path, const QString& newParentId)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		QFileInfo qInfo(path);
 		VFSCache* cache = WebMounter::getCache();
 		VFSCache::iterator elem = cache->find(qInfo.absoluteFilePath());
@@ -335,9 +334,9 @@ namespace RemoteDriver
 		return res;
 	}
 
-	RESULT VkRVFSDriver::createDirectory(const QString& path, const QString& parentId, const QString& title)
+	RESULT VkRVFSDriver::createDirectory(const QString& /*path*/, const QString& parentId, const QString& title)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		int count = 0;
 		VFSCache::iterator iter = WebMounter::getCache()->begin();
 		for(iter; iter != WebMounter::getCache()->end(); ++iter)
@@ -352,7 +351,7 @@ namespace RemoteDriver
 
 		if(parentId != ROOT_ID)
 		{
-			return eERROR; // Creation of sub-albums is not supported
+			return eERROR_GENERAL; // Creation of sub-albums is not supported
 		}
 
 		QString xmlResp;
@@ -411,7 +410,7 @@ namespace RemoteDriver
 			}
 		}
 		
-		if(err != eERROR)
+		if(err == eNO_ERROR)
 		{
 			handleNameDuplicates(elements);
 		}
@@ -436,7 +435,7 @@ namespace RemoteDriver
 
 	RESULT VkRVFSDriver::getPhotos(QList<VFSElement>& elements)
 	{
-		RESULT err = eERROR;
+		RESULT err = eERROR_GENERAL;
 		int offset = 0;
 		forever
 		{
@@ -486,7 +485,7 @@ namespace RemoteDriver
 				break;
 		}
 
-		if(err != eERROR)
+		if(err == eNO_ERROR)
 		{
 			handleNameDuplicates(elements);
 		}
@@ -595,7 +594,7 @@ namespace RemoteDriver
 
 	RESULT VkRVFSDriver::sync()
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		SettingStorage* settings = WebMounter::getSettingStorage();
 		QString pluginStoragePath = settings->getAppStoragePath() + QString(QDir::separator()) + _pluginName;
 		QFileInfo fInfo(pluginStoragePath);
@@ -670,7 +669,7 @@ namespace RemoteDriver
 								{
 									if(iter->getType() == VFSElement::DIRECTORY)
 									{
-										bool err = qDir.rename(iter->getPath(), elements[i].getPath());
+										qDir.rename(iter->getPath(), elements[i].getPath());
 									}
 									break;
 								}
@@ -717,7 +716,7 @@ namespace RemoteDriver
 			}
 		}
 
-		if(res == eERROR)
+		if(res != eNO_ERROR)
 		{
 			if(errorCode == ERROR_AUTH_FAILED)
 			{
@@ -763,7 +762,7 @@ namespace RemoteDriver
 
 			_syncMutex.lock();
 
-			bool result = _forceSync.wait(&_syncMutex, sync_period * 1000);
+			_forceSync.wait(&_syncMutex, sync_period * 1000);
 
 			_syncMutex.unlock();
 
@@ -1004,7 +1003,7 @@ namespace RemoteDriver
 		}
 	}
 
-	bool VkRVFSDriver::areFileAttributesValid(const QString& path, unsigned long attributes)
+	bool VkRVFSDriver::areFileAttributesValid(const QString& /*path*/, unsigned long /*attributes*/)
 	{
                 return true;///////(attributes & FILE_ATTRIBUTE_READONLY);
 	}

@@ -58,7 +58,6 @@ QIcon* YafPlugin::getIcon()
 
 QString YafPlugin::getTranslationFile(const QString& locale)
 {
-	char* loc = locale.toUtf8().data();
 	QString file("yaf_wm_pl_" + locale);
 	return file;
 }

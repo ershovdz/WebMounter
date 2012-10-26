@@ -70,16 +70,16 @@ namespace RemoteDriver
 				}
 				else
 				{
-					return eERROR;
+					return eERROR_GENERAL;
 				}
 			}
 		}
 		
 		RESULT res = _httpConnector->downloadFiles(urlList, pathList);
-		if(res == eERROR)
+		if(res != eNO_ERROR)
 		{
 			unsigned int retryDownloadCounter = 0;
-			while(res == eERROR && retryDownloadCounter < MAX_DOWNLOAD_RETRY)
+			while(res != eNO_ERROR && retryDownloadCounter < MAX_DOWNLOAD_RETRY)
 			{
 				res = _httpConnector->downloadFiles(urlList, pathList);
 				retryDownloadCounter++;
@@ -95,7 +95,7 @@ namespace RemoteDriver
 
 				if(iter != vfsCache->end())
 				{
-					if(res == eERROR)
+					if(res != eNO_ERROR)
 					{
 						vfsCache->setFlag(iter, VFSElement::eFl_None, VFSElement::eFl_Downloading);
 					}
@@ -112,7 +112,7 @@ namespace RemoteDriver
 		return res;
 	}
 
-	RESULT YaDiskRVFSDriver::uploadFile(const QString& path, const QString& title,  const QString& Id, const QString& parentId)
+	RESULT YaDiskRVFSDriver::uploadFile(const QString& path, const QString& title,  const QString& /*Id*/, const QString& parentId)
 	{
 		QString xmlResp;
 		QString id = ROOT_ID;
@@ -125,7 +125,7 @@ namespace RemoteDriver
 		RESULT err = _httpConnector->uploadFile(path, title, parentId, xmlResp);
                 unsigned int retryUploadCounter = 0;
 
-		while(err == eERROR && retryUploadCounter < MAX_UPLOAD_RETRY)
+		while(err != eNO_ERROR && retryUploadCounter < MAX_UPLOAD_RETRY)
 		{
 			err = _httpConnector->uploadFile(path, title, parentId, xmlResp);
 			retryUploadCounter++;
@@ -153,7 +153,7 @@ namespace RemoteDriver
 
 			QFile::Permissions permissions = QFile::permissions(elem.getPath());
 			permissions &= ~(QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
-			bool err = QFile::setPermissions(elem.getPath(), permissions);
+			QFile::setPermissions(elem.getPath(), permissions);
 		}
 		else
 		{
@@ -168,12 +168,12 @@ namespace RemoteDriver
 
 	RESULT YaDiskRVFSDriver::modifyFile(const QString&)
 	{
-		return eERROR;
+		return eERROR_GENERAL;
 	}
 
 	RESULT YaDiskRVFSDriver::renameElement(const QString& path, const QString& newTitle)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		QFileInfo qInfo(path);
 		VFSCache* cache = WebMounter::getCache();
 		VFSCache::iterator elem = cache->find(qInfo.absoluteFilePath());
@@ -211,7 +211,7 @@ namespace RemoteDriver
 
 	RESULT YaDiskRVFSDriver::deleteDirectory(const QString& path)
 	{
-		/*RESULT res = eERROR;
+		/*RESULT res = eERROR_GENERAL;
 		QDir qDirFrom(path);
 		VFSCache* cache = WebMounter::getCache();
 		VFSCache::iterator elem = cache->find(qDirFrom.absolutePath());
@@ -220,7 +220,7 @@ namespace RemoteDriver
 		{
 			QString response;
 			res = _httpConnector->deleteFile("album/" + elem->getId() + "/", response);
-			if(res != eERROR)
+			if(res == eNO_ERROR)
 			{
 				cache->erase(elem);
 			}
@@ -232,7 +232,7 @@ namespace RemoteDriver
 
 	RESULT YaDiskRVFSDriver::deleteFile(const QString& path)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		QFileInfo qInfo(path);
 		VFSCache* cache = WebMounter::getCache();
 		VFSCache::iterator elem = cache->find(qInfo.absoluteFilePath());
@@ -253,7 +253,7 @@ namespace RemoteDriver
 
 	RESULT YaDiskRVFSDriver::moveElement(const QString& path, const QString& newParentId)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		QFileInfo qInfo(path);
 		VFSCache* cache = WebMounter::getCache();
 		VFSCache::iterator elem = cache->find(qInfo.absoluteFilePath());
@@ -338,7 +338,7 @@ namespace RemoteDriver
 		}
 		else
 		{
-			for (unsigned int i = 0; i < elements.count(); ++i) 
+			for (int i = 0; i < elements.count(); ++i) 
 			{
 				if(elements[i].getId() == parentId)
 				{
@@ -353,8 +353,7 @@ namespace RemoteDriver
 
 	RESULT YaDiskRVFSDriver::getElements(QList<VFSElement>& elements)
 	{
-		RESULT err = eERROR;
-		bool entriesFound = false;
+		RESULT err = eERROR_GENERAL;
 		for(int i=0; i<elements.count()&&elements[i].getType()==VFSElement::DIRECTORY; i++)
 		{
 			QString xmlResp = "";
@@ -390,7 +389,7 @@ namespace RemoteDriver
 			}
 		}
 
-		if(err != eERROR)
+		if(err == eNO_ERROR)
 		{
 			//Populate path for elemenets
 			for(int k=0, count = elements.count(); k < count; k++)
@@ -457,7 +456,7 @@ namespace RemoteDriver
 
 	RESULT YaDiskRVFSDriver::sync()
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		SettingStorage* settings = WebMounter::getSettingStorage();
 		QString pluginStoragePath = settings->getAppStoragePath() + QString(QDir::separator()) + _pluginName;
 		QFileInfo fInfo(pluginStoragePath);
@@ -513,7 +512,7 @@ namespace RemoteDriver
 							{
 								if(iter->getType() == VFSElement::DIRECTORY)
 								{
-									bool err = qDir.rename(iter->getPath(), elements[i].getPath());
+									qDir.rename(iter->getPath(), elements[i].getPath());
 								}
 								break;
 							}
@@ -569,7 +568,7 @@ namespace RemoteDriver
 			}
 		}
 
-		if(res == eERROR)
+		if(res != eNO_ERROR)
 		{
 			stopPlugin();
 			notifyUser(Ui::Notification::eCRITICAL, tr("Error"), tr("Sync failed !\n"));
@@ -614,7 +613,7 @@ namespace RemoteDriver
 
 			_syncMutex.lock();
 
-			bool result = _forceSync.wait(&_syncMutex, sync_period * 1000);
+			_forceSync.wait(&_syncMutex, sync_period * 1000);
 
 			_syncMutex.unlock();
 
@@ -831,7 +830,7 @@ namespace RemoteDriver
 		}
 	}
 
-	bool YaDiskRVFSDriver::areFileAttributesValid(const QString& path, unsigned long attributes)
+	bool YaDiskRVFSDriver::areFileAttributesValid(const QString& /*path*/, unsigned long /*attributes*/)
 	{
                 return true;///////////(attributes & FILE_ATTRIBUTE_READONLY);
 	}

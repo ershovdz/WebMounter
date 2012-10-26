@@ -71,12 +71,12 @@ namespace Data
 
 			if(!isOk)
 			{
-				return eERROR;
+				return eERROR_GENERAL;
 			}
 			
 			return eNO_ERROR;
 		}
-		return eERROR;
+		return eERROR_GENERAL;
 	}
 
 	VFSCache* VFSCache::getCache(const QString& localDBPath)
@@ -274,7 +274,7 @@ namespace Data
 
 			if(!query.exec())
 			{
-				return eERROR;
+				return eERROR_GENERAL;
 			}
 
 			_FileList.erase(iter);
@@ -299,7 +299,7 @@ namespace Data
 
 			if(!isOk)
 			{
-				return eERROR;
+				return eERROR_GENERAL;
 			}
 
 			while (query.next()) 
@@ -338,7 +338,7 @@ namespace Data
 		catch(...)
 		{
 		}
-		return eERROR;
+		return eERROR_GENERAL;
 	}
 
 	RESULT VFSCache::flush()
@@ -376,7 +376,7 @@ namespace Data
 
 				if(!query.exec())
 				{
-					return eERROR;
+					return eERROR_GENERAL;
 				}
 				iter.getNatureIter()->second->setDirty(false);
 			}

@@ -11,7 +11,7 @@ SingleInstance::SingleInstance( QObject *parent ) : QTcpServer(parent)
 	listen(QHostAddress::Any, 2222);
 }
 
-void SingleInstance::newConnection(int socket)
+void SingleInstance::newConnection(int /*socket*/)
 {
 //  No need to implement anything!
 //  The parameter gives a warning at compile-time but that's nothing to care about...

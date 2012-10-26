@@ -230,7 +230,7 @@ namespace LocalDriver
 			CloseHandle(handle);
 			handle = INVALID_HANDLE_VALUE;
 
-			if(_pFileProxy->CreateFileW(QString::fromWCharArray(filePath)) == eERROR)
+			if(_pFileProxy->CreateFileW(QString::fromWCharArray(filePath)) != eNO_ERROR)
 			{
 				DbgPrint(L"  DeleteFile ");
 				if (DeleteFile(filePath) == 0) 
@@ -271,7 +271,7 @@ namespace LocalDriver
 	int __stdcall
 		LVFSDriver::DokanCreateDirectory(
 		LPCWSTR					FileName,
-		PDOKAN_FILE_INFO		DokanFileInfo)
+		PDOKAN_FILE_INFO		/*DokanFileInfo*/)
 	{
 		WCHAR filePath[MAX_PATH];
 		GetFilePath(filePath, MAX_PATH, FileName);
@@ -616,7 +616,7 @@ namespace LocalDriver
 			Sleep(100); //hack. We need a time to close file 
 
 			{	LOCK(_DriverMutex);
-				if(_pFileProxy->CreateFileW(QString::fromWCharArray(filePath)) == eERROR)
+				if(_pFileProxy->CreateFileW(QString::fromWCharArray(filePath)) != eNO_ERROR)
 				{
 					/*DbgPrint(L"  DeleteFile ");
 					if (DeleteFile(filePath) == 0) 
@@ -781,14 +781,13 @@ namespace LocalDriver
 	int __stdcall
 		LVFSDriver::DokanDeleteFile(
 		LPCWSTR				FileName,
-		PDOKAN_FILE_INFO	DokanFileInfo)
+		PDOKAN_FILE_INFO	/*DokanFileInfo*/)
 	{
 		WCHAR	filePath[MAX_PATH];
-		HANDLE	handle = (HANDLE)DokanFileInfo->Context;
-
+		
 		GetFilePath(filePath, MAX_PATH, FileName);
 
-		if(_pFileProxy->RemoveFile(QString::fromWCharArray(filePath)) == eERROR)
+		if(_pFileProxy->RemoveFile(QString::fromWCharArray(filePath)) != eNO_ERROR)
 		{
 			return -(int)ERROR_BAD_ARGUMENTS;
 		}
@@ -802,10 +801,9 @@ namespace LocalDriver
 	int __stdcall
 		LVFSDriver::DokanDeleteDirectory(
 		LPCWSTR				FileName,
-		PDOKAN_FILE_INFO	DokanFileInfo)
+		PDOKAN_FILE_INFO	/*DokanFileInfo*/)
 	{
 		WCHAR	filePath[MAX_PATH];
-		HANDLE	handle = (HANDLE)DokanFileInfo->Context;
 		HANDLE	hFind;
 		WIN32_FIND_DATAW	findData;
 		ULONG	fileLen;
@@ -1028,7 +1026,7 @@ namespace LocalDriver
 		LVFSDriver::DokanSetFileAttributes(
 		LPCWSTR				FileName,
 		DWORD				FileAttributes,
-		PDOKAN_FILE_INFO	DokanFileInfo)
+		PDOKAN_FILE_INFO	/*DokanFileInfo*/)
 	{
 		WCHAR	filePath[MAX_PATH];
 
@@ -1162,7 +1160,7 @@ namespace LocalDriver
 		LPCWSTR					FileName,
 		PSECURITY_INFORMATION	SecurityInformation,
 		PSECURITY_DESCRIPTOR	SecurityDescriptor,
-		ULONG				SecurityDescriptorLength,
+		ULONG				/*SecurityDescriptorLength*/,
 		PDOKAN_FILE_INFO	DokanFileInfo)
 	{
 		HANDLE	handle;
@@ -1195,7 +1193,7 @@ namespace LocalDriver
 		LPDWORD		FileSystemFlags,
 		LPWSTR		FileSystemNameBuffer,
 		DWORD		FileSystemNameSize,
-		PDOKAN_FILE_INFO	DokanFileInfo)
+		PDOKAN_FILE_INFO	/*DokanFileInfo*/)
 	{
 		wcscpy_s(VolumeNameBuffer, VolumeNameSize / sizeof(WCHAR), L"WEBMOUNTER");
 		*VolumeSerialNumber = 0x19831116;
@@ -1214,7 +1212,7 @@ namespace LocalDriver
 
 	int __stdcall
 		LVFSDriver::DokanWMUnmount(
-		PDOKAN_FILE_INFO	DokanFileInfo)
+		PDOKAN_FILE_INFO	/*DokanFileInfo*/)
 	{
 		DbgPrint(L"Unmount\n");
 		return 0;
@@ -1235,7 +1233,6 @@ namespace LocalDriver
 			//_pFileProxy->Sync(QString(""), false);
 
 			int status;
-			ULONG command;
 
 			LVFSDriver::_pDriverOperations =
 				(PDOKAN_OPERATIONS)malloc(sizeof(DOKAN_OPERATIONS));

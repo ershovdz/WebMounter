@@ -58,7 +58,6 @@ QIcon* YaNarodPlugin::getIcon()
 
 QString YaNarodPlugin::getTranslationFile(const QString& locale)
 {
-	char* loc = locale.toUtf8().data();
 	QString file("yanarod_wm_pl_" + locale);
 	return file;
 }

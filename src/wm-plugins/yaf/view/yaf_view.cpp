@@ -55,11 +55,18 @@ namespace Ui
 
 	void YafView::oAuthFinished(RESULT error, const QString& login, const QString& token)
 	{
-		PluginSettings pluginSettings; 
-		Common::WebMounter::getSettingStorage()->getData(pluginSettings, "Yandex.Fotki");
-		pluginSettings.userName = login;
-		pluginSettings.oAuthToken = token;
+		if(error == eERROR_CANCEL)
+		{
+			emit disconnectPlugin();
+		}
+		else
+		{
+			PluginSettings pluginSettings; 
+			Common::WebMounter::getSettingStorage()->getData(pluginSettings, "Yandex.Fotki");
+			pluginSettings.userName = login;
+			pluginSettings.oAuthToken = token;
 
-		static_cast<YafRVFSDriver*>(_driver)->connectHandlerStage2(error, pluginSettings);
+			static_cast<YafRVFSDriver*>(_driver)->connectHandlerStage2(error, pluginSettings);
+		}
 	}
 }

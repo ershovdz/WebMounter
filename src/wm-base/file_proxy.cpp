@@ -75,13 +75,13 @@ namespace Common
 
 		if(!driver)
 		{
-			return eERROR;
+			return eERROR_GENERAL;
 		}
 
 		if(driver->getState() != RemoteDriver::eConnected)
 		{
 			notifyUser(Ui::Notification::eINFO, QObject::tr("Info"),QObject::tr("Plugin is not connected !\nPlugin has to be in connected state.\n"));
-			return eERROR;
+			return eERROR_GENERAL;
 		}
 
 		QDir qDir = qFileInfo.dir();
@@ -91,7 +91,7 @@ namespace Common
 		if(it_dir == cache->end())
 		{
 			notifyUser(Ui::Notification::eCRITICAL, QString(QObject::tr("Error")), QString(QObject::tr("Select a specific category, at first\n")));
-			return eERROR; // Looks like it was root path
+			return eERROR_GENERAL; // Looks like it was root path
 		}
 
 		QFileInfo fInfo(path);
@@ -153,7 +153,7 @@ namespace Common
 		else
 		{
 			//Sleep(2000);
-			return eERROR;
+			return eERROR_GENERAL;
 		}
 	}
 
@@ -179,7 +179,7 @@ namespace Common
 		{
 			if(iter->getFlags() &  VFSElement::eFl_Downloading)
 			{
-				return eERROR;
+				return eERROR_GENERAL;
 			}
 			else if(iter->getFlags() &  VFSElement::eFl_Downloaded)
 			{
@@ -190,13 +190,13 @@ namespace Common
 
 			if(!driver)
 			{
-				return eERROR;
+				return eERROR_GENERAL;
 			}
 
 			if(driver->getState() != RemoteDriver::eConnected)
 			{
 				notifyUser(Ui::Notification::eINFO, QObject::tr("Info"), QString(iter->getPluginName() + QObject::tr(" plugin is not connected !\nPlugin has to be in connected state.\n")));
-				return eERROR;
+				return eERROR_GENERAL;
 			}
 			
 			urlList.append(iter->getSrcUrl());
@@ -204,7 +204,7 @@ namespace Common
 			
 			return driver->downloadFiles(urlList, pathList);
 		}
-		return eERROR;
+		return eERROR_GENERAL;
 	}
 
 	RESULT FileProxy::CreateDirectoryW(QString path)
@@ -234,13 +234,13 @@ namespace Common
 
 		if(!driver)
 		{
-			return eERROR;
+			return eERROR_GENERAL;
 		}
 
 		if(driver->getState() != RemoteDriver::eConnected)
 		{
 			notifyUser(Ui::Notification::eINFO, QObject::tr("Info"),QObject::tr("Plugin is not connected !\nPlugin has to be in connected state.\n"));
-			return eERROR;
+			return eERROR_GENERAL;
 		}
 		
 		return driver->createDirectory(dirPath, parentId, dirName);  
@@ -288,13 +288,13 @@ namespace Common
 
 			if(!driver)
 			{
-				return eERROR;
+				return eERROR_GENERAL;
 			}
 
 			if(driver->getState() != RemoteDriver::eConnected)
 			{
 				notifyUser(Ui::Notification::eINFO, QObject::tr("Info"),QObject::tr("Plugin is not connected !\nPlugin has to be in connected state.\n"));
-				return eERROR;
+				return eERROR_GENERAL;
 			}
 
 			if(fInfoFrom.baseName().mid(0, 4).toLower() == "~wrd"
@@ -325,36 +325,36 @@ namespace Common
 
 			if(!plugin_from || !plugin_to)
 			{
-				return eERROR;
+				return eERROR_GENERAL;
 			}
 
 			if(plugin_to != plugin_from)
 			{
 				notifyUser(Ui::Notification::eCRITICAL, QString("Info"), QString("Moving is possible within a single plugin only\n"));
-				return eERROR;
+				return eERROR_GENERAL;
 			}
 
 			if(plugin_to->getState() != RemoteDriver::eConnected)
 			{
 				notifyUser(Ui::Notification::eINFO, QObject::tr("Info"),QObject::tr("Plugin is not connected !\nPlugin has to be in connected state.\n"));
-				return eERROR;
+				return eERROR_GENERAL;
 			}
 
 			return plugin_to->moveElement(it_file_from->getPath(), it_dir_to->getId());
 		}
-		return eERROR;
+		return eERROR_GENERAL;
 	}
 
 	RESULT FileProxy::RemoveFile(QString path)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		RVFSDriver* driver = extractPlugin(path);
 		if(driver)
 		{
 			if(driver->getState() != RemoteDriver::eConnected)
 			{
 				notifyUser(Ui::Notification::eINFO, QObject::tr("Info"),QObject::tr("Plugin is not connected !\nPlugin has to be in connected state.\n"));
-				return eERROR;
+				return eERROR_GENERAL;
 			}
 
 			QFileInfo fInfo(path);
@@ -382,7 +382,7 @@ namespace Common
 
 	RESULT FileProxy::RemoveDir(QString& path)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		RVFSDriver* driver = extractPlugin(path);
 		if(driver)
 		{

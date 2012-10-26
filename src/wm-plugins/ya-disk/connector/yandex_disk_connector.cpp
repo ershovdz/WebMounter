@@ -35,7 +35,7 @@ namespace Connector
 		if(path)
 		{
 			QFile file(*(QString*)path);
-			bool res = file.open(QIODevice::WriteOnly | QIODevice::Append);
+			file.open(QIODevice::WriteOnly | QIODevice::Append);
 			size_t result = file.write((char*)ptr, size*count);
 			return result;
 		}
@@ -90,9 +90,6 @@ namespace Connector
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
-			struct curl_httppost *post = NULL;
-			struct curl_httppost *last = NULL;
-
 			if((_proxy != "") && (_proxy != ":"))
 			{
 				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
@@ -136,13 +133,10 @@ namespace Connector
 
 	RESULT YaDiskHTTPConnector::getTreeElements(const QString& path, QString& response)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
-			struct curl_httppost *post = NULL;
-			struct curl_httppost *last = NULL;
-
 			if((_proxy != "") && (_proxy != ":"))
 			{
 				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
@@ -178,7 +172,7 @@ namespace Connector
 			long code;
 			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
 
-			res = (_error == CURLE_OK && code == 207) ? eNO_ERROR : eERROR;
+			res = (_error == CURLE_OK && code == 207) ? eNO_ERROR : eERROR_GENERAL;
 			curl_easy_cleanup(p_curl);
 		}
 
@@ -187,13 +181,10 @@ namespace Connector
 
 	RESULT YaDiskHTTPConnector::createDirectory(const QString& title, const QString& parentId, QString& response)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
-			struct curl_httppost *post = NULL;
-			struct curl_httppost *last = NULL;
-
 			if((_proxy != "") && (_proxy != ":"))
 			{
 				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
@@ -235,7 +226,7 @@ namespace Connector
 			long code;
 			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
 
-			res = (_error == CURLE_OK && code == 201) ? eNO_ERROR : eERROR;
+			res = (_error == CURLE_OK && code == 201) ? eNO_ERROR : eERROR_GENERAL;
 			curl_easy_cleanup(p_curl);
 		}
 
@@ -244,14 +235,11 @@ namespace Connector
 
 	RESULT YaDiskHTTPConnector::deleteFile(const QString& path, QString& response)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
-			struct curl_httppost *post = NULL;
-			struct curl_httppost *last = NULL;
-
 			if((_proxy != "") && (_proxy != ":"))
 			{
 				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
@@ -278,7 +266,7 @@ namespace Connector
 			long code;
 			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
 
-			res = (_error == CURLE_OK && code == 200) ? eNO_ERROR : eERROR;
+			res = (_error == CURLE_OK && code == 200) ? eNO_ERROR : eERROR_GENERAL;
 			curl_easy_cleanup(p_curl);
 		}
 
@@ -299,9 +287,9 @@ namespace Connector
 		return retcode;
 	}
 
-	RESULT YaDiskHTTPConnector::uploadFile(const QString& path, const QString& title, const QString& parentId, QString& response)
+	RESULT YaDiskHTTPConnector::uploadFile(const QString& path, const QString& title, const QString& /*parentId*/, QString& response)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
@@ -343,7 +331,7 @@ namespace Connector
 			CURLcode err = curl_easy_perform(p_curl);
 			long code;
 			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
-			res = (err == CURLE_OK && code == 201) ? eNO_ERROR : eERROR;
+			res = (err == CURLE_OK && code == 201) ? eNO_ERROR : eERROR_GENERAL;
 
 			curl_easy_cleanup(p_curl);
 			fclose(hd_src);
@@ -356,7 +344,7 @@ namespace Connector
 	{
 		QMutexLocker locker(&_connectorMutex);
 
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
@@ -370,13 +358,12 @@ namespace Connector
 
 			curl_easy_setopt(p_curl, CURLOPT_VERBOSE, 1L);
 			curl_easy_setopt(p_curl, CURLOPT_WRITEFUNCTION, fwrite_b);
-			const QString* path1 = &path;
 			curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, &path);
 
 			CURLcode _error = curl_easy_perform(p_curl);
 			long code;
 			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
-			res = (_error == CURLE_OK && code == 200) ? eNO_ERROR : eERROR;
+			res = (_error == CURLE_OK && code == 200) ? eNO_ERROR : eERROR_GENERAL;
 			curl_easy_cleanup(p_curl);
 		}
 
@@ -437,11 +424,11 @@ namespace Connector
 		do
 		{
 			CURLMsg* msg = curl_multi_info_read(p_mcurl, &msgs_in_queue);
-			if((RESULT)msg->data.result == eERROR)
+			if((RESULT)msg->data.result != eNO_ERROR)
 			{
 				if(curl_easy_perform(msg->easy_handle) != CURLE_OK)
 				{
-					res = eERROR;
+					res = eERROR_GENERAL;
 					break;
 				}
 			}
@@ -459,15 +446,12 @@ namespace Connector
 	}
 
 
-	RESULT YaDiskHTTPConnector::moveElement(const QString& id, const QString& oldParentId, const QString& newParentId, ElementType type, QString& response)
+	RESULT YaDiskHTTPConnector::moveElement(const QString& id, const QString& oldParentId, const QString& newParentId, ElementType /*type*/, QString& response)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
-			struct curl_httppost *post = NULL;
-			struct curl_httppost *last = NULL;
-
 			if((_proxy != "") && (_proxy != ":"))
 			{
 				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
@@ -512,7 +496,7 @@ namespace Connector
 			long code;
 			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
 
-			res = (_error == CURLE_OK && code == 201) ? eNO_ERROR : eERROR;
+			res = (_error == CURLE_OK && code == 201) ? eNO_ERROR : eERROR_GENERAL;
 			curl_easy_cleanup(p_curl);
 		}
 
@@ -521,7 +505,7 @@ namespace Connector
 
 	RESULT YaDiskHTTPConnector::renameElement(const QString& id, ElementType type, const QString& newTitle, QString& response)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 
 		QString typeStr = type == (VFSElement::DIRECTORY) ? QString("album") : QString("photo");
 		QString url = QString("http://api-fotki.yandex.ru/api/users/%1/%2/%3/").arg(_login).arg(typeStr).arg(id);
@@ -570,7 +554,7 @@ namespace Connector
 				CURLcode err = curl_easy_perform(p_curl);
 				long code;
 				curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
-				res = (err == CURLE_OK && code == 200) ? eNO_ERROR : eERROR;
+				res = (err == CURLE_OK && code == 200) ? eNO_ERROR : eERROR_GENERAL;
 
 				curl_easy_cleanup(p_curl);
 			}

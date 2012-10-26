@@ -4,8 +4,6 @@
 #include <QRegExp>
 #include <QString>
 #include <QStringList>
-#include "cp_rsa.h"
-#include "base64.h"
 #include "yaf_connector.h"
 #include "reg_exp.h"
 #include <QFileInfo>
@@ -32,7 +30,7 @@ namespace Connector
 		if(path)
  		{
  			QFile file(*(QString*)path);
- 			bool res = file.open(QIODevice::WriteOnly | QIODevice::Append);
+ 			file.open(QIODevice::WriteOnly | QIODevice::Append);
  			size_t result = file.write((char*)ptr, size*count);
  			return result;
  		}
@@ -87,9 +85,6 @@ namespace Connector
  		CURL* p_curl = curl_easy_init();
  		if(p_curl)
  		{
- 			struct curl_httppost *post = NULL;
- 			struct curl_httppost *last = NULL;
- 
  			if((_proxy != "") && (_proxy != ":"))
  			{
  				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
@@ -131,84 +126,6 @@ namespace Connector
 		return res;
 	}
 
-	RESULT YafHTTPConnector::getCredentials()
-	{
-		RESULT res = eERROR;
-
-		QString response;
-		int err = execQuery("http://auth.mobile.yandex.ru/yamrsa/key/", "", "", &response);
-		if(err == 200) 
-		{
-			res = eNO_ERROR;
-			_key = RegExp::getByPattern("<key>(.*)</key>", response);
-			_requestId = RegExp::getByPattern("<request_id>(.*)</request_id>", response);
-
-			if(_key.length() == 0 || _requestId.length() == 0)
-			{
-				res = eERROR;
-			}
-		}
-
-		return res;
-	}
-
-	std::string YafHTTPConnector::encrypt(const char* public_key, std::string text)
-	{
-		CCryptoProviderRSA encrypter;
-		encrypter.ImportPublicKey(public_key);
-
-		char crypted_text[MAX_CRYPT_BITS / sizeof(char)] = "\0";
-		size_t crypted_len = 0;
-		encrypter.Encrypt(text.c_str(), text.size(), crypted_text, crypted_len);
-
-		std::string b64_crypted_text = base64_encode((unsigned char *)crypted_text, crypted_len);
-
-		return b64_crypted_text;
-	}
-
-	RESULT YafHTTPConnector::postCredentials()
-	{
-		RESULT res = eERROR;
-
-		QString credStr = QString("<credentials login=\"%1\" password=\"%2\"/>").arg(_login).arg(_password);
-		std::string cred = encrypt(_key.toStdString().c_str(), credStr.toStdString());
-		QString postReq = QString("request_id=%1&credentials=%2").arg(_requestId).arg(QString::fromStdString(cred));
-
-		QString response;
-		int err = execQuery("http://auth.mobile.yandex.ru/yamrsa/token/", "", postReq, &response);
-		if(err == 200) 
-		{
-			_token = RegExp::getByPattern("<token>(.*)</token>", response);
-			res = eNO_ERROR;
-		}
-
-		return res;
-	}
-
-	RESULT YafHTTPConnector::auth()
-	{
-		bool isConnected = false;
- 		int reqCount = 0;
- 		RESULT err = eNO_ERROR;
-		if(!_isOAuth)
-		{
-			while(!isConnected && reqCount <= 20)
-			{
-				err = getCredentials();
-				if(err)
-				{
-					break;
-				}
-
-				err = postCredentials();
-
-				isConnected = (_token.length() != 0);
-				reqCount++;
-			}
-		}
-		return !isConnected ? eERROR: eNO_ERROR;
-	}
-
 	RESULT YafHTTPConnector::getTreeElements(const QString& path, QString& response)
 	{
 		QString url = QString("http://api-fotki.yandex.ru/api/users/%1/%2").arg(_login).arg(path);
@@ -216,10 +133,10 @@ namespace Connector
 			: QString("Authorization: FimpToken realm=\"fotki.yandex.ru\", token=\"%1\"").arg(_token); 
 
 		int err = execQuery(url, header, "", &response);
-		return (err == 200) ? eNO_ERROR : eERROR;
+		return (err == 200) ? eNO_ERROR : eERROR_GENERAL;
 	}
 
-	RESULT YafHTTPConnector::createDirectory(const QString& title, const QString& parentId, QString& response)
+	RESULT YafHTTPConnector::createDirectory(const QString& title, const QString& /*parentId*/, QString& response)
 	{
  		QString url = QString("http://api-fotki.yandex.ru/api/users/%1/albums/").arg(_login);
  		QString header = _isOAuth ? QString("Content-Type: application/atom+xml; charset=utf-8; type=entry\nAuthorization: OAuth %1").arg(_token)
@@ -228,19 +145,16 @@ namespace Connector
 		QString postParams = QString("<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:f=\"yandex:fotki\">\r\n <title>%1</title>\r\n <summary> Test </summary>\r\n </entry>").arg(title);
 		int err = execQuery(url, header, postParams, &response);
 
- 		return (err == 201) ? eNO_ERROR : eERROR;
+ 		return (err == 201) ? eNO_ERROR : eERROR_GENERAL;
 	}
 
 	RESULT YafHTTPConnector::deleteFile(const QString& path, QString& response)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 
  		CURL* p_curl = curl_easy_init();
  		if(p_curl)
  		{
- 			struct curl_httppost *post = NULL;
- 			struct curl_httppost *last = NULL;
- 
  			if((_proxy != "") && (_proxy != ":"))
  			{
  				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
@@ -267,7 +181,7 @@ namespace Connector
  			long code;
  			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
  
- 			res = (_error == CURLE_OK && code == 204) ? eNO_ERROR : eERROR;
+ 			res = (_error == CURLE_OK && code == 204) ? eNO_ERROR : eERROR_GENERAL;
  			curl_easy_cleanup(p_curl);
  		}
 
@@ -276,7 +190,7 @@ namespace Connector
 
 	RESULT YafHTTPConnector::uploadFile(const QString& path, const QString& title, const QString& parentId, QString& response)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
  
  		CURL* p_curl = curl_easy_init();
  		if(p_curl)
@@ -321,7 +235,7 @@ namespace Connector
  			CURLcode error = curl_easy_perform(p_curl);
  			long code;
  			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
- 			res = (error == CURLE_OK && code == 200) ? eNO_ERROR : eERROR;
+ 			res = (error == CURLE_OK && code == 200) ? eNO_ERROR : eERROR_GENERAL;
  
  			/* then cleanup the formpost chain */ 
  			curl_formfree(post);
@@ -337,7 +251,7 @@ namespace Connector
 	{
 		QMutexLocker locker(&_connectorMutex);
 		
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
  		CURL* p_curl = curl_easy_init();
  		if(p_curl)
  		{
@@ -351,13 +265,13 @@ namespace Connector
  
  			curl_easy_setopt(p_curl, CURLOPT_VERBOSE, 1L);
  			curl_easy_setopt(p_curl, CURLOPT_WRITEFUNCTION, fwrite_b);
- 			const QString* path1 = &path;
+ 			//const QString* path1 = &path;
  			curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, &path);
  
  			CURLcode _error = curl_easy_perform(p_curl);
  			long code;
  			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
- 			res = (_error == CURLE_OK && code == 200) ? eNO_ERROR : eERROR;
+ 			res = (_error == CURLE_OK && code == 200) ? eNO_ERROR : eERROR_GENERAL;
  			curl_easy_cleanup(p_curl);
  		}
 
@@ -410,11 +324,11 @@ namespace Connector
  		do
  		{
  			CURLMsg* msg = curl_multi_info_read(p_mcurl, &msgs_in_queue);
- 			if((RESULT)msg->data.result == eERROR)
+ 			if((RESULT)msg->data.result != eNO_ERROR)
  			{
  				if(curl_easy_perform(msg->easy_handle) != CURLE_OK)
  				{
- 					res = eERROR;
+ 					res = eERROR_GENERAL;
  					break;
  				}
  			}
@@ -434,7 +348,7 @@ namespace Connector
 
 	RESULT YafHTTPConnector::moveElement(const QString& id, const QString& oldParentId, const QString& newParentId, ElementType type, QString& response)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 		QString typeStr = type == (VFSElement::DIRECTORY) ? QString("album") : QString("photo");
 		QString url = QString("http://api-fotki.yandex.ru/api/users/%1/%2/%3/").arg(_login).arg(typeStr).arg(id);
 		QString header = _isOAuth ? QString("Authorization: OAuth %1").arg(_token) 
@@ -463,7 +377,7 @@ namespace Connector
 			{
 				if(newParentId == ROOT_ID)
 				{
-					res = eERROR; // Moving from root to root. This should be handled in file-proxy
+					res = eERROR_GENERAL; // Moving from root to root. This should be handled in file-proxy
 				}
 				else
 				{
@@ -506,7 +420,7 @@ namespace Connector
  				CURLcode err = curl_easy_perform(p_curl);
  				long code;
  				curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
- 				res = (err == CURLE_OK && code == 200) ? eNO_ERROR : eERROR;
+ 				res = (err == CURLE_OK && code == 200) ? eNO_ERROR : eERROR_GENERAL;
  
  				curl_easy_cleanup(p_curl);
  			}
@@ -517,7 +431,7 @@ namespace Connector
 
 	RESULT YafHTTPConnector::renameElement(const QString& id, ElementType type, const QString& newTitle, QString& response)
 	{
-		RESULT res = eERROR;
+		RESULT res = eERROR_GENERAL;
 
 		QString typeStr = type == (VFSElement::DIRECTORY) ? QString("album") : QString("photo");
 		QString url = QString("http://api-fotki.yandex.ru/api/users/%1/%2/%3/").arg(_login).arg(typeStr).arg(id);
@@ -566,7 +480,7 @@ namespace Connector
  				CURLcode err = curl_easy_perform(p_curl);
  				long code;
  				curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
- 				res = (err == CURLE_OK && code == 200) ? eNO_ERROR : eERROR;
+ 				res = (err == CURLE_OK && code == 200) ? eNO_ERROR : eERROR_GENERAL;
  
  				curl_easy_cleanup(p_curl);
  			}

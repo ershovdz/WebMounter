@@ -26,7 +26,9 @@ namespace Common
 	enum RESULT
 	{
 		eNO_ERROR,
-		eERROR
+		eERROR_GENERAL,
+		eERROR_CANCEL,
+		eERROR_NOT_SUPPORTED
 	};
 };
 
