@@ -10,3 +10,5 @@
 *.opensdf
 *.sln
 *.suo
+*.cache
+*.ipch
