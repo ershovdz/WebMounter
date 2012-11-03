@@ -417,8 +417,6 @@ namespace RemoteDriver
 
 			QDateTime dt = QDateTime::fromString(elements[elements.count()-1].getModified(), "yyyy-MM-ddThh:mm:ssZ");
 			dt = dt.addSecs(-1); 
-			/*QTime time(dt.time().hour(), dt.time().minute(), dt.time().second() - 1);
-			dt.setTime(time);*/
 			dateTime = dt.toString("yyyy-MM-ddThh:mm:ssZ");
 		}
 
