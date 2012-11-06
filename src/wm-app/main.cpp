@@ -15,13 +15,13 @@ int main(int argc, char *argv[])
  	SingleApplication app(argc, argv);
   
  	QTranslator translator;
- 	translator.load(QString("webmounter_" + QLocale::system().name()));
+  translator.load(QString("webmounter_" + QLocale::system().name()));
  	QApplication::installTranslator(&translator);
  
  	if(!app.isSingle())
  	{
- 		QMessageBox::information(0, QObject::tr("WebMounter"),
- 									QObject::tr("WebMounter is already running."));
+ 		QMessageBox::information(0, QObject::tr("IPP-Webmounter"),
+ 									QObject::tr("IPP-Webmounter is already running."));
  
  		return 1;
  	}
@@ -35,17 +35,21 @@ int main(int argc, char *argv[])
      }
  
  	QApplication::setQuitOnLastWindowClosed(false);
- 	app.setApplicationName(QObject::tr("WebMounter"));
+ 	app.setApplicationName(QObject::tr("IPP-Webmounter"));
  	app.setApplicationVersion(VERSION);
-  app.setOrganizationName("WebMounter");
-  app.setOrganizationDomain("webmounter.ru");
+  app.setOrganizationName("iPhotoPrint");
+  app.setOrganizationDomain("iphotoprint.ru");
  
  	QApplication::removeTranslator(&translator);
  
- 	Common::WebMounter MainApp;
+ 	Common::WebMounter mainApp;
  
  	Ui::ControlPanel* panel = new Ui::ControlPanel;
- 	MainApp.startApp((*panel)());
+ 	mainApp.startApp( panel );
+
+  QObject::connect(panel, SIGNAL(mount()), &mainApp, SLOT(mount()));
+  QObject::connect(panel, SIGNAL(unmount()), &mainApp, SLOT(unmount())); 
+  
  	panel->show();
  
  	int res = app.exec();

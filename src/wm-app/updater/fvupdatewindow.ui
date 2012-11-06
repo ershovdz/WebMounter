@@ -51,7 +51,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>&lt;b&gt;%1 %2&lt;/b&gt; is now available - you have &lt;b&gt;%3&lt;/b&gt;. Would you like to download it now?</string>
+        <string>&lt;b&gt;Version %1 &lt;/b&gt; is now available - you have &lt;b&gt;%2&lt;/b&gt;. Would you like to download it now?</string>
        </property>
       </widget>
      </item>

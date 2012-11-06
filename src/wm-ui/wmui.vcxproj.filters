@@ -84,9 +84,6 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <None Include="lang\wmui_en.ts">
-      <Filter>Translation Files</Filter>
-    </None>
     <None Include="lang\wmui_ru.ts">
       <Filter>Translation Files</Filter>
     </None>

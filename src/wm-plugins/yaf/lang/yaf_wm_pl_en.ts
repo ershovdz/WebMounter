@@ -23,9 +23,8 @@
     </message>
     <message>
         <location filename="../driver/yaf_driver.cpp" line="177"/>
-        <location filename="../driver/yaf_driver.cpp" line="808"/>
-        <location filename="../driver/yaf_driver.cpp" line="905"/>
-        <location filename="../driver/yaf_driver.cpp" line="940"/>
+        <location filename="../driver/yaf_driver.cpp" line="813"/>
+        <location filename="../driver/yaf_driver.cpp" line="937"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -35,14 +34,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../driver/yaf_driver.cpp" line="808"/>
+        <location filename="../driver/yaf_driver.cpp" line="813"/>
         <source>Sync failed !
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../driver/yaf_driver.cpp" line="905"/>
-        <location filename="../driver/yaf_driver.cpp" line="940"/>
+        <location filename="../driver/yaf_driver.cpp" line="937"/>
         <source>Authorization failed !
 Please check proxy settings on Configuration tab and check settings on corresponding plugin tab...
 </source>

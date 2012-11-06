@@ -92,6 +92,12 @@
     <ClCompile Include="Release\moc_win_lvfs_driver.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="Debug\moc_webmounter.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\moc_webmounter.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common_stuff.h">
@@ -124,9 +130,6 @@
     <ClInclude Include="vfs_element.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="webmounter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <CustomBuild Include="win_lvfs_driver.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
@@ -138,5 +141,13 @@
     <None Include="lang\wmbase_ru.ts">
       <Filter>Translation Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="webmounter.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="IGui.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

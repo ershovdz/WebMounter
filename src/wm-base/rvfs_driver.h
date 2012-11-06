@@ -71,7 +71,8 @@ namespace RemoteDriver
 	protected:
 		virtual void notifyUser(Ui::Notification::_Types type, QString title, QString description) const;
 		virtual void updateState(int progress, DriverState newState);
-		virtual int removeFolder(QDir& dir);
+		virtual RESULT removeFolder(QDir& dir);
+    virtual RESULT removeFolderContent(QDir& dir);
 		virtual void syncCacheWithFileSystem(const QString& path);
                 virtual void updateDownloadStatus(RESULT downloadResult, const unsigned int uDownloaded, const unsigned int uNotDownloaded);
                 unsigned int countNotDownloaded();

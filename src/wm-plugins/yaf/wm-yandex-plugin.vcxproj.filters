@@ -101,12 +101,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="connector\base64.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="connector\cp_rsa.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="connector\yaf_connector.h">
       <Filter>Header Files</Filter>
     </ClInclude>

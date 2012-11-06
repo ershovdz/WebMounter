@@ -31,43 +31,43 @@ namespace RemoteDriver
   {
     VFSCache* vfsCache = WebMounter::getCache();
     int initialListSize = urlList.size();
-    
+
     { 	LOCK(_driverMutex)
-    
+
       VFSCache::iterator iter = vfsCache->end();
-      for(int i = 0; i < pathList.size(); ++i)
-      {
-        iter = vfsCache->find(pathList.at(i));
-        if(iter != vfsCache->end()
-          && !(iter->getFlags() & VFSElement::eFl_Downloading)
-          && !(iter->getFlags() & VFSElement::eFl_Downloaded))
-        {	
-          vfsCache->setFlag(iter, VFSElement::eFl_Downloading, VFSElement::eFl_None);
-          QFile::remove(pathList.at(i));
-        }
-        else
-        {
-          urlList.removeAt(i);
-          pathList.removeAt(i);
-          i = 0;
-        }
+    for(int i = 0; i < pathList.size(); ++i)
+    {
+      iter = vfsCache->find(pathList.at(i));
+      if(iter != vfsCache->end()
+        && !(iter->getFlags() & VFSElement::eFl_Downloading)
+        && !(iter->getFlags() & VFSElement::eFl_Downloaded))
+      {	
+        vfsCache->setFlag(iter, VFSElement::eFl_Downloading, VFSElement::eFl_None);
+        QFile::remove(pathList.at(i));
       }
-      
-      if(urlList.size() == 0) // there is nothing to download
+      else
       {
-        if(initialListSize == 1
-          && iter != vfsCache->end() 
-          && iter->getFlags() & VFSElement::eFl_Downloaded) // download request has been recieved for one file, but file is already downloaded
-        {	
-          return eNO_ERROR;
-        }
-        else
-        {
-          return eERROR_GENERAL;
-        }
+        urlList.removeAt(i);
+        pathList.removeAt(i);
+        i = 0;
       }
     }
-    
+
+    if(urlList.size() == 0) // there is nothing to download
+    {
+      if(initialListSize == 1
+        && iter != vfsCache->end() 
+        && iter->getFlags() & VFSElement::eFl_Downloaded) // download request has been recieved for one file, but file is already downloaded
+      {	
+        return eNO_ERROR;
+      }
+      else
+      {
+        return eERROR_GENERAL;
+      }
+    }
+    }
+
     RESULT res = _httpConnector->downloadFiles(urlList, pathList);
     if(res != eNO_ERROR)
     {
@@ -78,9 +78,9 @@ namespace RemoteDriver
         retryDownloadCounter++;
       }
     }
-    
+
     { 	LOCK(_driverMutex)
-    
+
       for(int i = 0; i < pathList.size(); i++)
       {
         QFileInfo fInfo(pathList.at(i));
@@ -145,8 +145,8 @@ namespace RemoteDriver
     if(count < DEMO_PHOTOS_PER_ALBUM_LIMIT)
     {
       QString xmlResp;
-                        unsigned int retryUploadCounter = 0;
-      
+      unsigned int retryUploadCounter = 0;
+
       err = _httpConnector->uploadFile(path, title, parentId, xmlResp);
       while(err != eNO_ERROR && retryUploadCounter < MAX_UPLOAD_RETRY)
       {
@@ -178,8 +178,8 @@ namespace RemoteDriver
       else
       {
         notifyUser(Ui::Notification::eCRITICAL
-              , RemoteDriver::VkRVFSDriver::tr("Error")
-              , RemoteDriver::VkRVFSDriver::tr("File upload failed (") + elem.getName() + QString(")"));
+          , RemoteDriver::VkRVFSDriver::tr("Error")
+          , RemoteDriver::VkRVFSDriver::tr("File upload failed (") + elem.getName() + QString(")"));
 
       }
 
@@ -409,7 +409,7 @@ namespace RemoteDriver
         pos += rx.matchedLength();
       }
     }
-    
+
     if(err == eNO_ERROR)
     {
       handleNameDuplicates(elements);
@@ -468,7 +468,7 @@ namespace RemoteDriver
             elem.setParentId(ROOT_ID);
             i = 0;
           }
-          
+
           path = elements[i].getPath() + QString(QDir::separator()) + elem.getName();
 
           QFileInfo fInfo(path);
@@ -498,15 +498,15 @@ namespace RemoteDriver
     QList<VFSElement> elements;
 
     VFSElement elem = VFSElement(VFSElement::DIRECTORY
-                  , _pluginName
-                  , "ROOT"
-                  , ""
-                  , ""
-                  , ""
-                  , ROOT_ID
-                  , ROOT_ID
-                  , ""
-                  , _pluginName);
+      , _pluginName
+      , "ROOT"
+      , ""
+      , ""
+      , ""
+      , ROOT_ID
+      , ROOT_ID
+      , ""
+      , _pluginName);
 
     elements.append(elem);
 
@@ -616,7 +616,7 @@ namespace RemoteDriver
     SettingStorage* settings = WebMounter::getSettingStorage();
     QString pluginStoragePath = settings->getAppStoragePath() + QString(QDir::separator()) + _pluginName;
     QFileInfo fInfo(pluginStoragePath);
-                unsigned int uNotDownloaded = 0;
+    //unsigned int uNotDownloaded = 0;
     PluginSettings plSettings;
     settings->getData(plSettings, _pluginName);
 
@@ -627,18 +627,26 @@ namespace RemoteDriver
     }
     _driverMutex.unlock();
 
+    VFSCache* vfsCache = WebMounter::getCache();
+    
+    if( plSettings.userName != plSettings.prevUserName )
+    {
+      removeFolderContent( QDir(pluginStoragePath) );
+      vfsCache->erasePlugin( _pluginName );
+    }
+
     QList<VFSElement> elements;
 
     VFSElement elem = VFSElement(VFSElement::DIRECTORY
-                    , fInfo.absoluteFilePath()
-                    , "ROOT"
-                    , ""
-                    , ""
-                    , ""
-                    , ROOT_ID
-                    , ROOT_ID
-                    , ""
-                    , _pluginName);
+      , fInfo.absoluteFilePath()
+      , "ROOT"
+      , ""
+      , ""
+      , ""
+      , ROOT_ID
+      , ROOT_ID
+      , ""
+      , _pluginName);
 
     elements.append(elem);
 
@@ -660,17 +668,16 @@ namespace RemoteDriver
         QDir qDir;
         QFile qFile;
 
-        uNotDownloaded = countNotDownloaded();
-        VFSCache* vfsCache = WebMounter::getCache();
+        //uNotDownloaded = countNotDownloaded();
         VFSCache::iterator iter = vfsCache->begin();
-        
+
         _driverMutex.lock();
         if(_state != eSyncStopping)
         {
           updateState(50, RemoteDriver::eSync);
         }
         _driverMutex.unlock();
-        
+
         for(iter; iter != vfsCache->end(); ++iter)
         {
           if(iter->getPluginName() == _pluginName)
@@ -797,7 +804,7 @@ namespace RemoteDriver
   }
 
 
-        void VkRVFSDriver::updateDownloadStatus(RESULT downloadResult, const unsigned int uDownloaded, const unsigned int uNotDownloaded)
+  void VkRVFSDriver::updateDownloadStatus(RESULT downloadResult, const unsigned int uDownloaded, const unsigned int uNotDownloaded)
   {
     if(!downloadResult)
     {
@@ -847,13 +854,13 @@ namespace RemoteDriver
 
       /*if(pluginSettings.isOAuthUsing && pluginSettings.oAuthToken != "")
       {
-        updateState(100, eAuthorized);
+      updateState(100, eAuthorized);
 
-        start(); // run sync thread				
+      start(); // run sync thread				
       }
       else
       {
-        updateState(0, eAuthInProgress);
+      updateState(0, eAuthInProgress);
       }*/
     }
   }
@@ -1023,6 +1030,6 @@ namespace RemoteDriver
 
   bool VkRVFSDriver::areFileAttributesValid(const QString& /*path*/, unsigned long /*attributes*/)
   {
-                return true;///////(attributes & FILE_ATTRIBUTE_READONLY);
+    return true;///////(attributes & FILE_ATTRIBUTE_READONLY);
   }
 }

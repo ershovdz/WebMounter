@@ -4,390 +4,322 @@
 <context>
     <name>Ui::GeneralView</name>
     <message>
-        <location filename="../general_view.cpp" line="21"/>
-        <location filename="../general_view.cpp" line="212"/>
         <source>Language:</source>
-        <translation>Язык:</translation>
+        <translation type="obsolete">Язык:</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="24"/>
-        <location filename="../general_view.cpp" line="217"/>
         <source>English</source>
-        <translation>Английский</translation>
+        <translation type="obsolete">Английский</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="25"/>
-        <location filename="../general_view.cpp" line="218"/>
         <source>Russian</source>
-        <translation>Русский</translation>
+        <translation type="obsolete">Русский</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="31"/>
-        <location filename="../general_view.cpp" line="223"/>
         <source>Cache Directory:</source>
-        <translation>Директория кэша:</translation>
+        <translation type="obsolete">Директория кэша:</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="32"/>
-        <location filename="../general_view.cpp" line="224"/>
         <source>&amp;Browse...</source>
-        <translation>&amp;Выбрать...</translation>
+        <translation type="obsolete">&amp;Выбрать...</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="44"/>
-        <location filename="../general_view.cpp" line="227"/>
         <source>Drive:</source>
-        <translation>Диск:</translation>
+        <translation type="obsolete">Диск:</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="47"/>
-        <location filename="../general_view.cpp" line="229"/>
         <source>Accept settings</source>
-        <translation>Применить настройки</translation>
+        <translation type="obsolete">Применить настройки</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="50"/>
-        <location filename="../general_view.cpp" line="232"/>
         <source>Proxy address:port (e.g. myproxy.ru:8080):</source>
-        <translation>Адрес прокси:порт (например myproxy.ru:8080):</translation>
+        <translation type="obsolete">Адрес прокси:порт (например myproxy.ru:8080):</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="54"/>
-        <location filename="../general_view.cpp" line="233"/>
         <source>Proxy login:</source>
-        <translation>Логин для прокси:</translation>
+        <translation type="obsolete">Логин для прокси:</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="58"/>
-        <location filename="../general_view.cpp" line="234"/>
         <source>Password:</source>
-        <translation>Пароль:</translation>
+        <translation type="obsolete">Пароль:</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="63"/>
-        <location filename="../general_view.cpp" line="236"/>
         <source>Proxy Configuration</source>
-        <translation>Настройки прокси</translation>
+        <translation type="obsolete">Настройки прокси</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="74"/>
-        <location filename="../general_view.cpp" line="239"/>
         <source>Misc Settings</source>
-        <translation>Разное</translation>
+        <translation type="obsolete">Разное</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="90"/>
-        <location filename="../general_view.cpp" line="243"/>
         <source>Status</source>
-        <translation>Статус</translation>
+        <translation type="obsolete">Статус</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="92"/>
-        <location filename="../general_view.cpp" line="244"/>
+        <location filename="../general_view.cpp" line="26"/>
+        <source>Disk</source>
+        <translation type="unfinished">Виртуальный диск</translation>
+    </message>
+    <message>
+        <location filename="../general_view.cpp" line="28"/>
         <source>Disk status:</source>
         <translation>Статус диска:</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="93"/>
-        <location filename="../general_view.cpp" line="176"/>
-        <location filename="../general_view.cpp" line="252"/>
+        <location filename="../general_view.cpp" line="29"/>
+        <location filename="../general_view.cpp" line="85"/>
         <source>&lt;font color=&quot;red&quot;&gt;&lt;b&gt;Unmounted&lt;/b&gt;&lt;/font&gt;</source>
-        <translation>&lt;font color=&quot;red&quot;&gt;&lt;b&gt;Отмонтирован&lt;/b&gt;&lt;/font&gt;</translation>
+        <translation type="unfinished">&lt;font color=&quot;red&quot;&gt;&lt;b&gt;Отключен&lt;/b&gt;&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="101"/>
-        <location filename="../general_view.cpp" line="240"/>
+        <location filename="../general_view.cpp" line="37"/>
         <source>Mount Disk</source>
-        <translation>Смонтировать диск</translation>
+        <translation type="unfinished">Подключить диск</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="102"/>
-        <location filename="../general_view.cpp" line="241"/>
+        <location filename="../general_view.cpp" line="38"/>
         <source>Unmount Disk</source>
-        <translation>Отмонтировать диск</translation>
+        <translation type="unfinished">Отключить диск</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="170"/>
-        <location filename="../general_view.cpp" line="248"/>
+        <location filename="../general_view.cpp" line="79"/>
         <source>&lt;font color=&quot;green&quot;&gt;&lt;b&gt;Mounted&lt;/b&gt;&lt;/font&gt;</source>
-        <translation>&lt;font color=&quot;green&quot;&gt;&lt;b&gt;Смонтирован&lt;/b&gt;&lt;/font&gt;</translation>
+        <translation type="unfinished">&lt;font color=&quot;green&quot;&gt;&lt;b&gt;Подключен&lt;/b&gt;&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../general_view.cpp" line="195"/>
         <source>Find Files</source>
-        <translation>Найти папку</translation>
+        <translation type="obsolete">Найти папку</translation>
     </message>
 </context>
 <context>
     <name>Ui::PluginView</name>
     <message>
         <location filename="../plugin_view.cpp" line="14"/>
-        <location filename="../plugin_view.cpp" line="245"/>
+        <location filename="../plugin_view.cpp" line="133"/>
         <source>&lt;font size=&quot;5&quot; color=&quot;red&quot; align=&quot;right&quot;&gt;Not implemented yet&lt;/font&gt;</source>
         <translation>&lt;font size=&quot;5&quot; color=&quot;red&quot; align=&quot;right&quot;&gt;Пока не реализовано&lt;/font&gt;</translation>
     </message>
     <message>
         <location filename="../plugin_view.cpp" line="23"/>
-        <location filename="../plugin_view.cpp" line="248"/>
+        <location filename="../plugin_view.cpp" line="136"/>
         <source>Use OAuth</source>
         <translation>Использовать OAuth</translation>
     </message>
     <message>
         <location filename="../plugin_view.cpp" line="27"/>
-        <location filename="../plugin_view.cpp" line="249"/>
+        <location filename="../plugin_view.cpp" line="137"/>
         <source>Server address:</source>
         <translation>Адрес сервера:</translation>
     </message>
     <message>
         <location filename="../plugin_view.cpp" line="31"/>
-        <location filename="../plugin_view.cpp" line="250"/>
+        <location filename="../plugin_view.cpp" line="138"/>
         <source>Login:</source>
         <translation>Логин:</translation>
     </message>
     <message>
         <location filename="../plugin_view.cpp" line="37"/>
-        <location filename="../plugin_view.cpp" line="251"/>
+        <location filename="../plugin_view.cpp" line="139"/>
         <source>Password:</source>
         <translation>Пароль:</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="44"/>
-        <location filename="../plugin_view.cpp" line="254"/>
         <source>&lt;b&gt;Activation Key:&lt;/b&gt;</source>
-        <translation>&lt;b&gt;Ключ активации:&lt;/b&gt;</translation>
+        <translation type="obsolete">&lt;b&gt;Ключ активации:&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="48"/>
-        <location filename="../plugin_view.cpp" line="255"/>
         <source>&lt;a href=&quot;http://jmediamanager.com/index.php?option=com_jcs&amp;view=jcs&amp;layout=form&amp;Itemid=95&amp;lang=ru&quot;&gt;Get activation key&lt;/a&gt;</source>
-        <translation>&lt;a href=&quot;http://jmediamanager.com/index.php?option=com_jcs&amp;view=jcs&amp;layout=form&amp;Itemid=95&amp;lang=ru&quot;&gt;Получить ключ активации&lt;/a&gt;</translation>
+        <translation type="obsolete">&lt;a href=&quot;http://jmediamanager.com/index.php?option=com_jcs&amp;view=jcs&amp;layout=form&amp;Itemid=95&amp;lang=ru&quot;&gt;Получить ключ активации&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="51"/>
-        <location filename="../plugin_view.cpp" line="257"/>
+        <location filename="../plugin_view.cpp" line="43"/>
+        <location filename="../plugin_view.cpp" line="141"/>
         <source>Connect</source>
         <translation>Включить</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="52"/>
-        <location filename="../plugin_view.cpp" line="258"/>
+        <location filename="../plugin_view.cpp" line="44"/>
+        <location filename="../plugin_view.cpp" line="142"/>
         <source>Disconnect</source>
         <translation>Выключить</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="56"/>
-        <location filename="../plugin_view.cpp" line="260"/>
         <source>Full sync (download all files)</source>
-        <translation>Полная синхронизация (скачать все файлы)</translation>
+        <translation type="obsolete">Полная синхронизация (скачать все файлы)</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="57"/>
-        <location filename="../plugin_view.cpp" line="261"/>
         <source>Partial sync (sync list of elements only)</source>
-        <translation>Частичная синхронизация (синхронизировать только список элементов)</translation>
+        <translation type="obsolete">Частичная синхронизация (синхронизировать только список элементов)</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="62"/>
-        <location filename="../plugin_view.cpp" line="264"/>
         <source>Auto Sync</source>
-        <translation>Автоматическая синхронизация</translation>
+        <translation type="obsolete">Автоматическая синхронизация</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="63"/>
-        <location filename="../plugin_view.cpp" line="265"/>
         <source>Start sync</source>
-        <translation>Начать синхронизацию</translation>
+        <translation type="obsolete">Начать синхронизацию</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="64"/>
-        <location filename="../plugin_view.cpp" line="266"/>
         <source>Stop sync</source>
-        <translation>Остановить синхронизацию</translation>
+        <translation type="obsolete">Остановить синхронизацию</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="71"/>
-        <location filename="../plugin_view.cpp" line="268"/>
         <source>Frequency synchronization:</source>
-        <translation>Частота синхронизации:</translation>
+        <translation type="obsolete">Частота синхронизации:</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="75"/>
-        <location filename="../plugin_view.cpp" line="273"/>
         <source>30 sec</source>
-        <translation>30 с</translation>
+        <translation type="obsolete">30 с</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="76"/>
-        <location filename="../plugin_view.cpp" line="274"/>
         <source>1 min</source>
-        <translation>1 мин</translation>
+        <translation type="obsolete">1 мин</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="77"/>
-        <location filename="../plugin_view.cpp" line="275"/>
         <source>5 min</source>
-        <translation>5 мин</translation>
+        <translation type="obsolete">5 мин</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="78"/>
-        <location filename="../plugin_view.cpp" line="276"/>
         <source>10 min</source>
-        <translation>10 мин</translation>
+        <translation type="obsolete">10 мин</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="79"/>
-        <location filename="../plugin_view.cpp" line="277"/>
         <source>30 min</source>
-        <translation>30 мин</translation>
+        <translation type="obsolete">30 мин</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="80"/>
-        <location filename="../plugin_view.cpp" line="278"/>
         <source>1 hour</source>
-        <translation>1 ч</translation>
+        <translation type="obsolete">1 ч</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="81"/>
-        <location filename="../plugin_view.cpp" line="279"/>
         <source>2 hour</source>
-        <translation>2 ч</translation>
+        <translation type="obsolete">2 ч</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="82"/>
-        <location filename="../plugin_view.cpp" line="280"/>
         <source>6 hour</source>
-        <translation>6 ч</translation>
+        <translation type="obsolete">6 ч</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="83"/>
-        <location filename="../plugin_view.cpp" line="281"/>
         <source>12 hour</source>
-        <translation>12 ч</translation>
+        <translation type="obsolete">12 ч</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="84"/>
-        <location filename="../plugin_view.cpp" line="282"/>
         <source>24 hour</source>
-        <translation>24 ч</translation>
+        <translation type="obsolete">24 ч</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="132"/>
-        <location filename="../plugin_view.cpp" line="286"/>
+        <location filename="../plugin_view.cpp" line="48"/>
+        <location filename="../plugin_view.cpp" line="144"/>
         <source>Authorization</source>
         <translation>Авторизиция</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="148"/>
-        <location filename="../plugin_view.cpp" line="288"/>
         <source>Sync</source>
-        <translation>Синхронизация</translation>
+        <translation type="obsolete">Синхронизация</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="166"/>
+        <location filename="../plugin_view.cpp" line="66"/>
         <source>Status</source>
         <translation>Статус</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="168"/>
-        <location filename="../plugin_view.cpp" line="290"/>
+        <location filename="../plugin_view.cpp" line="69"/>
+        <location filename="../plugin_view.cpp" line="147"/>
         <source>Plugin status:</source>
         <translation>Статус плагина:</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="169"/>
+        <location filename="../plugin_view.cpp" line="70"/>
         <source>&lt;font color=&quot;red&quot;&gt;Not connected&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;red&quot;&gt;Выключен&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="172"/>
-        <location filename="../plugin_view.cpp" line="331"/>
+        <location filename="../plugin_view.cpp" line="73"/>
+        <location filename="../plugin_view.cpp" line="188"/>
         <source>Progress:</source>
-        <translation>Прогресс:</translation>
+        <translation type="unfinished">Синхронизация с сервером:</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="237"/>
+        <location filename="../plugin_view.cpp" line="125"/>
         <source>&lt;font color=&quot;red&quot;&gt;Plugin not available...&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;red&quot;&gt;Плагин недоступен...&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="289"/>
+        <location filename="../plugin_view.cpp" line="146"/>
         <source>Status:</source>
         <translation>Статус:</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="294"/>
+        <location filename="../plugin_view.cpp" line="151"/>
         <source>&lt;font color=&quot;red&quot;&gt;Not available&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;red&quot;&gt;Недоступен&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="301"/>
-        <location filename="../plugin_view.cpp" line="510"/>
+        <location filename="../plugin_view.cpp" line="158"/>
+        <location filename="../plugin_view.cpp" line="280"/>
         <source>&lt;font color=&quot;green&quot;&gt;Authorization...&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;green&quot;&gt;Авторизация...&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="306"/>
-        <location filename="../plugin_view.cpp" line="519"/>
+        <location filename="../plugin_view.cpp" line="163"/>
+        <location filename="../plugin_view.cpp" line="289"/>
         <source>&lt;font color=&quot;green&quot;&gt;Authorized&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;green&quot;&gt;Авторизован&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="311"/>
-        <location filename="../plugin_view.cpp" line="532"/>
+        <location filename="../plugin_view.cpp" line="168"/>
+        <location filename="../plugin_view.cpp" line="300"/>
         <source>&lt;font color=&quot;green&quot;&gt;Connected&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;green&quot;&gt;Включен&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="316"/>
-        <location filename="../plugin_view.cpp" line="564"/>
+        <location filename="../plugin_view.cpp" line="173"/>
+        <location filename="../plugin_view.cpp" line="317"/>
         <source>&lt;font color=&quot;red&quot;&gt;Not Connected&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;red&quot;&gt;Выключен&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="321"/>
-        <location filename="../plugin_view.cpp" line="578"/>
+        <location filename="../plugin_view.cpp" line="178"/>
+        <location filename="../plugin_view.cpp" line="331"/>
         <source>&lt;font color=&quot;green&quot;&gt;Sync stopping...&lt;/font&gt;</source>
-        <translation>&lt;font color=&quot;green&quot;&gt;Остановка синхронизации...&lt;/font&gt;</translation>
+        <translation type="unfinished">&lt;font color=&quot;green&quot;&gt;Остановка...&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="326"/>
-        <location filename="../plugin_view.cpp" line="366"/>
-        <location filename="../plugin_view.cpp" line="592"/>
+        <location filename="../plugin_view.cpp" line="183"/>
+        <location filename="../plugin_view.cpp" line="343"/>
         <source>&lt;font color=&quot;green&quot;&gt;Synchronization...&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;green&quot;&gt;Синхронизация...&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="401"/>
-        <location filename="../plugin_view.cpp" line="407"/>
-        <location filename="../plugin_view.cpp" line="413"/>
-        <location filename="../plugin_view.cpp" line="603"/>
+        <location filename="../plugin_view.cpp" line="233"/>
+        <location filename="../plugin_view.cpp" line="239"/>
+        <location filename="../plugin_view.cpp" line="245"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="402"/>
+        <location filename="../plugin_view.cpp" line="234"/>
         <source>Enter server address</source>
         <translation>Введите адрес сервера</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="408"/>
+        <location filename="../plugin_view.cpp" line="240"/>
         <source>Enter login</source>
         <translation>Введите логин</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="414"/>
+        <location filename="../plugin_view.cpp" line="246"/>
         <source>Enter password</source>
         <translation>Введите пароль</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="442"/>
+        <location filename="../plugin_view.cpp" line="257"/>
         <source>&lt;font color=&quot;green&quot;&gt;Connecting...&lt;/font&gt;</source>
         <translation>&lt;font color=&quot;green&quot;&gt;Соединение...&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../plugin_view.cpp" line="604"/>
         <source>Enter activation key</source>
-        <translation>Введите ключ активации</translation>
+        <translation type="obsolete">Введите ключ активации</translation>
     </message>
 </context>
 </TS>

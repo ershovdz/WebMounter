@@ -16,8 +16,7 @@ namespace Ui
 	public slots:
 		virtual void updateView(int progress, int state);
 		void oAuthFinished(RESULT error, const QString& login, const QString& token);
-	private:
-		virtual bool isKeyValueValid(const Data::PluginSettings& settings);
+	
 	private:
  		VkOAuth* _oauthObj;
 	};

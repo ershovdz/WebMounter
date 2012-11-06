@@ -83,7 +83,7 @@ void FvUpdateWindow::onShowWindow(FvAvailableUpdate* proposedUpdate)
 	show();
 
 	QString downloadString = m_ui->wouldYouLikeToDownloadLabel->text()
-		.arg(QApplication::applicationName(), proposedUpdate->GetEnclosureVersion(), QApplication::applicationVersion());
+		.arg( proposedUpdate->GetEnclosureVersion(), QApplication::applicationVersion() );
 	m_ui->wouldYouLikeToDownloadLabel->setText(downloadString);
 
 	m_ui->releaseNotesWebView->stop();
@@ -119,5 +119,5 @@ void FvUpdateWindow::onFailed( QString msg )
 {
 	setProgressBarState(false);
 	m_ui->progressBar->setValue(0);
-	m_ui->progressBar->setFormat("Failed");
+	m_ui->progressBar->setFormat(tr("Failed"));
 }

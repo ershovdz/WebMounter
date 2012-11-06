@@ -8,8 +8,6 @@ HEADERS         = yaf_plugin.h \
 	./driver/yaf_driver.h \
 	./view/yaf_view.h \
 	./connector/yaf_connector.h \
-	./connector/cp_rsa.h \
-	./connector/base64.h \
 	./view/yaf_oauth.h
 
 SOURCES         = yaf_plugin.cpp \

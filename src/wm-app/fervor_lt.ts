@@ -67,12 +67,14 @@
     <message>
         <location filename="main.cpp" line="23"/>
         <location filename="main.cpp" line="38"/>
-        <source>WebMounter</source>
+        <source>IPP-Webmounter</source>
+        <oldsource>IPP_Webmounter</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="main.cpp" line="24"/>
-        <source>WebMounter is already running.</source>
+        <source>IPP-Webmounter is already running.</source>
+        <oldsource>IPP_Webmounter is already running.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -89,67 +91,73 @@
 <context>
     <name>Ui::ControlPanel</name>
     <message>
-        <location filename="control_panel.cpp" line="116"/>
+        <location filename="control_panel.cpp" line="121"/>
+        <location filename="control_panel.cpp" line="171"/>
         <source>version </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="119"/>
-        <location filename="control_panel.cpp" line="349"/>
+        <location filename="control_panel.cpp" line="124"/>
+        <location filename="control_panel.cpp" line="374"/>
         <source>Checking...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="124"/>
-        <location filename="control_panel.cpp" line="156"/>
+        <location filename="control_panel.cpp" line="129"/>
+        <location filename="control_panel.cpp" line="172"/>
         <source>Check for updates...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="141"/>
-        <source>WebMounter</source>
+        <location filename="control_panel.cpp" line="110"/>
+        <source>Minimize</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="157"/>
-        <location filename="control_panel.cpp" line="237"/>
+        <location filename="control_panel.cpp" line="146"/>
+        <source>IPP_Webmounter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="control_panel.cpp" line="173"/>
+        <location filename="control_panel.cpp" line="253"/>
         <source>&amp;Restore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="159"/>
-        <location filename="control_panel.cpp" line="240"/>
+        <location filename="control_panel.cpp" line="175"/>
+        <location filename="control_panel.cpp" line="256"/>
         <source>&amp;Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="161"/>
-        <location filename="control_panel.cpp" line="173"/>
+        <location filename="control_panel.cpp" line="177"/>
+        <location filename="control_panel.cpp" line="200"/>
         <source>Configuration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="342"/>
+        <location filename="control_panel.cpp" line="367"/>
         <source>No updates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="358"/>
+        <location filename="control_panel.cpp" line="383"/>
         <source>Close app</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="359"/>
+        <location filename="control_panel.cpp" line="384"/>
         <source>WebMounter has to be closed to install updates. Click OK button to close it now.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="375"/>
+        <location filename="control_panel.cpp" line="400"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="control_panel.cpp" line="376"/>
+        <location filename="control_panel.cpp" line="401"/>
         <source>Installer file is corrupted</source>
         <translation type="unfinished"></translation>
     </message>
@@ -171,6 +179,11 @@
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="updater/fvupdatewindow.cpp" line="122"/>
+        <source>Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>UpdateWindow</name>
@@ -186,7 +199,8 @@
     </message>
     <message>
         <location filename="updater/fvupdatewindow.ui" line="54"/>
-        <source>&lt;b&gt;%1 %2&lt;/b&gt; is now available - you have &lt;b&gt;%3&lt;/b&gt;. Would you like to download it now?</source>
+        <source>&lt;b&gt;Version %1 &lt;/b&gt; is now available - you have &lt;b&gt;%2&lt;/b&gt;. Would you like to download it now?</source>
+        <oldsource>&lt;b&gt;%1 %2&lt;/b&gt; is now available - you have &lt;b&gt;%3&lt;/b&gt;. Would you like to download it now?</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>

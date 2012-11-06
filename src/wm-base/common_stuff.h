@@ -3,7 +3,7 @@
 
 #include <qglobal.h>
 
-#define VERSION "0.3.2"
+#define VERSION "1.0.0"
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -28,12 +28,17 @@ namespace Common
 		eNO_ERROR,
 		eERROR_GENERAL,
 		eERROR_CANCEL,
-		eERROR_NOT_SUPPORTED
+		eERROR_NOT_SUPPORTED,
+    eERROR_FILE_SYSTEM
 	};
 };
 
 #define LOCK(mutex) QMutexLocker locker(&mutex);
 
 #include <QString>
+
+#define IPP_VERSION
+
+#define WmInterface struct
 
 #endif

@@ -1,4 +1,4 @@
-!define VERSION "0.4.1"
+!define VERSION "1.0.0"
 
 !define MULTIUSER_EXECUTIONLEVEL Highest
 ;!define MULTIUSER_NOUNINSTALL ;Uncomment if no uninstaller is created
@@ -9,29 +9,40 @@
 !include x64.nsh
 !include WinVer.nsh
 
-Name "WebMounter ${VERSION}"
-OutFile "WebMounter_${VERSION}.exe"
+Name "IPP-WebMounter ${VERSION}"
+OutFile "IPP_WebMounter_${VERSION}.exe"
 
-InstallDir $PROGRAMFILES32\WebMounter
+InstallDir $PROGRAMFILES32\IPP-WebMounter
 RequestExecutionLevel admin
 ;LicenseData "licdata.rtf"
 ShowUninstDetails show
 
 Var StartMenuFolder
 
-/*Page license*/
 !insertmacro MUI_PAGE_WELCOME 
-;Page components
-;Page instfiles
+!insertmacro MUI_PAGE_COMPONENTS 
+!insertmacro MUI_PAGE_DIRECTORY 
+!insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
+!insertmacro MUI_PAGE_INSTFILES  
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+!insertmacro MUI_PAGE_FINISH
 
- ; !insertmacro MULTIUSER_PAGE_INSTALLMODE
-  !insertmacro MUI_PAGE_COMPONENTS 
-  !insertmacro MUI_PAGE_DIRECTORY 
-  !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
-  !insertmacro MUI_PAGE_INSTFILES  
-  !insertmacro MUI_UNPAGE_CONFIRM
-  !insertmacro MUI_UNPAGE_INSTFILES
-  !insertmacro MUI_PAGE_FINISH
+; First is default
+;;LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
+;;LoadLanguageFile "${NSISDIR}\Contrib\Language files\Russian.nlf"
+
+!insertmacro MUI_LANGUAGE "Russian"
+!insertmacro MUI_LANGUAGE "English"
+
+;LangString prevExist ${LANG_ENGLISH} "Please unstall the previous version and restart your computer before running this installer."
+;LangString prevExist ${LANG_RUSSIAN} "Пожалуйста, удалите предыдущую версию и перезагрузите компьютер перед началом новой установки"
+;LangString notSupportOS64 ${LANG_ENGLISH} "Your OS is not supported. WebMounter supports Windows 2003, Vista, 2008, 2008R2 and 7 for x64."
+;LangString notSupportOS64 ${LANG_RUSSIAN} "Ваша операционная система не поддерживается. WebMounter поддерживает Windows 2003, Vista, 2008, 2008R2 and 7 для x64."	
+;LangString notSupportOS86 ${LANG_ENGLISH} "Your OS is not supported. WebMounter supports Windows XP, 2003, Vista, 2008 and 7 for x86."
+;LangString notSupportOS86 ${LANG_RUSSIAN} "Ваша операционная система не поддерживается. WebMounter поддерживает Windows XP, 2003, Vista, 2008 and 7 для x86."	
+;LangString rebootReq ${LANG_ENGLISH} "A reboot is required to finish the uninstallation. Do you wish to reboot now?"
+;LangString rebootReq ${LANG_RUSSIAN} "Для завершения установки требуется перезагрузка. Вы хотите перезагрузиться сейчас ?"	
 
 UninstPage uninstConfirm
 UninstPage instfiles
@@ -41,7 +52,7 @@ Icon ".\bin\drive.ico"
  
 !macro WebMounter
 
-  SetOutPath $PROGRAMFILES32\WebMounter\bin
+  SetOutPath $PROGRAMFILES32\IPP-WebMounter\bin
     File .\bin\libcurl.dll
     File .\bin\phonon4.dll
     File .\bin\QtCore4.dll
@@ -61,29 +72,18 @@ Icon ".\bin\drive.ico"
     File .\bin\QtXml4.dll
     File .\bin\ssleay32.dll
 
-  SetOutPath $PROGRAMFILES32\WebMounter\lib\plugins
+  SetOutPath $PROGRAMFILES32\IPP-WebMounter\lib\plugins
     File .\lib\plugins\wm-vk-plugin.dll
-    File .\lib\plugins\wm-ya-disk-plugin.dll
-    File .\lib\plugins\wm-ya-narod-plugin.dll
     File .\lib\plugins\wm-yandex-plugin.dll
 
-  SetOutPath $PROGRAMFILES32\WebMounter\share\webmounter
-    File .\share\webmounter\vk_wm_pl_en.qm
+  SetOutPath $PROGRAMFILES32\IPP-WebMounter\share\webmounter
     File .\share\webmounter\vk_wm_pl_ru.qm
-    File .\share\webmounter\yaf_wm_pl_en.qm
     File .\share\webmounter\yaf_wm_pl_ru.qm
-    File .\share\webmounter\yanarod_wm_pl_en.qm
-    File .\share\webmounter\yanarod_wm_pl_ru.qm
-    File .\share\webmounter\yandex_disk_wm_pl_en.qm
-    File .\share\webmounter\yandex_disk_wm_pl_ru.qm
-    File .\share\webmounter\webmounter_en.qm
     File .\share\webmounter\webmounter_ru.qm
-    File .\share\webmounter\wmbase_en.qm
     File .\share\webmounter\wmbase_ru.qm
-    File .\share\webmounter\wmui_en.qm
     File .\share\webmounter\wmui_ru.qm
 	
-  SetOutPath $PROGRAMFILES32\WebMounter\bin\sqldrivers
+  SetOutPath $PROGRAMFILES32\IPP-WebMounter\bin\sqldrivers
     File .\bin\sqldrivers\qsqlite4.dll
 !macroend
 
@@ -145,12 +145,12 @@ Icon ".\bin\drive.ico"
 !macro DokanSetup
   ExecWait '"$PROGRAMFILES32\Dokan\DokanLibrary\dokanctl.exe" /i a' $0
   DetailPrint "dokanctl returned $0"
-  WriteUninstaller $PROGRAMFILES32\WebMounter\WebMounterUninstall.exe
+  WriteUninstaller $PROGRAMFILES32\IPP-WebMounter\WebMounterUninstall.exe
 
   ;WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Run" "WebMounter" "$INSTDIR\WebMounter.exe"
   ; Write the uninstall keys for Windows
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\WebMounter" "DisplayName" "WebMounter ${VERSION}"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\WebMounter" "UninstallString" '"$PROGRAMFILES32\WebMounter\WebMounterUninstall.exe"'
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\WebMounter" "UninstallString" '"$PROGRAMFILES32\IPP-WebMounter\WebMounterUninstall.exe"'
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\WebMounter" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\WebMounter" "NoRepair" 1
 
@@ -173,37 +173,28 @@ Icon ".\bin\drive.ico"
 ;--------------------------------
 ;Languages
 
-
-  !insertmacro MUI_LANGUAGE "Russian"
+	;LoadLanguageFile "${NSISDIR}\Contrib\Language files\Russian.nlf"
+	;LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
   ;!insertmacro MUI_LANGUAGE "English"
-  !insertmacro MUI_RESERVEFILE_LANGDLL
+  ;!insertmacro MUI_LANGUAGE "Russian"
+  ;!insertmacro MUI_RESERVEFILE_LANGDLL
   
 ;---------------------------------
  
-  
-  ;LangString prevExist ${LANG_ENGLISH} "Please unstall the previous version and restart your computer before running this installer."
- LangString prevExist ${LANG_RUSSIAN} "Пожалуйста, удалите предыдущую версию и перезагрузите компьютер перед началом новой установки"
-  ;LangString notSupportOS64 ${LANG_ENGLISH} "Your OS is not supported. WebMounter supports Windows 2003, Vista, 2008, 2008R2 and 7 for x64."
- LangString notSupportOS64 ${LANG_RUSSIAN} "Ваша операционная система не поддерживается. WebMounter поддерживает Windows 2003, Vista, 2008, 2008R2 and 7 для x64."	
-  ;LangString notSupportOS86 ${LANG_ENGLISH} "Your OS is not supported. WebMounter supports Windows XP, 2003, Vista, 2008 and 7 for x86."
- LangString notSupportOS86 ${LANG_RUSSIAN} "Ваша операционная система не поддерживается. WebMounter поддерживает Windows XP, 2003, Vista, 2008 and 7 для x86."	
-  ;LangString rebootReq ${LANG_ENGLISH} "A reboot is required to finish the uninstallation. Do you wish to reboot now?"
- LangString rebootReq ${LANG_RUSSIAN} "Для завершения установки требуется перезагрузка. Вы хотите перезагрузиться сейчас ?"	
-
 Section "WebMounter Files" section_webmounter
 	!insertmacro WebMounter
 	
 	!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     
     ;Create shortcuts
-    CreateDirectory "$SMPROGRAMS\WebMounter"
-    CreateShortCut "$SMPROGRAMS\WebMounter\WebMounter.lnk" "$PROGRAMFILES32\WebMounter\bin\WebMounter.exe" "" "$PROGRAMFILES32\WebMounter\bin\drive.ico"
-    CreateShortCut "$SMPROGRAMS\WebMounter\Uninstall.lnk" "$PROGRAMFILES32\WebMounter\WebMounterUninstall.exe"
+    CreateDirectory "$SMPROGRAMS\IPP-WebMounter"
+    CreateShortCut "$SMPROGRAMS\IPP-WebMounter\IPP-WebMounter.lnk" "$PROGRAMFILES32\IPP-WebMounter\bin\WebMounter.exe" "" "$PROGRAMFILES32\IPP-WebMounter\bin\drive.ico"
+    CreateShortCut "$SMPROGRAMS\IPP-WebMounter\Uninstall.lnk" "$PROGRAMFILES32\IPP-WebMounter\WebMounterUninstall.exe"
 	
-	SetOutPath $PROGRAMFILES32\WebMounter
-	CreateShortCut "$DESKTOP\WebMounter.lnk" "$INSTDIR\bin\WebMounter.exe" "" "$INSTDIR\bin\drive.ico"
+	SetOutPath $PROGRAMFILES32\IPP-WebMounter
+	CreateShortCut "$DESKTOP\IPP-WebMounter.lnk" "$INSTDIR\bin\WebMounter.exe" "" "$INSTDIR\bin\drive.ico"
 	
-	CreateShortCut "$SMSTARTUP\WebMounter.lnk" "$INSTDIR\bin\WebMounter.exe" "" "$INSTDIR\bin\drive.ico"
+	;CreateShortCut "$SMSTARTUP\WebMounter.lnk" "$INSTDIR\bin\WebMounter.exe" "" "$INSTDIR\bin\drive.ico"
 	
 	
     !insertmacro MUI_STARTMENU_WRITE_END
@@ -281,7 +272,7 @@ Section "Uninstall"
   ExecWait '"$PROGRAMFILES32\Dokan\DokanLibrary\dokanctl.exe" /r a' $0
   DetailPrint "dokanctl.exe returned $0"
 
-  RMDir /r $PROGRAMFILES32\WebMounter
+  RMDir /r $PROGRAMFILES32\IPP-WebMounter
   RMDir /r $PROGRAMFILES32\Dokan\DokanLibrary
   RMDir $PROGRAMFILES32\Dokan
   Delete $SYSDIR\dokan.dll
@@ -296,27 +287,29 @@ Section "Uninstall"
 
   ; Remove registry keys
  
-  Delete "$SMPROGRAMS\WebMounter\WebMounter.lnk"
-  Delete "$SMPROGRAMS\WebMounter\Uninstall.lnk"
-  Delete "$DESKTOP\WebMounter.lnk"
-  Delete "$SMSTARTUP\WebMounter.lnk"
-  RMDir /r "$SMPROGRAMS\WebMounter"
+  Delete "$SMPROGRAMS\IPP-WebMounter\IPP-WebMounter.lnk"
+  Delete "$SMPROGRAMS\IPP-WebMounter\Uninstall.lnk"
+  Delete "$DESKTOP\IPP-WebMounter.lnk"
+  ;Delete "$SMSTARTUP\WebMounter.lnk"
+  RMDir /r "$SMPROGRAMS\IPP-WebMounter"
   
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\WebMounter"
   ;DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Run\WebMounter"
 
-  ;RMDir $SMPROGRAMS\WebMounter
+  ;RMDir $SMPROGRAMS\IPP-WebMounter
 
-  MessageBox MB_YESNO "$(rebootReq)" IDNO noreboot
+	StrCmp $LANGUAGE ${LANG_ENGLISH} 0 +2
+		MessageBox MB_YESNO "A reboot is required to finish the uninstallation. Do you wish to reboot now?" IDNO noreboot
+	StrCmp $LANGUAGE ${LANG_RUSSIAN} 0 +2
+		MessageBox MB_YESNO "Для завершения установки требуется перезагрузка. Вы хотите перезагрузиться сейчас ?" IDNO noreboot
     Reboot
   noreboot:
 
 SectionEnd
 
-Function .onInit
-  !insertmacro MULTIUSER_INIT
-  !insertmacro MUI_LANGDLL_DISPLAY
-  
+
+
+Function initChecks 
   IntOp $0 ${SF_SELECTED} | ${SF_RO}
   ${If} ${RunningX64}
     SectionSetFlags ${section_webmounter} $0
@@ -360,22 +353,38 @@ Function .onInit
       IfFileExists $SYSDIR\drivers\dokan.sys HasPreviousVersionX64 NoPreviousVersionX64
       ; To make EnableX64FSRedirection called in both cases, needs duplicated MessageBox code. How can I avoid this?
       HasPreviousVersionX64:
-        MessageBox MB_OK $(prevExist)
+        StrCmp $LANGUAGE ${LANG_ENGLISH} 0 +2
+			MessageBox MB_OK "Please unstall the previous version and restart your computer before running this installer."
+		StrCmp $LANGUAGE ${LANG_RUSSIAN} 0 +2
+			MessageBox MB_OK "Пожалуйста, удалите предыдущую версию и перезагрузите компьютер перед началом новой установки"
         Abort
       NoPreviousVersionX64:
     ${EnableX64FSRedirection}
   ${Else}
     IfFileExists $SYSDIR\drivers\dokan.sys HasPreviousVersion NoPreviousVersion
     HasPreviousVersion:
-      MessageBox MB_OK $(prevExist)
+       StrCmp $LANGUAGE ${LANG_ENGLISH} 0 +2
+			MessageBox MB_OK "Please unstall the previous version and restart your computer before running this installer."
+		StrCmp $LANGUAGE ${LANG_RUSSIAN} 0 +2
+			MessageBox MB_OK "Пожалуйста, удалите предыдущую версию и перезагрузите компьютер перед началом новой установки"
       Abort
     NoPreviousVersion:
   ${EndIf}
 FunctionEnd
 
+
+
+Function .onInit
+  !insertmacro MULTIUSER_INIT
+  !insertmacro MUI_LANGDLL_DISPLAY
+  
+  Call initChecks
+	
+FunctionEnd
+ 
 Function .onInstSuccess
 	
-  ExecShell "open" "$PROGRAMFILES32\WebMounter"
+  ;ExecShell "open" "$PROGRAMFILES32\WebMounter"
 FunctionEnd
 
 Function un.onInit

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'fvupdatewindow.ui'
 **
-** Created: Sat 3. Nov 19:25:47 2012
+** Created: Tue 6. Nov 23:06:08 2012
 **      by: Qt User Interface Compiler version 4.8.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -164,7 +164,7 @@ public:
     {
         UpdateWindow->setWindowTitle(QApplication::translate("UpdateWindow", "Software Update", 0, QApplication::UnicodeUTF8));
         newVersionIsAvailableLabel->setText(QApplication::translate("UpdateWindow", "A new version of %1 is available!", 0, QApplication::UnicodeUTF8));
-        wouldYouLikeToDownloadLabel->setText(QApplication::translate("UpdateWindow", "<b>%1 %2</b> is now available - you have <b>%3</b>. Would you like to download it now?", 0, QApplication::UnicodeUTF8));
+        wouldYouLikeToDownloadLabel->setText(QApplication::translate("UpdateWindow", "<b>Version %1 </b> is now available - you have <b>%2</b>. Would you like to download it now?", 0, QApplication::UnicodeUTF8));
         groupBox->setTitle(QApplication::translate("UpdateWindow", "Release Notes:", 0, QApplication::UnicodeUTF8));
         skipThisVersionButton->setText(QApplication::translate("UpdateWindow", "Skip This Version", 0, QApplication::UnicodeUTF8));
         prgressLabel->setText(QApplication::translate("UpdateWindow", "Downloading: ", 0, QApplication::UnicodeUTF8));

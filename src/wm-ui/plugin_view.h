@@ -24,19 +24,17 @@ namespace Ui
 	class WEBMOUNTER_UI_EXPORT PluginView : public View
 	{
 		Q_OBJECT
+
 	public:
 		PluginView(const Data::PluginSettings* settings, const QString& title);
 		virtual void changeLang();
+
 	protected:
 		void changeEvent ( QEvent * event );
-		int getSyncPeriod();
-		virtual bool isKeyValueValid(const Data::PluginSettings& settings);
-
+		//int getSyncPeriod();
+		
 	private slots:
-		void autoSyncClicked(int state);
 		void oauthClicked(int state);
-		void startSyncClicked(bool);
-		void stopSyncClicked(bool);
 		void startPluginClicked(bool);
 		void stopPluginClicked(bool);
 	
@@ -52,26 +50,12 @@ namespace Ui
 		QLineEdit *_nameEdit;
 		QLabel *_passwordLabel;
 		QLineEdit *_passwordEdit;
-#ifdef WM_FULL_VERSION
-		QLabel *_keyLabel;
-		QLineEdit *_keyEdit;
-		QLabel* _keyUrl;
-#endif
 
 		QPushButton *_startPluginButton;
 		QPushButton *_stopPluginButton;
-		QPushButton *_startSyncButton;
-		QPushButton *_stopSyncButton;
 		
-		QRadioButton *_fullSyncRadioButton;
-		QRadioButton *_partSyncRadioButton;
-		QCheckBox* _autoSyncCheckBox; 
-		QLabel *_syncPeriodLabel; 
-		QComboBox *_syncPeriodBox;
 		QGroupBox *_authGroup;
 		QGridLayout *_authLayout;
-		QGroupBox *_syncGroup;
-		QGridLayout *_syncLayout;
 		QGroupBox *_buttonGroup; 
 		QGridLayout *_buttonLayout;
 		QGroupBox *_progressGroup;

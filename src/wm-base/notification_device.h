@@ -53,7 +53,6 @@ namespace Ui
 	{
 	public:
 		virtual void showNotification(const Notification&) = 0;
-				//virtual void initiateDevice() = 0;
 	};
 }
 #endif // NOTIFICATIONDEVICE_H

@@ -22,21 +22,21 @@
         <translation>Файл будет изменен локально!</translation>
     </message>
     <message>
-        <location filename="../driver/vk_driver.cpp" line="182"/>
-        <location filename="../driver/vk_driver.cpp" line="192"/>
-        <location filename="../driver/vk_driver.cpp" line="722"/>
-        <location filename="../driver/vk_driver.cpp" line="785"/>
-        <location filename="../driver/vk_driver.cpp" line="850"/>
+        <location filename="../driver/vk_driver.cpp" line="181"/>
+        <location filename="../driver/vk_driver.cpp" line="191"/>
+        <location filename="../driver/vk_driver.cpp" line="757"/>
+        <location filename="../driver/vk_driver.cpp" line="820"/>
+        <location filename="../driver/vk_driver.cpp" line="896"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../driver/vk_driver.cpp" line="183"/>
+        <location filename="../driver/vk_driver.cpp" line="182"/>
         <source>File upload failed (</source>
         <translation>Загрузка файла завершилась неудачей (</translation>
     </message>
     <message>
-        <location filename="../driver/vk_driver.cpp" line="192"/>
+        <location filename="../driver/vk_driver.cpp" line="191"/>
         <source>An upload limit is reached! 
 Activation key required.
 </source>
@@ -49,19 +49,19 @@ Activation key required.
         <translation type="obsolete">Достигнут лимит создания файлов! Требуется ключ активации.</translation>
     </message>
     <message>
-        <location filename="../driver/vk_driver.cpp" line="722"/>
+        <location filename="../driver/vk_driver.cpp" line="757"/>
         <source>Sync failed !
 </source>
         <translation>Синхронизации завершилась неудачей!</translation>
     </message>
     <message>
-        <location filename="../driver/vk_driver.cpp" line="785"/>
+        <location filename="../driver/vk_driver.cpp" line="820"/>
         <source>Downloading failed  !
 </source>
         <translation>Скачивание завершилось неудачей!</translation>
     </message>
     <message>
-        <location filename="../driver/vk_driver.cpp" line="850"/>
+        <location filename="../driver/vk_driver.cpp" line="896"/>
         <source>Authorization failed !
 Please check proxy settings on Configuration tab and check settings on corresponding plugin tab...
 </source>
@@ -71,9 +71,9 @@ Please check proxy settings on Configuration tab and check settings on correspon
 <context>
     <name>Ui::VkOAuth</name>
     <message>
-        <location filename="../view/vk_oauth.cpp" line="32"/>
+        <location filename="../view/vk_oauth.cpp" line="31"/>
         <source>Vkontakte | Authentication</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ВКонтакте - Авторизация</translation>
     </message>
 </context>
 <context>

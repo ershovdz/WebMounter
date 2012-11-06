@@ -256,9 +256,9 @@ namespace Data
 	{
 		for(VFSCache::iterator iter = _FileList.begin(); 
 			iter != _FileList.end() && iter->getPluginName() == pluginName;
-			++iter)
+			)
 		{
-			erase(iter);
+			erase(iter++);
 		}
 		return eNO_ERROR;
 	}

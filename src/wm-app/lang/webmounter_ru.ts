@@ -6,17 +6,17 @@
     <message>
         <location filename="../updater/fvdownloadmanager.cpp" line="22"/>
         <source>Another download is in progress</source>
-        <translation type="unfinished">Другая загрузка в прогрессе</translation>
+        <translation>Другая загрузка в прогрессе</translation>
     </message>
     <message>
         <location filename="../updater/fvdownloadmanager.cpp" line="28"/>
         <source>Empty url</source>
-        <translation type="unfinished">Пустой url</translation>
+        <translation>Пустой url</translation>
     </message>
     <message>
         <location filename="../updater/fvdownloadmanager.cpp" line="112"/>
         <source>Couldn&apos;t save file %1</source>
-        <translation type="unfinished">Файл %1 не может быть сохранен</translation>
+        <translation>Файл %1 не может быть сохранен</translation>
     </message>
 </context>
 <context>
@@ -54,104 +54,122 @@
     <message>
         <location filename="../updater/fvupdater.cpp" line="447"/>
         <source>Error</source>
-        <translation type="unfinished">Ошибка</translation>
+        <translation>Ошибка</translation>
     </message>
     <message>
         <location filename="../updater/fvupdater.cpp" line="463"/>
         <source>Information</source>
-        <translation type="unfinished">Информация</translation>
+        <translation>Информация</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
+        <source>WebMounter is already running.</source>
+        <translation type="obsolete">WebMounter уже запущен</translation>
+    </message>
+    <message>
+        <source>IPP_Webmounter</source>
+        <translation type="obsolete">IPP-Webmounter</translation>
+    </message>
+    <message>
+        <source>IPP_Webmounter is already running.</source>
+        <translation type="obsolete">IPP-Webmounter уже запущен.</translation>
+    </message>
+    <message>
         <location filename="../main.cpp" line="23"/>
         <location filename="../main.cpp" line="38"/>
-        <source>WebMounter</source>
-        <translation type="unfinished"></translation>
+        <source>IPP-Webmounter</source>
+        <translation>IPP-Webmounter</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="24"/>
-        <source>WebMounter is already running.</source>
-        <translation type="unfinished">WebMounter уже запущен</translation>
+        <source>IPP-Webmounter is already running.</source>
+        <translation>IPP-Webmounter уже запущен.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="31"/>
         <source>Systray</source>
-        <translation type="unfinished">Системный трей</translation>
+        <translation>Системный трей</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="32"/>
         <source>I couldn&apos;t detect any system tray on this system.</source>
-        <translation type="unfinished">Системный трей в системе не обнаружен</translation>
+        <translation>Системный трей в системе не обнаружен</translation>
     </message>
 </context>
 <context>
     <name>Ui::ControlPanel</name>
     <message>
-        <location filename="../control_panel.cpp" line="116"/>
+        <location filename="../control_panel.cpp" line="121"/>
+        <location filename="../control_panel.cpp" line="171"/>
         <source>version </source>
-        <translation type="unfinished">версия </translation>
-    </message>
-    <message>
-        <location filename="../control_panel.cpp" line="119"/>
-        <location filename="../control_panel.cpp" line="349"/>
-        <source>Checking...</source>
-        <translation type="unfinished">Проверка...</translation>
+        <translation>версия </translation>
     </message>
     <message>
         <location filename="../control_panel.cpp" line="124"/>
-        <location filename="../control_panel.cpp" line="156"/>
+        <location filename="../control_panel.cpp" line="374"/>
+        <source>Checking...</source>
+        <translation>Проверка...</translation>
+    </message>
+    <message>
+        <location filename="../control_panel.cpp" line="129"/>
+        <location filename="../control_panel.cpp" line="172"/>
         <source>Check for updates...</source>
-        <translation type="unfinished">Проверить обновления</translation>
+        <translation>Проверить обновления...</translation>
     </message>
     <message>
-        <location filename="../control_panel.cpp" line="141"/>
-        <source>WebMounter</source>
-        <translation type="unfinished"></translation>
+        <location filename="../control_panel.cpp" line="110"/>
+        <source>Minimize</source>
+        <translation>Свернуть</translation>
     </message>
     <message>
-        <location filename="../control_panel.cpp" line="157"/>
-        <location filename="../control_panel.cpp" line="237"/>
-        <source>&amp;Restore</source>
-        <translation type="unfinished">&amp;Восстановить</translation>
+        <location filename="../control_panel.cpp" line="146"/>
+        <source>IPP_Webmounter</source>
+        <translation>IPP-Webmounter</translation>
     </message>
     <message>
-        <location filename="../control_panel.cpp" line="159"/>
-        <location filename="../control_panel.cpp" line="240"/>
-        <source>&amp;Quit</source>
-        <translation type="unfinished">&amp;Выйти</translation>
-    </message>
-    <message>
-        <location filename="../control_panel.cpp" line="161"/>
         <location filename="../control_panel.cpp" line="173"/>
+        <location filename="../control_panel.cpp" line="253"/>
+        <source>&amp;Restore</source>
+        <translation>&amp;Восстановить</translation>
+    </message>
+    <message>
+        <location filename="../control_panel.cpp" line="175"/>
+        <location filename="../control_panel.cpp" line="256"/>
+        <source>&amp;Quit</source>
+        <translation>&amp;Выйти</translation>
+    </message>
+    <message>
+        <location filename="../control_panel.cpp" line="177"/>
+        <location filename="../control_panel.cpp" line="200"/>
         <source>Configuration</source>
-        <translation type="unfinished">Конфигурация</translation>
+        <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../control_panel.cpp" line="342"/>
+        <location filename="../control_panel.cpp" line="367"/>
         <source>No updates</source>
-        <translation type="unfinished">Обновлений не найдено</translation>
+        <translation>Обновлений не найдено</translation>
     </message>
     <message>
-        <location filename="../control_panel.cpp" line="358"/>
+        <location filename="../control_panel.cpp" line="383"/>
         <source>Close app</source>
-        <translation type="unfinished">Закрыть</translation>
+        <translation>Закрыть</translation>
     </message>
     <message>
-        <location filename="../control_panel.cpp" line="359"/>
+        <location filename="../control_panel.cpp" line="384"/>
         <source>WebMounter has to be closed to install updates. Click OK button to close it now.</source>
-        <translation type="unfinished">Необходимо закрыть WebMounter для установки обновлений. Пожалуйста, нажмите OK, чтобы закрыть приложение сейчас.</translation>
+        <translation>Необходимо закрыть IPP-WebMounter для установки обновлений. Пожалуйста, нажмите OK, чтобы закрыть приложение сейчас.</translation>
     </message>
     <message>
-        <location filename="../control_panel.cpp" line="375"/>
+        <location filename="../control_panel.cpp" line="400"/>
         <source>Error</source>
-        <translation type="unfinished">Ошибка</translation>
+        <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../control_panel.cpp" line="376"/>
+        <location filename="../control_panel.cpp" line="401"/>
         <source>Installer file is corrupted</source>
-        <translation type="unfinished">Установочный файл некорректный</translation>
+        <translation>Установочный файл некорректный</translation>
     </message>
 </context>
 <context>
@@ -159,17 +177,22 @@
     <message>
         <location filename="../updater/fvupdatewindow.cpp" line="51"/>
         <source>Canceled</source>
-        <translation type="unfinished">Остановлено</translation>
+        <translation>Остановлено</translation>
     </message>
     <message>
         <location filename="../updater/fvupdatewindow.cpp" line="104"/>
         <source>Install Update</source>
-        <translation type="unfinished">Установить обновление</translation>
+        <translation>Установить обновление</translation>
     </message>
     <message>
         <location filename="../updater/fvupdatewindow.cpp" line="108"/>
         <source>Cancel</source>
-        <translation type="unfinished">Остановить</translation>
+        <translation>Остановить</translation>
+    </message>
+    <message>
+        <location filename="../updater/fvupdatewindow.cpp" line="122"/>
+        <source>Failed</source>
+        <translation>Ошибка</translation>
     </message>
 </context>
 <context>
@@ -177,52 +200,60 @@
     <message>
         <location filename="../updater/fvupdatewindow.ui" line="14"/>
         <source>Software Update</source>
-        <translation type="unfinished">Обновление</translation>
+        <translation>Обновление</translation>
     </message>
     <message>
         <location filename="../updater/fvupdatewindow.ui" line="28"/>
         <source>A new version of %1 is available!</source>
-        <translation type="unfinished">Доступна новая версия %1</translation>
+        <translation>Доступна новая версия %1</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;%1 %2&lt;/b&gt; is now available - you have &lt;b&gt;%3&lt;/b&gt;. Would you like to download it now?</source>
+        <translation type="obsolete">&lt;b&gt;%1 %2&lt;/b&gt; доступна -в настоящий момент установлена&lt;b&gt;%3&lt;/b&gt;. Хотите скачать новую версию?</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Version %1 &lt;/b&gt; is now available - you have &lt;b&gt;%3&lt;/b&gt;. Would you like to download it now?</source>
+        <translation type="obsolete">Доступна &lt;b&gt;версия %1&lt;/b&gt;. Сейчас установлена версия &lt;b&gt;%2&lt;/b&gt;. Would you like to download it now?</translation>
     </message>
     <message>
         <location filename="../updater/fvupdatewindow.ui" line="54"/>
-        <source>&lt;b&gt;%1 %2&lt;/b&gt; is now available - you have &lt;b&gt;%3&lt;/b&gt;. Would you like to download it now?</source>
-        <translation type="unfinished">&lt;b&gt;%1 %2&lt;/b&gt; доступна -в настоящий момент установлена&lt;b&gt;%3&lt;/b&gt;. Хотите скачать новую версию?</translation>
+        <source>&lt;b&gt;Version %1 &lt;/b&gt; is now available - you have &lt;b&gt;%2&lt;/b&gt;. Would you like to download it now?</source>
+        <translation>Доступна &lt;b&gt;версия %1&lt;/b&gt;. Сейчас установлена версия &lt;b&gt;%2&lt;/b&gt;. Желаете установить обновление ?</translation>
     </message>
     <message>
         <location filename="../updater/fvupdatewindow.ui" line="80"/>
         <source>Release Notes:</source>
-        <translation type="unfinished">Описание релиза</translation>
+        <translation>Описание релиза</translation>
     </message>
     <message>
         <location filename="../updater/fvupdatewindow.ui" line="93"/>
         <source>about:blank</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../updater/fvupdatewindow.ui" line="115"/>
         <source>Skip This Version</source>
-        <translation type="unfinished">Пропустить</translation>
+        <translation>Пропустить</translation>
     </message>
     <message>
         <location filename="../updater/fvupdatewindow.ui" line="125"/>
         <source>Downloading: </source>
-        <translation type="unfinished">Загрузка:</translation>
+        <translation>Загрузка:</translation>
     </message>
     <message>
         <location filename="../updater/fvupdatewindow.ui" line="149"/>
         <source>%p%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../updater/fvupdatewindow.ui" line="162"/>
         <source>Install Update</source>
-        <translation type="unfinished">Установить обновление</translation>
+        <translation>Установить обновление</translation>
     </message>
     <message>
         <location filename="../updater/fvupdatewindow.ui" line="181"/>
         <source>Remind Me Later</source>
-        <translation type="unfinished">Напомнить позднее</translation>
+        <translation>Напомнить позднее</translation>
     </message>
 </context>
 </TS>
