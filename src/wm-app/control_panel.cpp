@@ -16,7 +16,7 @@ namespace Ui
 {
   ControlPanel::ControlPanel()
   {
-    setWindowFlags( Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint );
+    setWindowFlags( Qt::CustomizeWindowHint | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint );
 
     _contentsWidget = 0;
     _pagesWidget = 0;
@@ -222,6 +222,7 @@ namespace Ui
 
   void ControlPanel::closeEvent(QCloseEvent * /*event*/)
   {
+    QApplication::instance()->quit();
   }
 
   void ControlPanel::setIcon(int /*index*/)
@@ -237,7 +238,7 @@ namespace Ui
       break;
     case QSystemTrayIcon::Trigger:
     case QSystemTrayIcon::DoubleClick:
-      this->setVisible(true);
+      showNormal();
       break;
     default:
       ;
@@ -402,5 +403,29 @@ namespace Ui
         , QMessageBox::Ok);
       errorDialog->exec();
     }
+  }
+
+  void ControlPanel::changeEvent(QEvent* e)
+  {
+    switch (e->type())
+    {
+    case QEvent::WindowStateChange:
+      {
+        if (this->windowState() & Qt::WindowMinimized)
+        {
+          //if (QApplication::instance()->minimizeToTray())
+          //{
+            QTimer::singleShot(250, this, SLOT(hide()));
+          //}
+          //hide();
+        }
+
+        break;
+      }
+    default:
+      break;
+    }
+
+    QDialog::changeEvent(e);
   }
 };

@@ -39,6 +39,7 @@ namespace Ui
     virtual void unmounted();
 
   protected:
+    void changeEvent(QEvent* e);
     void closeEvent(QCloseEvent *event);
     public slots:
       void showMsgBox(const QString&, const QString&);
