@@ -13,11 +13,6 @@ namespace Ui
 		_urlEdit->setText("narod.yandex.ru");
 		_urlEdit->setEnabled(false);
 
-#ifdef WM_FULL_VERSION
-		_keyLabel->setVisible(false);
-		_keyEdit->setVisible(false);
-		_keyUrl->setVisible(false);
-#endif
 //		_oauthCheckBox->setChecked(true);
 //		_oauthCheckBox->setVisible(false);
 

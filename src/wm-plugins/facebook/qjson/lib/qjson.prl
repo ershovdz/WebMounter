@@ -1,0 +1,4 @@
+QMAKE_PRL_BUILD_DIR = D:/Users/Yu/Projects/Webdisk/ipp-webmounter/src/wm-plugins/facebook/qjson/src
+QMAKE_PRO_INPUT = src.pro
+QMAKE_PRL_TARGET = qjson
+QMAKE_PRL_CONFIG = include_source_dir lex yacc warn_on debug uic resources incremental_off windows debug DebugBuild Debug build_pass qt warn_on incremental flat link_prl precompile_header autogen_precompile_source copy_dir_files debug_and_release debug_and_release_target embed_manifest_dll embed_manifest_exe debug shared stl exceptions rtti mmx 3dnow sse sse2 debug DebugBuild Debug build_pass create_prl debug DebugBuild Debug build_pass no_autoqmake dll shared moc thread

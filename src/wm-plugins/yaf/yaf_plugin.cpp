@@ -4,7 +4,7 @@
 #include "./view/yaf_view.h"
 #include "data.h"
 #include "webmounter.h"
- 
+
 YafPlugin::YafPlugin() : _driver(NULL), _view(NULL), _icon(NULL)
 {
 }
@@ -29,14 +29,14 @@ void* YafPlugin::getRVFSDriver()
 
 void* YafPlugin::getView()
 {
- 	if(!_view)
- 	{
- 		Data::PluginSettings settings;
- 		settings.pluginName = name();
- 		Common::WebMounter::getSettingStorage()->getData(settings, name());
- 
- 		_view = new Ui::YafView(&settings, name());
- 	}
+	if(!_view)
+	{
+		Data::PluginSettings settings;
+		settings.pluginName = name();
+		Common::WebMounter::getSettingStorage()->getData(settings, name());
+
+		_view = new Ui::YafView(&settings, name());
+	}
 
 	return (void*)(_view);
 }

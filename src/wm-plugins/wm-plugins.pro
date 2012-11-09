@@ -1,2 +1,4 @@
 TEMPLATE = subdirs
-SUBDIRS += yaf vk ya-narod ya-disk
+SUBDIRS += yaf vk facebook sub_qjson
+
+sub_qjson.subdir = facebook/qjson

@@ -4,7 +4,7 @@
 #include "./view/vk_view.h"
 #include "../../wm-base/data.h"
 #include "webmounter.h"
- 
+
 VkPlugin::VkPlugin() : _driver(NULL), _view(NULL), _icon(NULL)
 {
 }

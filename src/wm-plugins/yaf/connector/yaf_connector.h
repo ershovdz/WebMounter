@@ -45,7 +45,6 @@ namespace Connector
 			size_t len;
 		};
 	private:
-//		static QMutex _connectorMutex;
 		CURL* _curl;
 		QString _login;
 		QString _password;

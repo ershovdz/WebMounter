@@ -18,8 +18,8 @@ namespace Ui
 		Q_OBJECT
 	protected:
 		void closeEvent(QCloseEvent *event);
-		Q_SIGNALS:
-			void finished(RESULT error);
+	Q_SIGNALS:
+		void finished(RESULT error);
 	};
 
 	class YafOAuth : public QObject

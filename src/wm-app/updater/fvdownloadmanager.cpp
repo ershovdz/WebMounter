@@ -28,7 +28,7 @@ void FvDownloadManager::startDownload(const QUrl &url)
 		emit error(m_pCurrentDownload->url(), tr("Empty url"));
 		return;
 	}
-	
+
 	QNetworkRequest request(url);
 	m_pCurrentDownload = m_manager.get(request);
 
@@ -83,7 +83,7 @@ void FvDownloadManager::cancelDownload()
 QString FvDownloadManager::saveFileName(const QUrl &url)
 {
 	QString path = url.path();
-	
+
 	QString basename = QFileInfo(path).baseName();
 	QString fileDir = QDir::tempPath();
 	QString fileExtension = QFileInfo(path).completeSuffix();

@@ -67,7 +67,7 @@ private:
 	void createDownloadManager();
 	void showUpdaterWindowUpdatedWithCurrentUpdateProposal();		// Show updater window
 	void hideUpdaterWindow();										// Hide + destroy m_updaterWindow
-	
+
 	// Dialogs (notifications)
 	void showErrorDialog(QString message, bool showEvenInSilentMode = false);			// Show an error message
 	void showInformationDialog(QString message, bool showEvenInSilentMode = false);		// Show an informational message
@@ -77,8 +77,8 @@ private:
 
 private:
 	static FvUpdater* m_Instance;			// Singleton instance
-	
-	
+
+
 	// Available update (NULL if not fetched)
 	FvAvailableUpdate* m_proposedUpdate;
 
@@ -102,7 +102,7 @@ private slots:
 	void httpFeedUpdateDataReadProgress(qint64 bytesRead,
 										qint64 totalBytes);
 	void httpFeedDownloadFinished();
-	
+
 private:
 
 	//

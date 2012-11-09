@@ -14,8 +14,6 @@ SOURCES         = yaf_plugin.cpp \
 	./driver/yaf_driver.cpp \
 	./view/yaf_view.cpp \
 	./connector/yaf_connector.cpp \
-	./connector/cp_rsa.cpp \
-	./connector/base64.cpp \
 	./view/yaf_oauth.cpp 
 
 win32 {
@@ -24,6 +22,18 @@ win32 {
 	QMAKE_LIBDIR += $(LIBCURL_DIR)\lib\DLL-Release 
 
 	LIBS += -llibcurl_imp -lwmbase -lwmui
+
+	CONFIG(debug, debug|release) {
+		LIBS += -L$(BOOST_DIR)\bin.v2\libs\date_time\build\msvc-10.0\debug\link-static\threading-multi \ 
+		-L$(BOOST_DIR)\bin.v2\libs\thread\build\msvc-10.0\debug\link-static\threading-multi \ 
+		-llibboost_date_time-vc100-mt-gd-1_45 \
+		-llibboost_thread-vc100-mt-gd-1_45
+	} else {
+		LIBS += -L$(BOOST_DIR)\bin.v2\libs\date_time\build\msvc-10.0\release\link-static\threading-multi  \ 
+		-L$(BOOST_DIR)\bin.v2\libs\thread\build\msvc-10.0\release\link-static\threading-multi \
+		-llibboost_date_time-vc100-mt-1_45 \
+		-llibboost_thread-vc100-mt-1_45
+	}
 }
 else {
 	LIBS += -lcurl

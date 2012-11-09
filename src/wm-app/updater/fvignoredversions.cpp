@@ -9,7 +9,7 @@
 
 
 FVIgnoredVersions::FVIgnoredVersions(QObject *parent) :
-	QObject(parent)
+QObject(parent)
 {
 	// noop
 }
@@ -23,13 +23,13 @@ bool FVIgnoredVersions::VersionIsIgnored(QString version)
 	// 'version' is not likely to contain an older version in any case.
 
 	QString currentAppVersion = QApplication::applicationVersion();
-	
+
 	if (version == currentAppVersion) {
 		return true;
 	}
 
 	QSettings settings;
-	
+
 	if (settings.contains(FV_IGNORED_VERSIONS_LATEST_SKIPPED_VERSION_KEY)) {
 		QString lastSkippedVersion = settings.value(FV_IGNORED_VERSIONS_LATEST_SKIPPED_VERSION_KEY).toString();
 		if (version == lastSkippedVersion) {

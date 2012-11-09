@@ -32,18 +32,18 @@ namespace Ui
 		QComboBox * createDiskComboBox(const QString& driveLetter);
 #endif
 
-	private slots:
+		private slots:
 			void mountClicked();
 			void unmountClicked();
 
-  public slots:
+		public slots:
 			void mounted();
 			void unmounted();
 
-	signals:
+signals:
 			void mount();
 			void unmount();
-			
+
 	private:
 		QWidget* _parent;
 
@@ -52,12 +52,12 @@ namespace Ui
 
 		QLabel* _statusLabel;
 		QLabel* _statusValue;
-		
-//#ifdef Q_OS_WIN
-//    QLabel *_diskLetterLabel;
-//    QComboBox *_diskLetterComboBox;
-//#endif
-		
+
+		//#ifdef Q_OS_WIN
+		//    QLabel *_diskLetterLabel;
+		//    QComboBox *_diskLetterComboBox;
+		//#endif
+
 		QGroupBox *_buttonGroup;
 		QGridLayout *_buttonLayout;
 		QPushButton *_mountButton;

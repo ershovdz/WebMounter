@@ -7,9 +7,9 @@
 class SingleInstance : public QTcpServer
 {
 	Q_OBJECT
-	public:
-	  SingleInstance( QObject *parent=0 );
-	  void newConnection( int );
+public:
+	SingleInstance( QObject *parent=0 );
+	void newConnection( int );
 };
 
 class SingleApplication : public QApplication

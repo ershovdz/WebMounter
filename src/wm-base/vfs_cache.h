@@ -23,11 +23,11 @@ namespace Data
 	typedef std::map<QString, VFSElementPtr> VFSFileList;
 	typedef VFSElement::VFSElementType ElementType;
 	typedef std::pair <QString, VFSElementPtr> VFSFileList_Pair;
-	
+
 	class WEBMOUNTER_EXPORT VFSCache_Iter
 	{
 		friend class VFSCache;
-	
+
 	public:
 		typedef VFSFileList::iterator::iterator_category iterator_category;
 		typedef VFSFileList::iterator::value_type value_type;
@@ -72,7 +72,7 @@ namespace Data
 		{
 			return *this;
 		}
-	
+
 		bool operator!=(VFSFileList::iterator iter)
 		{
 			return (_Iter != iter);
@@ -99,7 +99,7 @@ namespace Data
 		}
 
 	protected:
-		
+
 		VFSCache_Iter& operator=(VFSFileList::iterator iter)
 		{
 			_Iter = iter;
@@ -148,7 +148,7 @@ namespace Data
 		RESULT erase(iterator& elem);
 		RESULT erasePlugin(const QString& pluginName);
 		RESULT flush();
-		
+
 		iterator find(const QString& key)
 		{
 			return _FileList.find(key);
@@ -163,10 +163,10 @@ namespace Data
 			return _FileList.end();
 		}
 
-// 		iterator findById(int /*id*/)
-// 		{
-// 			
-// 		}
+		// 		iterator findById(int /*id*/)
+		// 		{
+		// 			
+		// 		}
 
 		void setFlag(iterator& iter, uint set, uint unset = VFSElement::eFl_None, bool updateDB = true);
 

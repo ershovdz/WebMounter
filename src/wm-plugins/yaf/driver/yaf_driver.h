@@ -16,12 +16,12 @@ namespace RemoteDriver
 		public RVFSDriver
 	{
 		Q_OBJECT
-	
+
 	public:
 		YafRVFSDriver(const QString& pluginName);
 		virtual ~YafRVFSDriver(void);
 		void connectHandlerStage2(RESULT error, PluginSettings pluginSettings);
-	
+
 	public:
 		virtual RESULT downloadFiles() {return RVFSDriver::downloadFiles();};
 		virtual RESULT downloadFiles(QList <QString>& urlList, QList <QString>& pathList);
@@ -35,7 +35,7 @@ namespace RemoteDriver
 		virtual RESULT getElements();
 		virtual RESULT sync();
 		virtual bool areFileAttributesValid(const QString& path, unsigned long attributes);
-	
+
 	private:
 		RESULT getAlbums(QList<VFSElement>& elements);
 		RESULT getPhotos(QList<VFSElement>& elements);
@@ -55,7 +55,7 @@ namespace RemoteDriver
 		void markNameDuplicates(QList<VFSElement>& elemList);
 		void handleNameDuplicates(QList<VFSElement>& elemList);
 		QString addPathSuffix(ElementType type, const QString& path, const QString& suffix);
-	
+
 	private:
 		Connector::YafHTTPConnector* _httpConnector;
 		//const QString _pluginName;

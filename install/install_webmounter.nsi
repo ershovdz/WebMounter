@@ -1,4 +1,4 @@
-!define VERSION "1.0.0"
+!define VERSION "0.0.1"
 
 !define MULTIUSER_EXECUTIONLEVEL Highest
 ;!define MULTIUSER_NOUNINSTALL ;Uncomment if no uninstaller is created
@@ -64,23 +64,32 @@ Icon ".\bin\drive.ico"
     File .\bin\wmbase.dll
     File .\bin\wmui.dll
     File .\bin\WebMounter.exe
-	File .\bin\msvcp100.dll
-	File .\bin\msvcr100.dll
+    File .\bin\msvcp100.dll
+    File .\bin\msvcr100.dll
     File .\bin\drive.ico
     File .\bin\libeay32.dll
     File .\bin\libssl32.dll
     File .\bin\QtXml4.dll
     File .\bin\ssleay32.dll
+    File .\bin\qjson.dll
 
   SetOutPath $PROGRAMFILES32\IPP-WebMounter\lib\plugins
     File .\lib\plugins\wm-vk-plugin.dll
+    File .\lib\plugins\wm-facebook-plugin.dll
     File .\lib\plugins\wm-yandex-plugin.dll
 
   SetOutPath $PROGRAMFILES32\IPP-WebMounter\share\webmounter
+    File .\share\webmounter\vk_wm_pl_en.qm
     File .\share\webmounter\vk_wm_pl_ru.qm
+    File .\share\webmounter\yaf_wm_pl_en.qm
     File .\share\webmounter\yaf_wm_pl_ru.qm
+    File .\share\webmounter\facebook_wm_pl_en.qm
+    File .\share\webmounter\facebook_wm_pl_ru.qm
+    File .\share\webmounter\webmounter_en.qm
     File .\share\webmounter\webmounter_ru.qm
+    File .\share\webmounter\wmbase_en.qm
     File .\share\webmounter\wmbase_ru.qm
+    File .\share\webmounter\wmui_en.qm
     File .\share\webmounter\wmui_ru.qm
 	
   SetOutPath $PROGRAMFILES32\IPP-WebMounter\bin\sqldrivers

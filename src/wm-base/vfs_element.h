@@ -4,12 +4,12 @@
 
 namespace Data
 {
-	#define ROOT_ID "0"
+#define ROOT_ID "0"
 
 	class WEBMOUNTER_EXPORT VFSElement
 	{
 	public:
-                enum VFSElementType {UNKNOWN, DIRECTORY, FILE};
+		enum VFSElementType {UNKNOWN, DIRECTORY, FILE};
 		enum eVFSFlags
 		{
 			eFl_None		= 0x0,
@@ -27,16 +27,16 @@ namespace Data
 		VFSElement& operator=(const VFSElement& elem);
 		virtual ~VFSElement(void);
 		VFSElement(VFSElementType type
-					, const QString& path
-					, const QString& name
-					, const QString& editMetaURL
-					, const QString& editMediaURL
-					, const QString& srcURL
-					, const QString& id
-					, const QString& parent_id
-					, const QString& modified
-					, const QString& pluginName
-					, int flags = eFl_None);
+			, const QString& path
+			, const QString& name
+			, const QString& editMetaURL
+			, const QString& editMediaURL
+			, const QString& srcURL
+			, const QString& id
+			, const QString& parent_id
+			, const QString& modified
+			, const QString& pluginName
+			, int flags = eFl_None);
 
 	public:
 		bool operator==(const VFSElement& elem);
@@ -54,7 +54,7 @@ namespace Data
 		bool isDirty() const;
 		bool isDownloaded() const;
 		const QString& getModified() const;
-	
+
 		void setDirty(bool);
 		void setDownloaded(bool);
 		void setModified(const QString&);

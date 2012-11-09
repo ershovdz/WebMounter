@@ -16,7 +16,7 @@ public:
 	} ComparatorResult;
 
 	static ComparatorResult CompareVersions(std::string versionA,
-											std::string versionB);
+		std::string versionB);
 
 private:
 

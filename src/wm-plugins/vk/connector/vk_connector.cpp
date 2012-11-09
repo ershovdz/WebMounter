@@ -22,7 +22,7 @@ namespace Connector
 		{
 			res = savePhoto(parentId, response);
 		}
-		
+
 		return res;
 	}
 
@@ -41,7 +41,7 @@ namespace Connector
 			res = RegExp::getByPattern("<upload_url>(.*)</upload_url>", response);
 			res.replace("&amp;", "&");
 		}
-		
+
 		return res;
 	}
 
@@ -195,11 +195,11 @@ namespace Connector
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
- 			if((_proxy != "") && (_proxy != ":"))
- 			{
- 				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
- 				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
- 			}
+			if((_proxy != "") && (_proxy != ":"))
+			{
+				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
+				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
+			}
 
 			curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(url));
 			curl_easy_setopt(p_curl, CURLOPT_VERBOSE, 1L);
@@ -208,7 +208,7 @@ namespace Connector
 
 			struct curl_slist *chunk = NULL;
 			chunk = curl_slist_append(chunk, "Cache-Control: no-store, no-cache, must-revalidate");
-			
+
 			if(header.length())
 			{
 				chunk = curl_slist_append(chunk, qPrintable(header));
@@ -298,7 +298,7 @@ namespace Connector
 	{
 		RESULT res = eNO_ERROR;
 		QMutexLocker locker(&_connectorMutex);
-				
+
 		QList <CURL*> curls;
 		CURLM* p_mcurl = curl_multi_init();
 
@@ -350,7 +350,7 @@ namespace Connector
 			}
 		}
 		while(msgs_in_queue);
-		
+
 		for(int i = 0; i < urlList.size(); i++)
 		{
 			curl_multi_remove_handle(p_mcurl, curls.at(i)); 

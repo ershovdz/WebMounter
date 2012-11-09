@@ -38,8 +38,8 @@ namespace LocalDriver
 		LVFSDriver(const LVFSDriver &); 
 		LVFSDriver& operator=(const LVFSDriver &); 
 		void run();
-	
-	public slots:
+
+		public slots:
 			virtual void mount(Data::GeneralSettings& generalSettings);
 			virtual void unmount();
 
@@ -211,7 +211,7 @@ namespace LocalDriver
 		//static NotificationDevice* _pNotificationDevice;
 
 		static LVFSDriver* _pDriverInstance;
-		
+
 		static PDOKAN_OPERATIONS _pDriverOperations;
 		static PDOKAN_OPTIONS _pDriverOptions;
 		static QMutex _DriverMutex;
@@ -221,7 +221,7 @@ namespace LocalDriver
 
 	public:
 		static LVFSDriver* createDriver(FileProxy*);
-	
+
 	private:
 		static void startDriver();
 		static void stopDriver();

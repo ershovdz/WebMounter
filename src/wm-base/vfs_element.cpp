@@ -42,7 +42,7 @@ bool VFSElement::operator==(const VFSElement& elem)
 		&& this->getModified() == elem.getModified()
 		/*&& this->getFlags() == elem.getFlags()*/
 		);
-	
+
 	if(equal)
 	{
 		QFileInfo fCurrent(this->getPath());

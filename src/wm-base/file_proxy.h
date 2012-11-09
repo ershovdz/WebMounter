@@ -15,7 +15,7 @@
 namespace Common
 {
 	using RemoteDriver::RVFSDriver;
-	
+
 	class WEBMOUNTER_EXPORT FileProxy
 	{
 		FileProxy(void);
@@ -36,17 +36,17 @@ namespace Common
 
 		//void Sync(QString path, bool bFullSync = false);
 		RESULT UnCheckFile(QString path);
-                unsigned int CheckFile(QString path);
+		unsigned int CheckFile(QString path);
 		void WriteFile(QString path);
 		//void RegisterRVFSDriver(RVFSDriver*);
 		bool CheckFileAttributes(const QString& path, unsigned long attributes);
 
-                static unsigned int GetNotUploadedCounter()
+		static unsigned int GetNotUploadedCounter()
 		{
 			QMutexLocker locker(&_FileProxyMutex);
 			return uNotUploaded;
 		}
-                static unsigned int GetUploadedCounter()
+		static unsigned int GetUploadedCounter()
 		{
 			QMutexLocker locker(&_FileProxyMutex);
 			return uUploaded;
@@ -68,12 +68,12 @@ namespace Common
 			uNotUploaded++;
 		}
 
-                static unsigned int getNotDeletedCounter()
+		static unsigned int getNotDeletedCounter()
 		{
 			QMutexLocker locker(&_FileProxyMutex);
 			return _uNotDeleted;
 		}
-                static unsigned int getDeletedCounter()
+		static unsigned int getDeletedCounter()
 		{
 			QMutexLocker locker(&_FileProxyMutex);
 			return _uDeleted;
@@ -94,25 +94,25 @@ namespace Common
 			_uNotDeleted++;
 		}
 
- public:
-	 void fileUploaded(QString filePath, RESULT result);
-	 void fileDeleted(const QString& filePath, RESULT result);
+	public:
+		void fileUploaded(QString filePath, RESULT result);
+		void fileDeleted(const QString& filePath, RESULT result);
 
 	private:
 		static void notifyUser(Ui::Notification::_Types type, QString title, QString description);
 		RVFSDriver* extractPlugin(const QString& path) const;
-	
+
 	private:
 		static QMutex _FileProxyMutex;
 		static set<QString> _currentFiles;
 
-                static unsigned int uUploaded;
-                static unsigned int uNotUploaded;
+		static unsigned int uUploaded;
+		static unsigned int uNotUploaded;
 
 		static QList<QString> _uploadQueue;
 
-                static unsigned int _uDeleted;
-                static unsigned int _uNotDeleted;
+		static unsigned int _uDeleted;
+		static unsigned int _uNotDeleted;
 		static QList<QString> _deleteQueue;
 	public:
 		static FileProxy* _pFileProxyInstance;

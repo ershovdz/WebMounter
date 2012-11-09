@@ -25,7 +25,7 @@ namespace RemoteDriver
 		VkRVFSDriver(const QString& pluginName);
 		virtual ~VkRVFSDriver(void);
 		void connectHandlerStage2(RESULT error, PluginSettings pluginSettings);
-	
+
 	public:
 		virtual RESULT downloadFiles() {return RVFSDriver::downloadFiles();};
 		virtual void updateDownloadStatus(RESULT downloadResult, const unsigned int uDownloaded, const unsigned int uNotDownloaded);

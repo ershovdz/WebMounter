@@ -38,7 +38,7 @@ namespace LocalDriver
 		{
 			_rootDirectory = generalSettings.appStoragePath;
 			_mountPoint = generalSettings.driveLetter;
-			
+
 			startDriver();
 		}
 	}
@@ -60,9 +60,9 @@ namespace LocalDriver
 			//FILE* log = fopen("G:\\SRC\\WebDisk\\Debug\\driver.log", "a+");
 			//if (0)
 			//{
-				//fwprintf(log, buffer);
+			//fwprintf(log, buffer);
 			//} else {
-				OutputDebugStringW(buffer);
+			OutputDebugStringW(buffer);
 			//}
 			//fclose(log);
 		}
@@ -226,7 +226,7 @@ namespace LocalDriver
 		if (CreationDisposition == CREATE_NEW)
 		{
 			DbgPrint(L"Create File on server\n");
-			
+
 			CloseHandle(handle);
 			handle = INVALID_HANDLE_VALUE;
 
@@ -425,110 +425,110 @@ namespace LocalDriver
 		DbgPrint(L"ReadFile : %s\n", filePath);
 
 		{ 	LOCK(_DriverMutex)
-		
+
 			uint fileState = _pFileProxy->CheckFile(QString::fromWCharArray(filePath));
-			
-			if(!(fileState & VFSElement::eFl_Downloading)
-					&& !(fileState & VFSElement::eFl_Downloaded))
+
+		if(!(fileState & VFSElement::eFl_Downloading)
+			&& !(fileState & VFSElement::eFl_Downloaded))
+		{
+			CloseHandle(handle);
+			handle = INVALID_HANDLE_VALUE;
+			DokanFileInfo->Context = (ULONG64)handle;
+
+			Sleep(100); //hack. We need a time to close file 
+
+			if(_pFileProxy->ReadFile(QString::fromWCharArray(filePath)))
 			{
-				CloseHandle(handle);
-				handle = INVALID_HANDLE_VALUE;
-				DokanFileInfo->Context = (ULONG64)handle;
-
-				Sleep(100); //hack. We need a time to close file 
-
-				if(_pFileProxy->ReadFile(QString::fromWCharArray(filePath)))
-				{
-					return -1;
-				}
-
-				Sleep(100); //hack. We need a time to close file 
-
-				handle = CreateFile(filePath
-									, GENERIC_READ
-									, FILE_SHARE_READ
-									, NULL
-									, OPEN_EXISTING
-									, 0
-									, NULL);
-									
-				if (handle == INVALID_HANDLE_VALUE) 
-				{
-					DbgPrint(L"\tCreateFile error : %d\n\n", GetLastError());
-					return -1;
-				}
-				
-				DbgPrint(L"\tNew handle = %d : %d\n\n", handle);
-				opened = TRUE;
-				DokanFileInfo->Context = (ULONG64)handle;
-			}
-			else if((fileState &  VFSElement::eFl_Downloading)
-					&& (fileState != VFSElement::eFl_All))
-			{
-				sleep(3);
 				return -1;
 			}
 
-			if (!handle || handle == INVALID_HANDLE_VALUE) 
-			{
-				DbgPrint(L"\tinvalid handle, cleanuped?\n");
-				handle = CreateFile(filePath
-									, GENERIC_READ
-									, FILE_SHARE_READ
-									, NULL
-									, OPEN_EXISTING
-									, 0
-									, NULL);
-									
-				if (handle == INVALID_HANDLE_VALUE) 
-				{
-					DbgPrint(L"\tCreateFile error : %d\n\n", GetLastError());
-					return -1;
-				}
-				opened = TRUE;
-				DokanFileInfo->Context = (ULONG64)handle;
-			}
+			Sleep(100); //hack. We need a time to close file 
 
-			if (SetFilePointer(handle, offset, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER) 
-			{ 
-				DbgPrint(L"\tseek error, offset = %d, error = %d, handle = %d\n\n", offset, GetLastError(), handle);
-				if (opened)
-				CloseHandle(handle);
+			handle = CreateFile(filePath
+				, GENERIC_READ
+				, FILE_SHARE_READ
+				, NULL
+				, OPEN_EXISTING
+				, 0
+				, NULL);
+
+			if (handle == INVALID_HANDLE_VALUE) 
+			{
+				DbgPrint(L"\tCreateFile error : %d\n\n", GetLastError());
 				return -1;
 			}
 
+			DbgPrint(L"\tNew handle = %d : %d\n\n", handle);
+			opened = TRUE;
+			DokanFileInfo->Context = (ULONG64)handle;
+		}
+		else if((fileState &  VFSElement::eFl_Downloading)
+			&& (fileState != VFSElement::eFl_All))
+		{
+			sleep(3);
+			return -1;
+		}
 
-			if (!ReadFile(handle, Buffer, BufferLength, ReadLength, NULL)) 
+		if (!handle || handle == INVALID_HANDLE_VALUE) 
+		{
+			DbgPrint(L"\tinvalid handle, cleanuped?\n");
+			handle = CreateFile(filePath
+				, GENERIC_READ
+				, FILE_SHARE_READ
+				, NULL
+				, OPEN_EXISTING
+				, 0
+				, NULL);
+
+			if (handle == INVALID_HANDLE_VALUE) 
 			{
-				DbgPrint(L"\tread error = %u, buffer length = %d, read length = %d\n\n",
+				DbgPrint(L"\tCreateFile error : %d\n\n", GetLastError());
+				return -1;
+			}
+			opened = TRUE;
+			DokanFileInfo->Context = (ULONG64)handle;
+		}
+
+		if (SetFilePointer(handle, offset, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER) 
+		{ 
+			DbgPrint(L"\tseek error, offset = %d, error = %d, handle = %d\n\n", offset, GetLastError(), handle);
+			if (opened)
+				CloseHandle(handle);
+			return -1;
+		}
+
+
+		if (!ReadFile(handle, Buffer, BufferLength, ReadLength, NULL)) 
+		{
+			DbgPrint(L"\tread error = %u, buffer length = %d, read length = %d\n\n",
 				GetLastError(), BufferLength, *ReadLength);
-				if (opened)
-				{
-					CloseHandle(handle);
-					handle = INVALID_HANDLE_VALUE;
-					DokanFileInfo->Context = (ULONG64)handle;
-				}
-				return -1;
-
-			} 
-			else 
-			{
-				DbgPrint(L"\tread %d, offset %d\n\n", *ReadLength, offset);
-			}
-
-			/*if((offset) == GetFileSize((HANDLE)DokanFileInfo->Context,  NULL))
-			{
-				_pFileProxy->UnCheckFile(QString::fromWCharArray(filePath));
-			}*/
-
 			if (opened)
 			{
-				DbgPrint(L"440 CloseHandle, handle = %d\n\n", (HANDLE)DokanFileInfo->Context);
 				CloseHandle(handle);
 				handle = INVALID_HANDLE_VALUE;
 				DokanFileInfo->Context = (ULONG64)handle;
-
 			}
+			return -1;
+
+		} 
+		else 
+		{
+			DbgPrint(L"\tread %d, offset %d\n\n", *ReadLength, offset);
+		}
+
+		/*if((offset) == GetFileSize((HANDLE)DokanFileInfo->Context,  NULL))
+		{
+		_pFileProxy->UnCheckFile(QString::fromWCharArray(filePath));
+		}*/
+
+		if (opened)
+		{
+			DbgPrint(L"440 CloseHandle, handle = %d\n\n", (HANDLE)DokanFileInfo->Context);
+			CloseHandle(handle);
+			handle = INVALID_HANDLE_VALUE;
+			DokanFileInfo->Context = (ULONG64)handle;
+
+		}
 		}
 		return 0;
 	}
@@ -581,7 +581,7 @@ namespace LocalDriver
 			return -1;
 		}
 
-		
+
 		if (!WriteFile(handle, Buffer, NumberOfBytesToWrite, NumberOfBytesWritten, NULL)) {
 			DbgPrint(L"\twrite error = %u, buffer length = %d, write length = %d\n",
 				GetLastError(), NumberOfBytesToWrite, *NumberOfBytesWritten);
@@ -599,7 +599,7 @@ namespace LocalDriver
 		}
 
 		DbgPrint(L"\t offset = %d, NumberOfBytesWritten = %d, GetFileSize = %d \n", offset, *NumberOfBytesWritten, GetFileSize((HANDLE)DokanFileInfo->Context,  NULL));
-		
+
 		DWORD size = GetFileSize((HANDLE)DokanFileInfo->Context,  NULL);
 		if(((offset + *NumberOfBytesWritten) == size && *NumberOfBytesWritten > 4096)
 			|| (*NumberOfBytesWritten < 4096))
@@ -616,20 +616,20 @@ namespace LocalDriver
 			Sleep(100); //hack. We need a time to close file 
 
 			{	LOCK(_DriverMutex);
-				if(_pFileProxy->CreateFileW(QString::fromWCharArray(filePath)) != eNO_ERROR)
+			if(_pFileProxy->CreateFileW(QString::fromWCharArray(filePath)) != eNO_ERROR)
+			{
+				/*DbgPrint(L"  DeleteFile ");
+				if (DeleteFile(filePath) == 0) 
 				{
-					/*DbgPrint(L"  DeleteFile ");
-					if (DeleteFile(filePath) == 0) 
-					{
-					DbgPrint(L" error code = %d\n\n", GetLastError());
-					} 
-					else 
-					{
-					DbgPrint(L"success\n\n");
-					}
-
-					return -1;*/
+				DbgPrint(L" error code = %d\n\n", GetLastError());
+				} 
+				else 
+				{
+				DbgPrint(L"success\n\n");
 				}
+
+				return -1;*/
+			}
 			}
 		}
 		return 0;
@@ -784,7 +784,7 @@ namespace LocalDriver
 		PDOKAN_FILE_INFO	/*DokanFileInfo*/)
 	{
 		WCHAR	filePath[MAX_PATH];
-		
+
 		GetFilePath(filePath, MAX_PATH, FileName);
 
 		if(_pFileProxy->RemoveFile(QString::fromWCharArray(filePath)) != eNO_ERROR)
@@ -1031,10 +1031,10 @@ namespace LocalDriver
 		WCHAR	filePath[MAX_PATH];
 
 		GetFilePath(filePath, MAX_PATH, FileName);
-		
+
 		/*if(!_pFileProxy->CheckFileAttributes(QString::fromWCharArray(filePath), FileAttributes))
 		{
-			return -1;
+		return -1;
 		}*/
 
 		DbgPrint(L"SetFileAttributes %s\n", filePath);
@@ -1223,12 +1223,12 @@ namespace LocalDriver
 		try
 		{
 			Ui::NotificationDevice* notificationDevice = Common::WebMounter::getNotificationDevice();
-			
+
 			/*notificationDevice->showNotification(Notification(
-				Notification::eINFO
-				, "Connecting..."
-				, "Connecting to website... \n")
-				);*/
+			Notification::eINFO
+			, "Connecting..."
+			, "Connecting to website... \n")
+			);*/
 
 			//_pFileProxy->Sync(QString(""), false);
 
@@ -1245,11 +1245,11 @@ namespace LocalDriver
 
 			//_pDriverOptions->MountPoint =
 			//	(WCHAR*)malloc(sizeof(WCHAR) * _mountPoint.size() + 1);
-			
+
 			//wcscpy_s((wchar_t*)_pDriverOptions->MountPoint, _mountPoint.size() + 1, _mountPoint.toStdWString().c_str());
 			_pDriverOptions->DriveLetter = _mountPoint.toStdWString().c_str()[0];
 
-			
+
 			if (g_DebugMode) 
 			{
 				_pDriverOptions->Options |= DOKAN_OPTION_DEBUG;
@@ -1296,7 +1296,7 @@ namespace LocalDriver
 				Notification msg(Notification::eINFO, tr("Info"), tr("Disk is mounted\n"));
 				notificationDevice->showNotification(msg);
 			}
-		
+
 			status = DokanMain(_pDriverOptions, _pDriverOperations);
 
 			emit unmounted();
@@ -1339,12 +1339,12 @@ namespace LocalDriver
 					DbgPrint(L"Can't assign a drive letter\n");
 					break;
 				}
-			/*case DOKAN_MOUNT_POINT_ERROR:
+				/*case DOKAN_MOUNT_POINT_ERROR:
 				{
-					Notification msg(Notification::eCRITICAL, tr("Error"), tr("Mount point error\n"));
-					notificationDevice->showNotification(msg);
-					DbgPrint(L"Mount point error\n");
-					break;
+				Notification msg(Notification::eCRITICAL, tr("Error"), tr("Mount point error\n"));
+				notificationDevice->showNotification(msg);
+				DbgPrint(L"Mount point error\n");
+				break;
 				}*/
 			case DOKAN_SUCCESS:
 				{
@@ -1394,5 +1394,5 @@ namespace LocalDriver
 			DokanUnmount(_mountPoint.toStdWString().c_str()[0]);
 		}
 	}
-	
+
 };

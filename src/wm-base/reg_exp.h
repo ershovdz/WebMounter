@@ -9,7 +9,7 @@ namespace Data
 	class WEBMOUNTER_EXPORT RegExp
 	{
 	public:
-			static QString getByPattern(const QString& pattern, const QString& text);
+		static QString getByPattern(const QString& pattern, const QString& text);
 	};
 }
 

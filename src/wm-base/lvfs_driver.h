@@ -12,12 +12,11 @@ namespace LocalDriver
 	class ILVFSDriver : public QThread
 	{
 		Q_OBJECT
-
 			public slots:
 				virtual void mount(Data::GeneralSettings& generalSettings) = 0;
 				virtual void unmount() = 0;
-		
-		signals:
+
+signals:
 				void mounted();
 				void unmounted();
 	};

@@ -29,7 +29,7 @@ namespace Common
 		eERROR_GENERAL,
 		eERROR_CANCEL,
 		eERROR_NOT_SUPPORTED,
-    eERROR_FILE_SYSTEM
+		eERROR_FILE_SYSTEM
 	};
 };
 

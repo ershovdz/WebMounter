@@ -19,7 +19,7 @@ namespace Ui
 
 	public slots:
 		virtual void updateView(int progress, int state) = 0;
-	
+
 signals:
 		void startSync();
 		void stopSync();

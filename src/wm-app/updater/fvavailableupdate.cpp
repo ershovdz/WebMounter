@@ -1,7 +1,7 @@
 #include "fvavailableupdate.h"
 
 FvAvailableUpdate::FvAvailableUpdate(QObject *parent) :
-	QObject(parent)
+QObject(parent)
 {
 	// noop
 }

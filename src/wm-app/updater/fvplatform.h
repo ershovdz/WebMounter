@@ -12,7 +12,7 @@ public:
 
 private:
 	explicit FvPlatform(QObject *parent = 0);
-		
+
 };
 
 #endif // FVPLATFORM_H

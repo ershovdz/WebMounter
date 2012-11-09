@@ -13,8 +13,8 @@ SingleInstance::SingleInstance( QObject *parent ) : QTcpServer(parent)
 
 void SingleInstance::newConnection(int /*socket*/)
 {
-//  No need to implement anything!
-//  The parameter gives a warning at compile-time but that's nothing to care about...
+	//  No need to implement anything!
+	//  The parameter gives a warning at compile-time but that's nothing to care about...
 }
 
 SingleApplication::SingleApplication(int &argc, char **argv) : QApplication(argc, argv)

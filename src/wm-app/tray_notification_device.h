@@ -23,11 +23,11 @@ namespace Ui
 		//void showNotification(const Notification&);
 
 		//public slots:	
-			virtual void showNotification(const Notification&);
-			//virtual void initiateDevice();
+		virtual void showNotification(const Notification&);
+		//virtual void initiateDevice();
 signals:
-			void showMsgBox(const QString&, const QString&);
-			void showTrayMsg(int, const QString&, const QString&);
+		void showMsgBox(const QString&, const QString&);
+		void showTrayMsg(int, const QString&, const QString&);
 
 	protected:
 		void run();

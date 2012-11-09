@@ -12,14 +12,14 @@ namespace Ui
 		Q_OBJECT
 	public:
 		YafView(const Data::PluginSettings* settings, const QString& title);
-	
+
 	public slots:
 		virtual void updateView(int progress, int state);
 		void oAuthFinished(RESULT error, const QString& login, const QString& token);
 	private:
 		virtual bool isKeyValueValid(const Data::PluginSettings& settings);
 	private:
- 		YafOAuth* _oauthObj;
+		YafOAuth* _oauthObj;
 	};
 }
 

@@ -17,7 +17,7 @@
 #endif
 
 #ifdef FV_DEBUG
-	// Unit tests
+// Unit tests
 #	include "fvversioncomparatortest.h"
 #endif
 
@@ -208,7 +208,7 @@ void FvUpdater::httpFeedReadyRead()
 }
 
 void FvUpdater::httpFeedUpdateDataReadProgress(qint64 bytesRead,
-											   qint64 totalBytes)
+	qint64 totalBytes)
 {
 	Q_UNUSED(bytesRead);
 	Q_UNUSED(totalBytes);
@@ -256,7 +256,7 @@ bool FvUpdater::xmlParseFeed()
 	QString currentTag, currentQualifiedTag;
 
 	QString xmlTitle, xmlLink, xmlReleaseNotesLink, xmlPubDate, xmlEnclosureUrl,
-			xmlEnclosureVersion, xmlEnclosurePlatform, xmlEnclosureType;
+		xmlEnclosureVersion, xmlEnclosurePlatform, xmlEnclosureType;
 	unsigned long xmlEnclosureLength;
 
 	// Parse
@@ -287,7 +287,7 @@ bool FvUpdater::xmlParseFeed()
 
 				if (attribs.hasAttribute("fervor:platform")) {
 					QString platform = attribs.value("fervor:platform").toString().trimmed();
-					
+
 					if (FvPlatform::CurrentlyRunningOnPlatform(platform)) {
 						xmlEnclosurePlatform = platform;
 						if (attribs.hasAttribute("url")) {
@@ -326,14 +326,14 @@ bool FvUpdater::xmlParseFeed()
 				// the newest version.
 
 				return searchDownloadedFeedForUpdates(xmlTitle,
-													  xmlLink,
-													  xmlReleaseNotesLink,
-													  xmlPubDate,
-													  xmlEnclosureUrl,
-													  xmlEnclosureVersion,
-													  xmlEnclosurePlatform,
-													  xmlEnclosureLength,
-													  xmlEnclosureType);
+					xmlLink,
+					xmlReleaseNotesLink,
+					xmlPubDate,
+					xmlEnclosureUrl,
+					xmlEnclosureVersion,
+					xmlEnclosurePlatform,
+					xmlEnclosureLength,
+					xmlEnclosureType);
 
 			}
 
@@ -366,14 +366,14 @@ bool FvUpdater::xmlParseFeed()
 
 
 bool FvUpdater::searchDownloadedFeedForUpdates(QString xmlTitle,
-											   QString xmlLink,
-											   QString xmlReleaseNotesLink,
-											   QString xmlPubDate,
-											   QString xmlEnclosureUrl,
-											   QString xmlEnclosureVersion,
-											   QString xmlEnclosurePlatform,
-											   unsigned long xmlEnclosureLength,
-											   QString xmlEnclosureType)
+	QString xmlLink,
+	QString xmlReleaseNotesLink,
+	QString xmlPubDate,
+	QString xmlEnclosureUrl,
+	QString xmlEnclosureVersion,
+	QString xmlEnclosurePlatform,
+	unsigned long xmlEnclosureLength,
+	QString xmlEnclosureType)
 {
 	Q_UNUSED(xmlTitle);
 	Q_UNUSED(xmlPubDate);
@@ -408,7 +408,7 @@ bool FvUpdater::searchDownloadedFeedForUpdates(QString xmlTitle,
 		emit noUpdates();
 		return true;	// Things have succeeded when you think of it.
 	}
-	
+
 	//
 	// Success! At this point, we have found an update that can be proposed
 	// to the user.
@@ -501,13 +501,3 @@ void FvUpdater::createDownloadManager()
 		, this
 		, SLOT(downloadUpdateFailed(const QUrl&, const QString&)) );
 }
-
-
-
-
-
-
-
-
-
-

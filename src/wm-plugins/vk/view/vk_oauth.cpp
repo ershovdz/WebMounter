@@ -55,7 +55,7 @@ namespace Ui
 			if(url.contains("access_token="))
 			{
 				_token = Data::RegExp::getByPattern("access_token=(.*)&expires_in=", url);
-				
+
 				delete _view;
 				_view = NULL;
 

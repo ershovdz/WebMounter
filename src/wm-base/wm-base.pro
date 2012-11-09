@@ -1,4 +1,4 @@
-QT += sql
+QT += sql network
 TARGET = wmbase
 TEMPLATE = lib
 target.path = /usr/lib/webmounter/base

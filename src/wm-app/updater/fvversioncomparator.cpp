@@ -73,7 +73,7 @@ std::vector<std::string> FvVersionComparator::SplitVersionString(std::string ver
 
 
 FvVersionComparator::ComparatorResult FvVersionComparator::CompareVersions(std::string versionA,
-																		   std::string versionB)
+	std::string versionB)
 {
 	std::vector<std::string> partsA = SplitVersionString(versionA);
 	std::vector<std::string> partsB = SplitVersionString(versionB);
@@ -106,9 +106,9 @@ FvVersionComparator::ComparatorResult FvVersionComparator::CompareVersions(std::
 			} else if (typeA == kStringType) {
 				short result = partA.compare(partB);
 				switch (result) {
-					case -1: return kAscending; break;
-					case 1: return kDescending; break;
-					case 0: /* do nothing */ break;
+				case -1: return kAscending; break;
+				case 1: return kDescending; break;
+				case 0: /* do nothing */ break;
 				};
 			}
 		} else {

@@ -72,41 +72,41 @@ namespace RemoteDriver
 		virtual void notifyUser(Ui::Notification::_Types type, QString title, QString description) const;
 		virtual void updateState(int progress, DriverState newState);
 		virtual RESULT removeFolder(QDir& dir);
-    virtual RESULT removeFolderContent(QDir& dir);
+		virtual RESULT removeFolderContent(QDir& dir);
 		virtual void syncCacheWithFileSystem(const QString& path);
-                virtual void updateDownloadStatus(RESULT downloadResult, const unsigned int uDownloaded, const unsigned int uNotDownloaded);
-                unsigned int countNotDownloaded();
+		virtual void updateDownloadStatus(RESULT downloadResult, const unsigned int uDownloaded, const unsigned int uNotDownloaded);
+		unsigned int countNotDownloaded();
 		void updateChildrenPath(const VFSElement& elem);
 
-    Q_SIGNALS:
+Q_SIGNALS:
 
 		void updateView(int, int);
 		void fileUploaded(/*QString, RESULT*/);
-		
-	public Q_SLOTS:
+
+		public Q_SLOTS:
 
 			virtual void startPlugin(Data::PluginSettings&);
-			
+
 			virtual void stopPlugin();
-			
+
 			virtual void startSync();
-			
+
 			virtual void stopSync();
 
 	public:
-		
+
 		virtual void connectHandler(PluginSettings& pluginSettings);
-		
+
 		virtual void disconnectHandler();
-		
+
 		virtual void syncHandler();
-		
+
 		virtual void stopSyncHandler();
 
 		virtual DriverState getState() {return _state;};
 
 		virtual void setState(DriverState state) {_state = state;};
-	
+
 	protected:
 		DriverState _state;
 		QString _pluginName;

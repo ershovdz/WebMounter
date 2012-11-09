@@ -73,7 +73,7 @@ namespace Data
 			{
 				return eERROR_GENERAL;
 			}
-			
+
 			return eNO_ERROR;
 		}
 		return eERROR_GENERAL;
@@ -166,7 +166,7 @@ namespace Data
 					elem.setDownloaded(iter->isDownloaded());
 					elem.setName(iter->getName());
 					elem.setPath(iter->getPath());
-					
+
 					erase(iter);
 
 					elem.setDirty(dirty);
@@ -202,7 +202,7 @@ namespace Data
 					}
 					return;
 				}
-				
+
 			}
 
 			elem.setDirty(dirty);
@@ -213,37 +213,37 @@ namespace Data
 
 			//if(updatedb)
 			//{
-				QSqlQuery query(_DB);
+			QSqlQuery query(_DB);
 
-				query.prepare("INSERT INTO Elements(path, elemid, parentid, name, type, flags, modified, editMetaUrl, editMetaUrl, srcUrl, pluginName) "
-								"VALUES(:path_elem, :elemid,"
-								":parentid,"
-								":name,"
-								":type,"
-								":flags,"
-								":modified,"
-								":editMetaUrl,"
-								":editMediaUrl,"
-								":srcUrl,"
-								":pluginName)");
+			query.prepare("INSERT INTO Elements(path, elemid, parentid, name, type, flags, modified, editMetaUrl, editMetaUrl, srcUrl, pluginName) "
+				"VALUES(:path_elem, :elemid,"
+				":parentid,"
+				":name,"
+				":type,"
+				":flags,"
+				":modified,"
+				":editMetaUrl,"
+				":editMediaUrl,"
+				":srcUrl,"
+				":pluginName)");
 
-				query.bindValue(":path_elem", QVariant(elem.getPath()));
-				query.bindValue(":elemid", QVariant(elem.getId()));
-				query.bindValue(":parentid", QVariant(elem.getParentId()));
-				query.bindValue(":name", QVariant(elem.getName()));
-				query.bindValue(":type", QVariant(elem.getType()));
-				query.bindValue(":flags", QVariant(elem.getFlags()));
-				query.bindValue(":modified", QVariant(elem.getModified()));
-				query.bindValue(":editMetaUrl", QVariant(elem.getEditMetaUrl()));
-				query.bindValue(":editMediaUrl", QVariant(elem.getEditMediaUrl()));
-				query.bindValue(":srcUrl", QVariant(elem.getSrcUrl()));
-				query.bindValue(":pluginName", QVariant(elem.getPluginName()));
+			query.bindValue(":path_elem", QVariant(elem.getPath()));
+			query.bindValue(":elemid", QVariant(elem.getId()));
+			query.bindValue(":parentid", QVariant(elem.getParentId()));
+			query.bindValue(":name", QVariant(elem.getName()));
+			query.bindValue(":type", QVariant(elem.getType()));
+			query.bindValue(":flags", QVariant(elem.getFlags()));
+			query.bindValue(":modified", QVariant(elem.getModified()));
+			query.bindValue(":editMetaUrl", QVariant(elem.getEditMetaUrl()));
+			query.bindValue(":editMediaUrl", QVariant(elem.getEditMediaUrl()));
+			query.bindValue(":srcUrl", QVariant(elem.getSrcUrl()));
+			query.bindValue(":pluginName", QVariant(elem.getPluginName()));
 
-				query.exec();
+			query.exec();
 			//}
 		}
 	}
-	
+
 	void VFSCache::setFlag(iterator& iter, uint set, uint unset, bool updateDB)
 	{
 		iter.getNatureIter()->second->setDirty(true);

@@ -32,15 +32,15 @@ namespace Ui
 	protected:
 		void changeEvent ( QEvent * event );
 		//int getSyncPeriod();
-		
+
 	private slots:
 		void oauthClicked(int state);
 		void startPluginClicked(bool);
 		void stopPluginClicked(bool);
-	
+
 	public slots:
 		virtual void updateView(int progress, int state);
-	
+
 	protected:
 		QCheckBox* _oauthCheckBox;
 		QLabel* _dummyLabel;
@@ -53,7 +53,7 @@ namespace Ui
 
 		QPushButton *_startPluginButton;
 		QPushButton *_stopPluginButton;
-		
+
 		QGroupBox *_authGroup;
 		QGridLayout *_authLayout;
 		QGroupBox *_buttonGroup; 
@@ -69,7 +69,7 @@ namespace Ui
 		RemoteDriver::RVFSDriver* _driver;
 		QString _pluginName;
 		RemoteDriver::DriverState _driverState;
-		
+
 	};
 }
 #endif

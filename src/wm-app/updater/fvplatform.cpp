@@ -3,7 +3,7 @@
 #include <QDebug>
 
 FvPlatform::FvPlatform(QObject *parent) :
-	QObject(parent)
+QObject(parent)
 {
 	// noop
 }
