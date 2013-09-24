@@ -1,3 +1,22 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #include <QtGui>
 #include <QtWebKit>
 #include "webmounter.h"
@@ -14,31 +33,31 @@ namespace Ui
 	}
 
 
-	VkOAuth::VkOAuth() : _view(NULL)
+    VkOAuth::VkOAuth() : m_view(NULL)
 	{
-		_oAuthTimer = new QTimer();
-		connect(_oAuthTimer, SIGNAL(timeout()), this, SLOT(slotOAuthTimeout()));
+        m_oAuthTimer = new QTimer();
+        connect(m_oAuthTimer, SIGNAL(timeout()), this, SLOT(slotOAuthTimeout()));
 	}
 
 	VkOAuth::~VkOAuth()
 	{
-		delete _oAuthTimer;
+        delete m_oAuthTimer;
 	}
 
 	void VkOAuth::initializeWebView()
 	{
-		_view = new WebView();
-		_view->setWindowTitle(tr("Vkontakte | Authentication"));
+        m_view = new WebView();
+        m_view->setWindowTitle(tr("Vkontakte | Authentication"));
 		QNetworkAccessManager * manager = new QNetworkAccessManager(this);
 
 		connect(manager, SIGNAL(finished(QNetworkReply*)),this,SLOT(finished(QNetworkReply*)));
 		connect(manager, SIGNAL(sslErrors(QNetworkReply *, const QList<QSslError> &)), this, SLOT(ignoreSSL( QNetworkReply *, const QList<QSslError> & )));
-		connect(_view, SIGNAL(finished(RESULT)), this, SLOT(finished(RESULT)));
+        connect(m_view, SIGNAL(finished(RESULT)), this, SLOT(finished(RESULT)));
 
-		_view->page()->setNetworkAccessManager(manager);
-		_view->page()->triggerAction(QWebPage::Forward);
+        m_view->page()->setNetworkAccessManager(manager);
+        m_view->page()->triggerAction(QWebPage::Forward);
 
-		_view->resize(800, 500);
+        m_view->resize(800, 500);
 	}
 
 	void VkOAuth::finished(QNetworkReply *reply) 
@@ -47,24 +66,24 @@ namespace Ui
 
 		if(attr == 302) // redirect
 		{
-			_oAuthTimer->stop();
+            m_oAuthTimer->stop();
 
 			QString url = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();
 			if(url.contains("access_token="))
 			{
-				_token = Data::RegExp::getByPattern("access_token=(.*)&expires_in=", url);
+                m_token = Data::RegExp::getByPattern("access_token=(.*)&expires_in=", url);
 
-				delete _view;
-				_view = NULL;
+                delete m_view;
+                m_view = NULL;
 
-				emit authFinished(eNO_ERROR, "", _token);
+                emit authFinished(eNO_ERROR, "", m_token);
 			}
 			else if(url.contains("error=access_denied"))
 			{
-				delete _view;
-				_view = NULL;
+                delete m_view;
+                m_view = NULL;
 
-				_oAuthTimer->stop();
+                m_oAuthTimer->stop();
 
 				emit authFinished(eERROR_CANCEL, "", "");
 			}
@@ -78,47 +97,47 @@ namespace Ui
 
 	void VkOAuth::authenticate()
 	{
-		if(!_view)
+        if(!m_view)
 		{
 			initializeWebView();
 		}
 
 		GeneralSettings generalSettings; 
 		WebMounter::getSettingStorage()->getData(generalSettings);
-		if(generalSettings.proxyAddress.length())
+        if(generalSettings.m_proxyAddress.length())
 		{
 			QNetworkProxy proxy;
 			proxy.setType(QNetworkProxy::HttpProxy);
-			proxy.setHostName(generalSettings.proxyAddress.left(generalSettings.proxyAddress.lastIndexOf(":")));
-			QString portStr = generalSettings.proxyAddress.right(generalSettings.proxyAddress.length() - generalSettings.proxyAddress.lastIndexOf(":")-1);
+            proxy.setHostName(generalSettings.m_proxyAddress.left(generalSettings.m_proxyAddress.lastIndexOf(":")));
+            QString portStr = generalSettings.m_proxyAddress.right(generalSettings.m_proxyAddress.length() - generalSettings.m_proxyAddress.lastIndexOf(":")-1);
 			proxy.setPort(portStr.toInt());
-			proxy.setUser(generalSettings.proxyLogin);
-			proxy.setPassword(generalSettings.proxyPassword);
+            proxy.setUser(generalSettings.m_proxyLogin);
+            proxy.setPassword(generalSettings.m_proxyPassword);
 
-			_view->page()->networkAccessManager()->setProxy(proxy);
+            m_view->page()->networkAccessManager()->setProxy(proxy);
 		}
 
-		_view->load(QUrl("https://oauth.vk.com/authorize?client_id=2950346&scope=4&response_type=token"));
-		_view->show();
-		if (!_oAuthTimer->isActive())
-			_oAuthTimer->start(60*1000);
+        m_view->load(QUrl("https://oauth.vk.com/authorize?client_id=2950346&scope=4&response_type=token"));
+        m_view->show();
+        if (!m_oAuthTimer->isActive())
+            m_oAuthTimer->start(60*1000);
 	}
 
 	void VkOAuth::finished(RESULT error)
 	{
-		delete _view;
-		_view = NULL;
+        delete m_view;
+        m_view = NULL;
 
-		_oAuthTimer->stop();
+        m_oAuthTimer->stop();
 
 		emit authFinished(error, "", "");
 	}
 
 	void VkOAuth::slotOAuthTimeout()
 	{
-		_oAuthTimer->stop();
-		delete _view;
-		_view = NULL;
+        m_oAuthTimer->stop();
+        delete m_view;
+        m_view = NULL;
 
 		emit authFinished(eERROR_GENERAL, "", "");
 	}

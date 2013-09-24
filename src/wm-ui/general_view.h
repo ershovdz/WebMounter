@@ -1,3 +1,22 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #ifndef GENERAL_VIEW_H
 #define GENERAL_VIEW_H
 
@@ -36,36 +55,36 @@ namespace Ui
 			void mountClicked();
 			void unmountClicked();
 
-		public slots:
-			void mounted();
-			void unmounted();
+			public slots:
+				void mounted();
+				void unmounted();
 
 signals:
-			void mount();
-			void unmount();
+				void mount();
+				void unmount();
 
 	private:
-		QWidget* _parent;
+		QWidget* m_parent;
 
-		QGroupBox* _diskStatusGroup;
-		QGridLayout* _diskStatusLayout;
+		QGroupBox* m_diskStatusGroup;
+		QGridLayout* m_diskStatusLayout;
 
-		QLabel* _statusLabel;
-		QLabel* _statusValue;
+		QLabel* m_statusLabel;
+		QLabel* m_statusValue;
 
 		//#ifdef Q_OS_WIN
 		//    QLabel *_diskLetterLabel;
 		//    QComboBox *_diskLetterComboBox;
 		//#endif
 
-		QGroupBox *_buttonGroup;
-		QGridLayout *_buttonLayout;
-		QPushButton *_mountButton;
-		QPushButton *_unmountButton;
+		QGroupBox* m_buttonGroup;
+		QGridLayout* m_buttonLayout;
+		QPushButton* m_mountButton;
+		QPushButton* m_unmountButton;
 
-		QVBoxLayout *_mainLayout;
-		unsigned int _state;
-		QTranslator _translator;
+		QVBoxLayout* m_mainLayout;
+		unsigned int m_state;
+		QTranslator m_translator;
 	};
 }
 #endif

@@ -1,3 +1,21 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
 
 #include <curl/curl.h>
 #include <QFile>
@@ -20,7 +38,7 @@ namespace Connector
 {
 	using namespace Common;
 	using namespace Data;
-	//	QMutex YaDiskHTTPConnector::_connectorMutex;
+    //	QMutex YaDiskHTTPConnector::m_connectorMutex;
 
 	size_t YaDiskHTTPConnector::writeStr(void *ptr, size_t size, size_t count, void *response)
 	{
@@ -34,7 +52,7 @@ namespace Connector
 
 	size_t YaDiskHTTPConnector::fwrite_b(void *ptr, size_t size, size_t count, void *path) 
 	{
-		//QMutexLocker locker(&_connectorMutex); 		
+        //QMutexLocker locker(&m_connectorMutex);
 		if(path)
 		{
 			QFile file(*(QString*)path);
@@ -53,10 +71,10 @@ namespace Connector
 			sPutData* userdata = (sPutData*)stream;
 
 			size_t curl_size = nmemb * size;
-			res = (userdata->len < curl_size) ? userdata->len : curl_size;
-			memcpy(ptr, userdata->data, res);
-			userdata->len -= res;
-			userdata->data += res;
+            res = (userdata->m_len < curl_size) ? userdata->m_len : curl_size;
+            memcpy(ptr, userdata->m_data, res);
+            userdata->m_len -= res;
+            userdata->m_data += res;
 		}
 
 		return res;
@@ -64,12 +82,10 @@ namespace Connector
 
 	YaDiskHTTPConnector::YaDiskHTTPConnector()
 	{
-		_curl = curl_easy_init();
 	}
 
 	YaDiskHTTPConnector::~YaDiskHTTPConnector()
 	{
-		curl_easy_cleanup(_curl);
 	}
 
 	void YaDiskHTTPConnector::setSettings(const QString& login
@@ -79,12 +95,12 @@ namespace Connector
 		, bool isOAuth
 		, const QString& token)
 	{
-		_login = login.left(login.lastIndexOf("@"));
-		_password = password;
-		_proxy = proxy;
-		_proxy_login_pwd = proxyLoginPwd;
-		_isOAuth = isOAuth;
-		_token = token;
+        m_login = login.left(login.lastIndexOf("@"));
+        m_password = password;
+        m_proxy = proxy;
+        m_proxyLoginPwd = proxyLoginPwd;
+        m_isOAuth = isOAuth;
+        m_token = token;
 	}
 
 	int YaDiskHTTPConnector::execQuery(const QString &url, const QString &header, const QString& postFields, QString* response)
@@ -93,10 +109,10 @@ namespace Connector
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
-			if((_proxy != "") && (_proxy != ":"))
+            if((m_proxy != "") && (m_proxy != ":"))
 			{
-				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
-				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
+                curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
 			}
 
 			curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(url));
@@ -140,10 +156,10 @@ namespace Connector
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
-			if((_proxy != "") && (_proxy != ":"))
+            if((m_proxy != "") && (m_proxy != ":"))
 			{
-				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
-				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
+                curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
 			}
 
 			QString url = QString("https://webdav.yandex.ru/%1").arg(path);
@@ -151,7 +167,7 @@ namespace Connector
 			curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(url));
 
 			struct curl_slist *chunk = NULL;
-			QString header = QString("Authorization: OAuth %1").arg(_token);
+            QString header = QString("Authorization: OAuth %1").arg(m_token);
 
 			chunk = curl_slist_append(chunk, qPrintable(header));
 
@@ -188,10 +204,10 @@ namespace Connector
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
-			if((_proxy != "") && (_proxy != ":"))
+            if((m_proxy != "") && (m_proxy != ":"))
 			{
-				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
-				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
+                curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
 			}
 
 			QString path = title;
@@ -205,7 +221,7 @@ namespace Connector
 			curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(url));
 
 			struct curl_slist *chunk = NULL;
-			QString header = QString("Authorization: OAuth %1").arg(_token);
+            QString header = QString("Authorization: OAuth %1").arg(m_token);
 
 			chunk = curl_slist_append(chunk, qPrintable(header));
 
@@ -243,10 +259,10 @@ namespace Connector
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
-			if((_proxy != "") && (_proxy != ":"))
+            if((m_proxy != "") && (m_proxy != ":"))
 			{
-				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
-				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
+                curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
 			}
 
 			QString url = QString::fromAscii("https://webdav.yandex.ru/%1").arg(path);
@@ -254,7 +270,7 @@ namespace Connector
 			curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(url));
 
 			struct curl_slist *chunk = NULL;
-			QString header = QString("Authorization: OAuth %1").arg(_token);
+            QString header = QString("Authorization: OAuth %1").arg(m_token);
 
 			chunk = curl_slist_append(chunk, qPrintable(header));
 
@@ -309,7 +325,7 @@ namespace Connector
 			struct curl_slist *chunk = NULL;
 			//QString contentType = "Content-Type: application/atom+xml; charset=utf-8; type=entry";
 			//chunk = curl_slist_append(chunk, qPrintable(contentType));
-			QString authorization = QString("Authorization: OAuth %1").arg(_token);
+            QString authorization = QString("Authorization: OAuth %1").arg(m_token);
 			chunk = curl_slist_append(chunk, qPrintable(authorization));
 
 			curl_easy_setopt(p_curl, CURLOPT_HTTPHEADER, chunk);
@@ -345,16 +361,16 @@ namespace Connector
 
 	RESULT YaDiskHTTPConnector::downloadFile(const QString& url, const QString& path)
 	{
-		QMutexLocker locker(&_connectorMutex);
+        QMutexLocker locker(&m_connectorMutex);
 
 		RESULT res = eERROR_GENERAL;
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
-			if((_proxy != "") && (_proxy != ":"))
+            if((m_proxy != "") && (m_proxy != ":"))
 			{
-				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
-				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
+                curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
 			}
 
 			curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(url));
@@ -375,7 +391,7 @@ namespace Connector
 
 	RESULT YaDiskHTTPConnector::downloadFiles(const QList <QString>& urlList, const QList <QString>& pathList)
 	{
-		QMutexLocker locker(&_connectorMutex);
+        QMutexLocker locker(&m_connectorMutex);
 
 		RESULT res = eNO_ERROR;
 		QList <CURL*> curls;
@@ -386,25 +402,25 @@ namespace Connector
 			CURL* p_curl = curl_easy_init();
 			if(p_curl)
 			{
-				if((_proxy != "") && (_proxy != ":"))
+                if((m_proxy != "") && (m_proxy != ":"))
 				{
-					curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
-					curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
+                    curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                    curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
 				}
 
-                                QString url = QString("https://webdav.yandex.ru/%1").arg(urlList.at(i));
-                                curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(url));
- 
-                                struct curl_slist *chunk = NULL;
-                                QString authorization = QString("Authorization: OAuth %1").arg(_token);
-                                chunk = curl_slist_append(chunk, qPrintable(authorization));
+				QString url = QString("https://webdav.yandex.ru/%1").arg(urlList.at(i));
+				curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(url));
 
-                                curl_easy_setopt(p_curl, CURLOPT_HTTPHEADER, chunk);
+				struct curl_slist *chunk = NULL;
+                QString authorization = QString("Authorization: OAuth %1").arg(m_token);
+				chunk = curl_slist_append(chunk, qPrintable(authorization));
 
- 				curl_easy_setopt(p_curl, CURLOPT_VERBOSE, 1L);
- 				curl_easy_setopt(p_curl, CURLOPT_WRITEFUNCTION, fwrite_b);
- 				curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, &pathList.at(i));
-                                curl_easy_setopt(p_curl, CURLOPT_SSL_VERIFYPEER, 0L);
+				curl_easy_setopt(p_curl, CURLOPT_HTTPHEADER, chunk);
+
+				curl_easy_setopt(p_curl, CURLOPT_VERBOSE, 1L);
+				curl_easy_setopt(p_curl, CURLOPT_WRITEFUNCTION, fwrite_b);
+				curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, &pathList.at(i));
+				curl_easy_setopt(p_curl, CURLOPT_SSL_VERIFYPEER, 0L);
 			}
 			curls.append(p_curl);
 			curl_multi_add_handle(p_mcurl, p_curl);
@@ -455,12 +471,12 @@ namespace Connector
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
-			if((_proxy != "") && (_proxy != ":"))
+            if((m_proxy != "") && (m_proxy != ":"))
 			{
-				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
-				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
+                curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
 			}
-			
+
 			QString pathFrom = id;
 			if(oldParentId != "0")
 			{
@@ -472,7 +488,7 @@ namespace Connector
 			curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(url));
 
 			struct curl_slist *chunk = NULL;
-			QString header = QString("Authorization: OAuth %1").arg(_token);
+            QString header = QString("Authorization: OAuth %1").arg(m_token);
 
 			chunk = curl_slist_append(chunk, qPrintable(header));
 
@@ -481,7 +497,7 @@ namespace Connector
 			{
 				pathTo = QString("%1/%2").arg(newParentId).arg(pathTo);				
 			}
-			
+
 			QString destination = QString("Destination: /%1").arg(pathTo);
 			chunk = curl_slist_append(chunk, qPrintable(destination));
 
@@ -511,9 +527,9 @@ namespace Connector
 		RESULT res = eERROR_GENERAL;
 
 		QString typeStr = type == (VFSElement::DIRECTORY) ? QString("album") : QString("photo");
-		QString url = QString("http://api-fotki.yandex.ru/api/users/%1/%2/%3/").arg(_login).arg(typeStr).arg(id);
-		QString header = _isOAuth ? QString("Authorization: OAuth %1").arg(_token)
-			: QString("Authorization: FimpToken realm=\"fotki.yandex.ru\", token=\"%1\"").arg(_token);
+        QString url = QString("http://api-fotki.yandex.ru/api/users/%1/%2/%3/").arg(m_login).arg(typeStr).arg(id);
+        QString header = m_isOAuth ? QString("Authorization: OAuth %1").arg(m_token)
+            : QString("Authorization: FimpToken realm=\"fotki.yandex.ru\", token=\"%1\"").arg(m_token);
 
 		int err = execQuery(url, header, "", &response);
 		if(err == 200)
@@ -535,8 +551,8 @@ namespace Connector
 				struct curl_slist *chunk = NULL;
 				QString contentType = "Content-Type: application/atom+xml; charset=utf-8; type=entry";
 				chunk = curl_slist_append(chunk, qPrintable(contentType));
-				QString authorization = _isOAuth ? QString("Authorization: OAuth %1").arg(_token) 
-					: QString("Authorization: FimpToken realm=\"fotki.yandex.ru\", token=\"%1\"").arg(_token);
+                QString authorization = m_isOAuth ? QString("Authorization: OAuth %1").arg(m_token)
+                    : QString("Authorization: FimpToken realm=\"fotki.yandex.ru\", token=\"%1\"").arg(m_token);
 				chunk = curl_slist_append(chunk, qPrintable(authorization));
 
 				curl_easy_setopt(p_curl, CURLOPT_HTTPHEADER, chunk); 
@@ -544,12 +560,12 @@ namespace Connector
 				QString datastr = QString("<entry %1</entry>").arg(entry);
 				sPutData userdata;
 				QByteArray arr = datastr.toUtf8();
-				userdata.data = arr.constData();
-				userdata.len = strlen(userdata.data);
+                userdata.m_data = arr.constData();
+                userdata.m_len = strlen(userdata.m_data);
 
 				curl_easy_setopt(p_curl, CURLOPT_READFUNCTION, readStr);
 				curl_easy_setopt(p_curl, CURLOPT_READDATA, &userdata);
-				curl_easy_setopt(p_curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t)userdata.len);
+                curl_easy_setopt(p_curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t)userdata.m_len);
 				curl_easy_setopt(p_curl, CURLOPT_WRITEFUNCTION, writeStr);
 
 				curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, &response);
@@ -568,6 +584,6 @@ namespace Connector
 
 	void YaDiskHTTPConnector::setToken(const QString& token)
 	{
-		_token = token;
+        m_token = token;
 	}
 }

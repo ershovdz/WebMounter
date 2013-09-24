@@ -1,3 +1,22 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #ifndef CONTROLPANEL_H
 #define CONTROLPANEL_H
 
@@ -32,7 +51,7 @@ namespace Ui
 	public:  
 		virtual NotificationDevice* getNotificationDevice()
 		{
-			return _pNotificationDevice;
+            return m_notificationDevice;
 		}
 
 		virtual void mounted();
@@ -40,23 +59,23 @@ namespace Ui
 
 	protected:
 		void closeEvent(QCloseEvent *event);
-	public slots:
-		void showMsgBox(const QString&, const QString&);
-		void showTrayMsg(int, const QString&, const QString&);
-		void changeLanguage(const QString&);
-	signals:
-		void mount();
-		void unmount();
+		public slots:
+			void showMsgBox(const QString&, const QString&);
+			void showTrayMsg(int, const QString&, const QString&);
+			void changeLanguage(const QString&);
+signals:
+			void mount();
+			void unmount();
 
 			//public slots:
 			//virtual void showNotification(const Notification& msg);
 
-	private slots:
-		void setIcon(int index);
-		void iconActivated(QSystemTrayIcon::ActivationReason reason);
-		void messageClicked();
-	    void onHelpClicked();
-		void about();
+			private slots:
+				void setIcon(int index);
+				void iconActivated(QSystemTrayIcon::ActivationReason reason);
+				void messageClicked();
+				void onHelpClicked();
+				void about();
 
 	private:
 		void recreateAllWidgets();
@@ -74,37 +93,37 @@ namespace Ui
 		void changeEvent(QEvent* e);
 
 	private:
-		GeneralView*  _generalView;
-		QList<PluginView*> _pluginViewList;
-		QVBoxLayout *_mainLayout;
-		QBoxLayout *_buttonsLayout;
-		QHBoxLayout *_horizontalLayout;
-		QList<QTranslator*> _transList;
-		QGroupBox *messageGroupBox;
-		QLabel *typeLabel;
-		QLabel *titleLabel;
-		QLabel *bodyLabel;
-		QComboBox *typeComboBox;
-		QLineEdit *titleEdit;
-		QTextEdit *bodyEdit;
-		QPushButton *showMessageButton;
-		QPushButton *showMessageButton2;
-		QListWidget *_contentsWidget;
-		QStackedWidget *_pagesWidget;
-		QAction *_restoreAction;
-		QAction *_aboutAction;
-		QAction *_quitAction;
-		QSystemTrayIcon *trayIcon;
-		QMenu *trayIconMenu;
-		QPushButton *_closeButton;
+        GeneralView* m_generalView;
+        QList<PluginView*> m_pluginViewList;
+        QVBoxLayout* m_mainLayout;
+        QBoxLayout* m_buttonsLayout;
+        QHBoxLayout* m_horizontalLayout;
+        QList<QTranslator*> m_transList;
+        QGroupBox* m_messageGroupBox;
+        QLabel* m_typeLabel;
+        QLabel* m_titleLabel;
+        QLabel* m_bodyLabel;
+        QComboBox* m_typeComboBox;
+        QLineEdit* m_titleEdit;
+        QTextEdit* m_bodyEdit;
+        QPushButton* m_showMessageButton;
+        QPushButton* m_showMessageButton2;
+        QListWidget* m_contentsWidget;
+        QStackedWidget* m_pagesWidget;
+        QAction* m_restoreAction;
+        QAction* m_aboutAction;
+        QAction* m_quitAction;
+        QSystemTrayIcon* m_trayIcon;
+        QMenu* m_trayIconMenu;
+        QPushButton* m_closeButton;
 
-		QList<QListWidgetItem*> _pluginButtonsList;
-		QListWidgetItem *_configButton;
-		bool _bShowOnCloseMessage;
-		TrayNotificationDevice* _pNotificationDevice;
-		QLabel* _version;
-		QPushButton* _helpButton;
-		
+        QList<QListWidgetItem*> m_pluginButtonsList;
+        QListWidgetItem* m_configButton;
+        bool m_showOnCloseMessage;
+        TrayNotificationDevice* m_notificationDevice;
+        QLabel* m_version;
+        QPushButton* m_helpButton;
+
 		public slots:
 			void changePage(QListWidgetItem *current, QListWidgetItem *previous);
 	};

@@ -1,3 +1,22 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #ifndef DATA_H
 #define DATA_H
 
@@ -9,34 +28,34 @@ namespace Data
 {
 	struct GeneralSettings
 	{
-		QString proxyAddress;
-		QString proxyLogin;
-		QString proxyPassword;
+		QString m_proxyAddress;
+		QString m_proxyLogin;
+		QString m_proxyPassword;
 
-		QString appStoragePath;
-		QString appSettingStoragePath;
+		QString m_appStoragePath;
+		QString m_appSettingStoragePath;
 
-		QString appLang;
-		QString driveLetter;
+		QString m_appLang;
+		QString m_driveLetter;
 
-    QString appVersion;
+		QString m_appVersion;
 	};
 
 	struct PluginSettings
 	{
-		QString pluginName;
-		QString serverUrl;
-		QString userName;
-		QString prevUserName;
+		QString m_pluginName;
+		QString m_serverUrl;
+		QString m_userName;
+		QString m_prevUserName;
 
-		QString userPassword; // password is not kept in setting storage !!!
+		QString m_userPassword; // password is not kept in setting storage !!!
 
-		bool bFullSync;
-		bool bAutoSync;
-		QString syncPeriod;
-		QString lastSync;
-		bool isOAuthUsing;
-		QString oAuthToken; 
+		bool m_fullSync;
+		bool m_autoSync;
+		QString m_syncPeriod;
+		QString m_lastSync;
+		bool m_isOAuthUsing;
+		QString m_oAuthToken; 
 	};
 
 	class WEBMOUNTER_EXPORT SettingStorage
@@ -60,9 +79,9 @@ namespace Data
 		SettingStorage();
 
 	private:
-		static SettingStorage* _storageInstance;
-		static QMutex _storageMutex;
-		QSettings _settings;
+		static SettingStorage* m_storageInstance;
+		static QMutex m_storageMutex;
+		QSettings m_settings;
 	};
 }
 

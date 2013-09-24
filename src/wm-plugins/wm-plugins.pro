@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS += yaf vk facebook ya-narod ya-disk
+SUBDIRS += facebook vk yaf ya-narod ya-disk
 

@@ -5,7 +5,7 @@ target.path = /usr/lib/webmounter/base
 DESTDIR = ../build/lib
 DEFINES += WEBMOUNTER_LIBRARY
 QMAKE_CXXFLAGS += -D_FILE_OFFSET_BITS=64 \
-	-DFUSE_USE_VERSION=26
+        -DFUSE_USE_VERSION=26
 HEADERS += common_stuff.h \
 	data.h \
 	file_proxy.h \
@@ -21,7 +21,6 @@ HEADERS += common_stuff.h \
 
 SOURCES += data.cpp \
 	file_proxy.cpp \
-	lvfs_driver.cpp \
 	rvfs_driver.cpp \
 	vfs_cache.cpp \
 	vfs_element.cpp \

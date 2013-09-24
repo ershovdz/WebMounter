@@ -1,3 +1,22 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #include <curl/curl.h>
 #include <qregexp.h>
 #include <QStringList>
@@ -11,7 +30,7 @@ namespace Connector
 	using namespace Common;
 
 	// VkHTTPConnector
-	QString VkHTTPConnector::_appId = "2950346";
+	QString VkHTTPConnector::m_appId = "2950346";
 
 	RESULT VkHTTPConnector::uploadFile(const QString& path, const QString& /*title*/, const QString& parentId, QString& response)
 	{
@@ -45,71 +64,71 @@ namespace Connector
 		return res;
 	}
 
-  RESULT VkHTTPConnector::uploadPhoto(const QString& uploadServer, const QString& path)
-  {
-    CURL* p_curl = curl_easy_init();
-    if(p_curl)
-    {
-      struct curl_httppost *post = NULL;
-      struct curl_httppost *last = NULL;
+	RESULT VkHTTPConnector::uploadPhoto(const QString& uploadServer, const QString& path)
+	{
+		CURL* p_curl = curl_easy_init();
+		if(p_curl)
+		{
+			struct curl_httppost *post = NULL;
+			struct curl_httppost *last = NULL;
 
-      QString response;
+			QString response;
 
-      if((_proxy != "") && (_proxy != ":"))
-      {
-        curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
-        curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
-      }
+			if((m_proxy != "") && (m_proxy != ":"))
+			{
+				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
+			}
 
-      curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(uploadServer));
-      curl_easy_setopt(p_curl, CURLOPT_VERBOSE, 1L);
+			curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(uploadServer));
+			curl_easy_setopt(p_curl, CURLOPT_VERBOSE, 1L);
 
-      curl_formadd(&post, &last, CURLFORM_COPYNAME, "file1", CURLFORM_FILE, qPrintable(path), CURLFORM_END);
+			curl_formadd(&post, &last, CURLFORM_COPYNAME, "file1", CURLFORM_FILE, qPrintable(path), CURLFORM_END);
 
-      curl_easy_setopt(p_curl, CURLOPT_HTTPPOST, post);
+			curl_easy_setopt(p_curl, CURLOPT_HTTPPOST, post);
 
-      struct curl_slist *chunk = NULL;
-      QString header = QString("Cookie: remixchk=5; remixsid=%1").arg(_s);
+			struct curl_slist *chunk = NULL;
+            QString header = QString("Cookie: remixchk=5; remixsid=%1").arg(m_s);
 
-      chunk = curl_slist_append(chunk, qPrintable(header));
+			chunk = curl_slist_append(chunk, qPrintable(header));
 
-      curl_easy_setopt(p_curl, CURLOPT_VERBOSE, 1L);
-      curl_easy_setopt(p_curl, CURLOPT_HTTPHEADER, chunk); 
+			curl_easy_setopt(p_curl, CURLOPT_VERBOSE, 1L);
+			curl_easy_setopt(p_curl, CURLOPT_HTTPHEADER, chunk); 
 
-      curl_easy_setopt(p_curl, CURLOPT_WRITEHEADER, writeStr);
-      curl_easy_setopt(p_curl, CURLOPT_HEADERDATA, &response);
-      curl_easy_setopt(p_curl, CURLOPT_WRITEFUNCTION, writeStr);
-      curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, &response);
+			curl_easy_setopt(p_curl, CURLOPT_WRITEHEADER, writeStr);
+			curl_easy_setopt(p_curl, CURLOPT_HEADERDATA, &response);
+			curl_easy_setopt(p_curl, CURLOPT_WRITEFUNCTION, writeStr);
+			curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, &response);
 
-      CURLcode _error = curl_easy_perform(p_curl);
-      curl_formfree(post);
-      curl_easy_cleanup(p_curl);
+			CURLcode _error = curl_easy_perform(p_curl);
+			curl_formfree(post);
+			curl_easy_cleanup(p_curl);
 
-      if(!_error)
-      {
-        _upload._photos_list = RegExp::getByPattern("\"photos_list\"(.*)\"aid\"", response);
+			if(!_error)
+			{
+                m_upload.m_photos_list = RegExp::getByPattern("\"photos_list\"(.*)\"aid\"", response);
 
-        if( ":\"[]\"," == _upload._photos_list )
-        {
-          return eERROR_GENERAL;
-        } 
-        else
-        {
-          _upload._photos_list = _upload._photos_list.mid(2, _upload._photos_list.length() - 4);
-          _upload._photos_list.remove("\\");
-          _upload._server = RegExp::getByPattern("\"server\"(.*)\"photos_list\"", response);
-          _upload._server = _upload._server.mid(1, _upload._server.length()-2);
-          _upload._hash = response.mid(response.indexOf("hash") + 7, response.lastIndexOf("}")-response.indexOf("hash") - 8);
-          return eNO_ERROR;
-        }
-      }
-      else
-      {
-        return eERROR_GENERAL;
-      }
-    }
-    return eERROR_GENERAL;
-  }
+                if( ":\"[]\"," == m_upload.m_photos_list )
+				{
+					return eERROR_GENERAL;
+				} 
+				else
+				{
+                    m_upload.m_photos_list = m_upload.m_photos_list.mid(2, m_upload.m_photos_list.length() - 4);
+                    m_upload.m_photos_list.remove("\\");
+                    m_upload.m_server = RegExp::getByPattern("\"server\"(.*)\"photos_list\"", response);
+                    m_upload.m_server = m_upload.m_server.mid(1, m_upload.m_server.length()-2);
+                    m_upload.m_hash = response.mid(response.indexOf("hash") + 7, response.lastIndexOf("}")-response.indexOf("hash") - 8);
+					return eNO_ERROR;
+				}
+			}
+			else
+			{
+				return eERROR_GENERAL;
+			}
+		}
+		return eERROR_GENERAL;
+	}
 
 	RESULT VkHTTPConnector::savePhoto(const QString& parentId, QString& response)
 	{
@@ -117,13 +136,13 @@ namespace Connector
 		QStringList params;
 		params.append("aid=" + parentId);
 
-		QString server = "server="+_upload._server;
+        QString server = "server="+m_upload.m_server;
 		params.append(server);
 
-		QString hash = "hash="+_upload._hash;
+        QString hash = "hash="+m_upload.m_hash;
 		params.append(hash);
 
-		QString photos_list = "photos_list="+_upload._photos_list;
+        QString photos_list = "photos_list="+m_upload.m_photos_list;
 		params.append(photos_list);
 
 		QString query;
@@ -159,12 +178,10 @@ namespace Connector
 
 	VkHTTPConnector::VkHTTPConnector()
 	{
-		_curl = curl_easy_init();
 	}
 
 	VkHTTPConnector::~VkHTTPConnector()
 	{
-		curl_easy_cleanup(_curl);
 	}
 
 	void VkHTTPConnector::setSettings(const QString& login
@@ -174,19 +191,19 @@ namespace Connector
 		, bool isOAuth
 		, const QString& token)
 	{
-		_login = login;
-		_password = password;
-		_proxy = proxy;
-		_proxy_login_pwd = proxyLoginPwd;
-		_isOAuth = isOAuth;
-		_token = token;
+        m_login = login;
+        m_password = password;
+        m_proxy = proxy;
+        m_proxyLoginPwd = proxyLoginPwd;
+        m_isOAuth = isOAuth;
+        m_token = token;
 	}
 
 	QString VkHTTPConnector::genQuery(const QString& /*method*/, const QStringList &params)
 	{
 		QStringList paramsList;
 
-		paramsList.append("access_token=" + _token);
+        paramsList.append("access_token=" + m_token);
 		if (!params.isEmpty()) 
 		{
 			paramsList << params;
@@ -205,10 +222,10 @@ namespace Connector
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
-			if((_proxy != "") && (_proxy != ":"))
+            if((m_proxy != "") && (m_proxy != ":"))
 			{
-				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
-				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
+                curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
 			}
 
 			curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(url));
@@ -239,7 +256,7 @@ namespace Connector
 			curl_easy_setopt(p_curl, CURLOPT_FOLLOWLOCATION, 1L);
 
 			CURLcode _error = curl_easy_perform(p_curl);
-			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &_responseCode);
+            curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &m_responseCode);
 			res = (_error == CURLE_OK) ? eNO_ERROR: eERROR_GENERAL;
 			curl_easy_cleanup(p_curl);
 		}
@@ -280,15 +297,15 @@ namespace Connector
 	RESULT VkHTTPConnector::downloadFile(const QString& url, const QString& path)
 	{
 		RESULT res = eERROR_GENERAL;
-		QMutexLocker locker(&_connectorMutex);
+        QMutexLocker locker(&m_connectorMutex);
 
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
-			if((_proxy != "") && (_proxy != ":"))
+            if((m_proxy != "") && (m_proxy != ":"))
 			{
-				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
-				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
+                curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
 			}
 
 			curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(url));
@@ -307,7 +324,7 @@ namespace Connector
 	RESULT VkHTTPConnector::downloadFiles(QList <QString>& urlList, QList <QString>& pathList)
 	{
 		RESULT res = eNO_ERROR;
-		QMutexLocker locker(&_connectorMutex);
+        QMutexLocker locker(&m_connectorMutex);
 
 		QList <CURL*> curls;
 		CURLM* p_mcurl = curl_multi_init();
@@ -317,10 +334,10 @@ namespace Connector
 			CURL* p_curl = curl_easy_init();
 			if(p_curl)
 			{
-				if((_proxy != "") && (_proxy != ":"))
+                if((m_proxy != "") && (m_proxy != ":"))
 				{
-					curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
-					curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
+                    curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                    curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
 				}
 
 				curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(urlList.at(i)));

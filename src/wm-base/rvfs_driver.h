@@ -1,19 +1,34 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #ifndef RVFS_DRIVER_H
 #define RVFS_DRIVER_H
 
 #include <map>
 #include <QWaitCondition>
-
-#include "common_stuff.h"
-
-#include "data.h"
-
-#include "vfs_cache.h"
-//#include "view.h"
-#include "notification_device.h"
-
 #include <QThread>
 #include <QDir>
+
+#include "common_stuff.h"
+#include "data.h"
+#include "vfs_cache.h"
+#include "notification_device.h"
 
 using namespace std;
 using Common::RESULT;
@@ -77,7 +92,7 @@ namespace RemoteDriver
 		void updateSyncStatus(double currentStatus);
 		void updateChildrenPath(const VFSElement& elem);
 		void mergeToCache(QList<VFSElement>& elements);
-		
+
 		void run();
 Q_SIGNALS:
 
@@ -104,22 +119,22 @@ Q_SIGNALS:
 
 		virtual void stopSyncHandler();
 
-		virtual DriverState getState() {return _state;};
+		virtual DriverState getState() {return m_state;};
 
-		virtual void setState(DriverState state) {_state = state;};
+		virtual void setState(DriverState state) {m_state = state;};
 
 	protected:
-		DriverState _state;
-		QString _pluginName;
-		QMutex _driverMutex;
-		QWaitCondition _forceSync;
-		QMutex _syncMutex;
+		DriverState m_state;
+		QString m_pluginName;
+		QMutex m_driverMutex;
+		QWaitCondition m_forceSync;
+		QMutex m_syncMutex;
 		struct SyncProgressData
 		{
-			double _currProgress;
-			int _maxValue;
-		} _progressData;
+			double m_currProgress;
+			int m_maxValue;
+		} m_progressData;
 	};
 }
 
-#endif
+#endif //RVFS_DRIVER_H

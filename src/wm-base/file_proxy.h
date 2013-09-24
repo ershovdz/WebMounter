@@ -1,3 +1,22 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #ifndef FILE_PROXY_H
 #define FILE_PROXY_H
 
@@ -43,55 +62,55 @@ namespace Common
 
 		static unsigned int GetNotUploadedCounter()
 		{
-			QMutexLocker locker(&_FileProxyMutex);
-			return uNotUploaded;
+			QMutexLocker locker(&m_fileProxyMutex);
+			return m_notUploaded;
 		}
 		static unsigned int GetUploadedCounter()
 		{
-			QMutexLocker locker(&_FileProxyMutex);
-			return uUploaded;
+			QMutexLocker locker(&m_fileProxyMutex);
+			return m_uploaded;
 		}
 		static void IncreaseUploadedCounter()
 		{
-			QMutexLocker locker(&_FileProxyMutex);
-			uUploaded++;
+			QMutexLocker locker(&m_fileProxyMutex);
+			m_uploaded++;
 		}
 		static void IncreaseNotUploadedCounter()
 		{
-			//QMutexLocker locker(&_FileProxyMutex);
-			if(uNotUploaded == 0)
+			//QMutexLocker locker(&m_fileProxyMutex);
+			if(m_notUploaded == 0)
 			{
 				notifyUser(Ui::Notification::eINFO
 					, QObject::tr("Info")
 					, QObject::tr("Upload has been started !"));
 			}
-			uNotUploaded++;
+			m_notUploaded++;
 		}
 
 		static unsigned int getNotDeletedCounter()
 		{
-			QMutexLocker locker(&_FileProxyMutex);
-			return _uNotDeleted;
+			QMutexLocker locker(&m_fileProxyMutex);
+			return m_notDeleted;
 		}
 		static unsigned int getDeletedCounter()
 		{
-			QMutexLocker locker(&_FileProxyMutex);
-			return _uDeleted;
+			QMutexLocker locker(&m_fileProxyMutex);
+			return m_deleted;
 		}
 		static void increaseDeletedCounter()
 		{
-			QMutexLocker locker(&_FileProxyMutex);
-			_uDeleted++;
+			QMutexLocker locker(&m_fileProxyMutex);
+			m_deleted++;
 		}
 		static void increaseNotDeletedCounter()
 		{
-			if(_uNotDeleted == 0)
+			if(m_notDeleted == 0)
 			{
 				notifyUser(Ui::Notification::eINFO
 					, QObject::tr("Info")
 					, QObject::tr("Deletion has been started !"));
 			}
-			_uNotDeleted++;
+			m_notDeleted++;
 		}
 
 	public:
@@ -103,19 +122,19 @@ namespace Common
 		RVFSDriver* extractPlugin(const QString& path) const;
 
 	private:
-		static QMutex _FileProxyMutex;
-		static set<QString> _currentFiles;
+		static QMutex m_fileProxyMutex;
+		static set<QString> m_currentFiles;
 
-		static unsigned int uUploaded;
-		static unsigned int uNotUploaded;
+		static unsigned int m_uploaded;
+		static unsigned int m_notUploaded;
 
-		static QList<QString> _uploadQueue;
+		static QList<QString> m_uploadQueue;
 
-		static unsigned int _uDeleted;
-		static unsigned int _uNotDeleted;
-		static QList<QString> _deleteQueue;
+		static unsigned int m_deleted;
+		static unsigned int m_notDeleted;
+		static QList<QString> m_deleteQueue;
 	public:
-		static FileProxy* _pFileProxyInstance;
+		static FileProxy* m_fileProxyInstance;
 	};
 }
 

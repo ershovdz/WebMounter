@@ -1,3 +1,22 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #include <curl/curl.h>
 #include <qregexp.h>
 #include <QStringList>
@@ -33,12 +52,12 @@ namespace Connector
 		, bool isOAuth
 		, const QString& token)
 	{
-		_login = login;
-		_password = password;
-		_proxy = proxy;
-		_proxy_login_pwd = proxyLoginPwd;
-		_isOAuth = isOAuth;
-		_token = token;
+        m_login = login;
+        m_password = password;
+        m_proxy = proxy;
+        m_proxyLoginPwd = proxyLoginPwd;
+        m_isOAuth = isOAuth;
+        m_token = token;
 	}
 
 	size_t FacebookHTTPConnector::fwrite_b(void *ptr, size_t size, size_t count, void *path) 
@@ -67,7 +86,7 @@ namespace Connector
 	{
 		RESULT res = eERROR_GENERAL;
 		GraphAPI* graphAPI = new GraphAPI(NULL);
-		graphAPI->setSettings(_proxy, _proxy_login_pwd, _token);
+        graphAPI->setSettings(m_proxy, m_proxyLoginPwd, m_token);
 		QFacebookReply* reply = graphAPI->getObject("me/albums");
 
 		if (reply)
@@ -89,7 +108,7 @@ namespace Connector
 	{
 		RESULT res = eERROR_GENERAL;
 		GraphAPI* graphAPI = new GraphAPI(NULL);
-		graphAPI->setSettings(_proxy, _proxy_login_pwd, _token);
+        graphAPI->setSettings(m_proxy, m_proxyLoginPwd, m_token);
 		QFacebookReply* reply = graphAPI->getObject(albumId + "/photos");
 
 		if (reply)
@@ -124,10 +143,10 @@ namespace Connector
 
 			QString resp;
 
-			if((_proxy != "") && (_proxy != ":"))
+            if((m_proxy != "") && (m_proxy != ":"))
 			{
-				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
-				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
+                curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
 			}
 
 			QString url = QString("https://graph.facebook.com/%1/photos").arg(parentId);
@@ -136,7 +155,7 @@ namespace Connector
 			curl_easy_setopt(p_curl, CURLOPT_SSL_VERIFYPEER, 0L);
 			curl_easy_setopt(p_curl, CURLOPT_SSL_VERIFYHOST, 0L);
 
-			curl_formadd(&post, &last, CURLFORM_COPYNAME, "access_token", CURLFORM_COPYCONTENTS, qPrintable(_token), CURLFORM_END);
+            curl_formadd(&post, &last, CURLFORM_COPYNAME, "access_token", CURLFORM_COPYCONTENTS, qPrintable(m_token), CURLFORM_END);
 			curl_formadd(&post, &last, CURLFORM_COPYNAME, "file1", CURLFORM_FILE, qPrintable(path), CURLFORM_END);
 
 			curl_easy_setopt(p_curl, CURLOPT_VERBOSE, 1L);
@@ -147,7 +166,7 @@ namespace Connector
 			CURLcode _error = curl_easy_perform(p_curl);
 			long code;
 			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
-			res = (_error == CURLE_OK) && (code == 200) ? eNO_ERROR: eERROR_GENERAL;
+            res = (_error == CURLE_OK) && (code == 200) ? eNO_ERROR: eERROR_GENERAL;
 			curl_formfree(post);
 			curl_easy_cleanup(p_curl);
 
@@ -159,7 +178,7 @@ namespace Connector
 				QVariant parsedResult = parser.parse(replyResult, &ok);
 
 				GraphAPI* graphAPI = new GraphAPI(NULL);
-				graphAPI->setSettings(_proxy, _proxy_login_pwd, _token);
+                graphAPI->setSettings(m_proxy, m_proxyLoginPwd, m_token);
 				QVariantMap map = parsedResult.toMap();
 				QFacebookReply* reply = graphAPI->getObject(map["id"].toString());
 
@@ -184,7 +203,7 @@ namespace Connector
 	RESULT FacebookHTTPConnector::downloadFiles(QList <QString>& urlList, QList <QString>& pathList)
 	{
 		RESULT res = eNO_ERROR;
-		QMutexLocker locker(&_connectorMutex);
+        QMutexLocker locker(&m_connectorMutex);
 
 		QList <CURL*> curls;
 		CURLM* p_mcurl = curl_multi_init();
@@ -194,10 +213,10 @@ namespace Connector
 			CURL* p_curl = curl_easy_init();
 			if(p_curl)
 			{
-				if((_proxy != "") && (_proxy != ":"))
+                if((m_proxy != "") && (m_proxy != ":"))
 				{
-					curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
-					curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
+                    curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                    curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
 				}
 
 				curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(urlList.at(i)));
@@ -207,7 +226,7 @@ namespace Connector
 				curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, &pathList.at(i));
 			}
 			curls.append(p_curl);
-			curl_multi_add_handle(p_mcurl, p_curl);
+            curl_multi_add_handle(p_mcurl, p_curl);
 		}
 
 		int still_running = 0;
@@ -253,7 +272,7 @@ namespace Connector
 	{
 		RESULT res = eERROR_GENERAL;
 		GraphAPI* graphAPI = new GraphAPI(NULL);
-		graphAPI->setSettings(_proxy, _proxy_login_pwd, _token);
+        graphAPI->setSettings(m_proxy, m_proxyLoginPwd, m_token);
 		QFacebookReply* reply = graphAPI->deleteObject(id);
 
 		if (reply)
@@ -277,7 +296,7 @@ namespace Connector
 		RESULT res = eERROR_GENERAL;
 		QString name = QString("name=%1").arg(title); 
 		GraphAPI* graphAPI = new GraphAPI(NULL);
-		graphAPI->setSettings(_proxy, _proxy_login_pwd, _token);
+        graphAPI->setSettings(m_proxy, m_proxyLoginPwd, m_token);
 		QFacebookReply* reply = graphAPI->putObject("me", "albums", name.toLocal8Bit());
 
 		if (reply)

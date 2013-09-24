@@ -1,3 +1,22 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #include "yaf_oauth.h"
 #include "yaf_view.h"
 #include "../driver/yaf_driver.h"
@@ -10,19 +29,19 @@ namespace Ui
 	YafView::YafView(const Data::PluginSettings* settings, const QString& title)
 		: PluginView(settings, title)
 	{
-		_urlEdit->setText("fotki.yandex.ru");
-		_urlEdit->setEnabled(false);
+        m_urlEdit->setText("fotki.yandex.ru");
+        m_urlEdit->setEnabled(false);
 
-		_oauthCheckBox->setChecked(true);
-		_oauthCheckBox->setVisible(false);
+        m_oauthCheckBox->setChecked(true);
+        m_oauthCheckBox->setVisible(false);
 
-		_nameLabel->setVisible(false);
-		_nameEdit->setVisible(false);
-		_passwordLabel->setVisible(false);
-		_passwordEdit->setVisible(false);
+        m_nameLabel->setVisible(false);
+        m_nameEdit->setVisible(false);
+        m_passwordLabel->setVisible(false);
+        m_passwordEdit->setVisible(false);
 
-		_oauthObj = new YafOAuth();
-		connect(_oauthObj, SIGNAL(authFinished(RESULT, const QString&, const QString&)), this, SLOT(oAuthFinished(RESULT, const QString&, const QString&)));
+        m_oauthObj = new YafOAuth();
+        connect(m_oauthObj, SIGNAL(authFinished(RESULT, const QString&, const QString&)), this, SLOT(oAuthFinished(RESULT, const QString&, const QString&)));
 	}
 
 	bool YafView::isKeyValueValid(const Data::PluginSettings&)
@@ -33,18 +52,18 @@ namespace Ui
 	void YafView::updateView(int progress, int state)
 	{
 		PluginView::updateView(progress, state);
-		_urlEdit->setEnabled(false);
+        m_urlEdit->setEnabled(false);
 
-		_nameLabel->setVisible(false);
-		_nameEdit->setVisible(false);
-		_passwordLabel->setVisible(false);
-		_passwordEdit->setVisible(false);
+        m_nameLabel->setVisible(false);
+        m_nameEdit->setVisible(false);
+        m_passwordLabel->setVisible(false);
+        m_passwordEdit->setVisible(false);
 
 		PluginSettings pluginSettings; 
 		Common::WebMounter::getSettingStorage()->getData(pluginSettings, "Yandex.Fotki");
-		if(pluginSettings.isOAuthUsing && (state == RemoteDriver::eAuthInProgress) && progress == 0) // Started to authenticate
+        if(pluginSettings.m_isOAuthUsing && (state == RemoteDriver::eAuthInProgress) && progress == 0) // Started to authenticate
 		{
-			_oauthObj->authenticate();
+            m_oauthObj->authenticate();
 		}
 	}
 
@@ -58,11 +77,11 @@ namespace Ui
 		{
 			PluginSettings pluginSettings; 
 			Common::WebMounter::getSettingStorage()->getData(pluginSettings, "Yandex.Fotki");
-			pluginSettings.prevUserName = pluginSettings.userName;
-			pluginSettings.userName = login;
-			pluginSettings.oAuthToken = token;
+            pluginSettings.m_prevUserName = pluginSettings.m_userName;
+            pluginSettings.m_userName = login;
+            pluginSettings.m_oAuthToken = token;
 
-			static_cast<YafRVFSDriver*>(_driver)->connectHandlerStage2(error, pluginSettings);
+            static_cast<YafRVFSDriver*>(m_driver)->connectHandlerStage2(error, pluginSettings);
 		}
 	}
 }

@@ -1,7 +1,6 @@
 TEMPLATE = app
 TARGET = webmounter
 DESTDIR = ../build/bin
-CONFIG += debug
 BINDIR = /usr/bin
 target.path = $$BINDIR
 

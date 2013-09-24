@@ -9,16 +9,14 @@ HEADERS         = yanarod_plugin.h \
 	./view/yandex_narod_view.h \
 	./connector/yandex_narod_connector.h \
 	./connector/cp_rsa.h \
-	./connector/base64.h \
-	./view/yaf_oauth.h
+	./connector/base64.h
 
 SOURCES         = yanarod_plugin.cpp \
 	./driver/yandex_narod_driver.cpp \
 	./view/yandex_narod_view.cpp \
 	./connector/yandex_narod_connector.cpp \
 	./connector/cp_rsa.cpp \
-	./connector/base64.cpp \
-	./view/yaf_oauth.cpp 
+	./connector/base64.cpp
 
 win32 {
 	INCLUDEPATH += $(BOOST_DIR) $(LIBCURL_DIR)\include

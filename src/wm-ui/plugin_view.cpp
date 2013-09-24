@@ -1,3 +1,22 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #include "plugin_view.h"
 
 #include "webmounter.h"
@@ -6,48 +25,48 @@ namespace Ui
 {
 	PluginView::PluginView(const Data::PluginSettings* settings, const QString& /*title*/)
 	{
-		_driver = 0;
+        m_driver = 0;
 
 		if(!settings)
 		{
-			_dummyLabel = new QLabel(tr("<font size=\"5\" color=\"red\" align=\"right\">Not implemented yet</font>"));
+            m_dummyLabel = new QLabel(tr("<font size=\"5\" color=\"red\" align=\"right\">Not implemented yet</font>"));
 
-			_mainLayout = new QVBoxLayout;
-			_mainLayout->setAlignment(Qt::AlignHCenter);
-			_mainLayout->addWidget(_dummyLabel);
-			setLayout(_mainLayout);
+            m_mainLayout = new QVBoxLayout;
+            m_mainLayout->setAlignment(Qt::AlignHCenter);
+            m_mainLayout->addWidget(m_dummyLabel);
+            setLayout(m_mainLayout);
 			return;
 		}
 
-		_oauthCheckBox = new QCheckBox(tr("Use OAuth"));
-		_oauthCheckBox->setChecked(settings->isOAuthUsing);
-		_oauthCheckBox->setVisible(false);
+        m_oauthCheckBox = new QCheckBox(tr("Use OAuth"));
+        m_oauthCheckBox->setChecked(settings->m_isOAuthUsing);
+        m_oauthCheckBox->setVisible(false);
 
 		/*_urlLabel = new QLabel(tr("Server address:"));*/
-		_urlEdit = new QLineEdit;
-		_urlEdit->setText(settings->serverUrl);
+        m_urlEdit = new QLineEdit;
+        m_urlEdit->setText(settings->m_serverUrl);
 
-		_nameLabel = new QLabel(tr("Login:"));
-		_nameLabel->setTextFormat(Qt::RichText);
-		_nameEdit = new QLineEdit;
-		_nameEdit->setText(!settings->isOAuthUsing ? settings->userName : "");
-		_nameEdit->setEnabled(!settings->isOAuthUsing);
+        m_nameLabel = new QLabel(tr("Login:"));
+        m_nameLabel->setTextFormat(Qt::RichText);
+        m_nameEdit = new QLineEdit;
+        m_nameEdit->setText(!settings->m_isOAuthUsing ? settings->m_userName : "");
+        m_nameEdit->setEnabled(!settings->m_isOAuthUsing);
 
-		_passwordLabel = new QLabel(tr("Password:"));
-		_passwordEdit = new QLineEdit;
+        m_passwordLabel = new QLabel(tr("Password:"));
+        m_passwordEdit = new QLineEdit;
 
-		_passwordEdit->setEchoMode(QLineEdit::Password);
-		_passwordEdit->setEnabled(!settings->isOAuthUsing);
+        m_passwordEdit->setEchoMode(QLineEdit::Password);
+        m_passwordEdit->setEnabled(!settings->m_isOAuthUsing);
 
-		_startPluginButton = new QPushButton(tr("Connect"));
-		_stopPluginButton = new QPushButton(tr("Disconnect"));
+        m_startPluginButton = new QPushButton(tr("Connect"));
+        m_stopPluginButton = new QPushButton(tr("Disconnect"));
 
-		_stopPluginButton->setEnabled(false);
-		_fullSyncRadioButton = new QRadioButton(tr("Full sync (download all files)"));
-		_partSyncRadioButton = new QRadioButton(tr("Partial sync (sync list of elements only)"));
+        m_stopPluginButton->setEnabled(false);
+        m_fullSyncRadioButton = new QRadioButton(tr("Full sync (download all files)"));
+        m_partSyncRadioButton = new QRadioButton(tr("Partial sync (sync list of elements only)"));
 
-		_partSyncRadioButton->setChecked(!settings->bFullSync);
-		_fullSyncRadioButton->setChecked(settings->bFullSync);
+        m_partSyncRadioButton->setChecked(!settings->m_fullSync);
+        m_fullSyncRadioButton->setChecked(settings->m_fullSync);
 
 		/*_autoSyncCheckBox  = new QCheckBox(tr("Auto Sync"));*/
 		//_startSyncButton = new QPushButton(tr("Start sync"));
@@ -75,43 +94,43 @@ namespace Ui
 
 		if(settings->syncPeriod == "30")
 		{
-			_syncPeriodBox->setCurrentIndex(0);
+		_syncPeriodBox->setCurrentIndex(0);
 		}
 		else if(settings->syncPeriod == "60")
 		{
-			_syncPeriodBox->setCurrentIndex(1);
+		_syncPeriodBox->setCurrentIndex(1);
 		}
 		else if(settings->syncPeriod == "300")
 		{
-			_syncPeriodBox->setCurrentIndex(2);
+		_syncPeriodBox->setCurrentIndex(2);
 		}
 		else if(settings->syncPeriod == "600")
 		{
-			_syncPeriodBox->setCurrentIndex(3);
+		_syncPeriodBox->setCurrentIndex(3);
 		}
 		else if(settings->syncPeriod == "1800")
 		{
-			_syncPeriodBox->setCurrentIndex(4);
+		_syncPeriodBox->setCurrentIndex(4);
 		}
 		else if(settings->syncPeriod == "3600")
 		{
-			_syncPeriodBox->setCurrentIndex(5);
+		_syncPeriodBox->setCurrentIndex(5);
 		}
 		else if(settings->syncPeriod == "7200")
 		{
-			_syncPeriodBox->setCurrentIndex(6);
+		_syncPeriodBox->setCurrentIndex(6);
 		}
 		else if(settings->syncPeriod == "21600")
 		{
-			_syncPeriodBox->setCurrentIndex(7);
+		_syncPeriodBox->setCurrentIndex(7);
 		}
 		else if(settings->syncPeriod == "43200")
 		{
-			_syncPeriodBox->setCurrentIndex(8);
+		_syncPeriodBox->setCurrentIndex(8);
 		}
 		else if(settings->syncPeriod == "86400")
 		{
-			_syncPeriodBox->setCurrentIndex(9);
+		_syncPeriodBox->setCurrentIndex(9);
 		}*/
 
 		//_syncPeriodLabel->setEnabled(settings->bAutoSync);
@@ -131,108 +150,108 @@ namespace Ui
 
 		//_authGroup->setLayout(_authLayout);
 
-		_syncGroup = new QGroupBox(tr("Sync"));
-		_syncLayout = new QGridLayout;
+        m_syncGroup = new QGroupBox(tr("Sync"));
+        m_syncLayout = new QGridLayout;
 
-		_syncLayout->addWidget(_fullSyncRadioButton, 0, 0, 1, 2);
-		_syncLayout->addWidget(_partSyncRadioButton, 1, 0, 2, 2);
-//		_syncLayout->addWidget(_startSyncButton, 3, 0);
-//		_syncLayout->addWidget(_stopSyncButton, 3, 1);
-		_syncGroup->setLayout(_syncLayout);
+        m_syncLayout->addWidget(m_fullSyncRadioButton, 0, 0, 1, 2);
+        m_syncLayout->addWidget(m_partSyncRadioButton, 1, 0, 2, 2);
+		//		_syncLayout->addWidget(_startSyncButton, 3, 0);
+		//		_syncLayout->addWidget(_stopSyncButton, 3, 1);
+        m_syncGroup->setLayout(m_syncLayout);
 
-		_buttonGroup = new QGroupBox();
-		_buttonLayout = new QGridLayout;
-		_buttonLayout->addWidget(_startPluginButton, 0, 0);
-		_buttonLayout->addWidget(_stopPluginButton, 0, 1);
-		_buttonGroup->setLayout(_buttonLayout);
+        m_buttonGroup = new QGroupBox();
+        m_buttonLayout = new QGridLayout;
+        m_buttonLayout->addWidget(m_startPluginButton, 0, 0);
+        m_buttonLayout->addWidget(m_stopPluginButton, 0, 1);
+        m_buttonGroup->setLayout(m_buttonLayout);
 
-		_progressGroup = new QGroupBox(tr("Status"));
-		_progressLayout = new QGridLayout;
-		_progressLayout->setAlignment(Qt::AlignRight);
-		_statusLabel = new QLabel(tr("Plugin status:"));
-		_statusValue = new QLabel(tr("<font color=\"red\">Not connected</font>"));
-		_statusValue->setTextFormat(Qt::RichText);
+        m_progressGroup = new QGroupBox(tr("Status"));
+        m_progressLayout = new QGridLayout;
+        m_progressLayout->setAlignment(Qt::AlignRight);
+        m_statusLabel = new QLabel(tr("Plugin status:"));
+        m_statusValue = new QLabel(tr("<font color=\"red\">Not connected</font>"));
+        m_statusValue->setTextFormat(Qt::RichText);
 
-		_progressBarLabel = new QLabel(tr("Progress:"));
-		_progressBar = new QProgressBar();
-		_progressBar->setValue(0);
+        m_progressBarLabel = new QLabel(tr("Progress:"));
+        m_progressBar = new QProgressBar();
+        m_progressBar->setValue(0);
 
-		_progressLayout->addWidget(_statusLabel, 0,0);
-		_progressLayout->addWidget(_statusValue, 0,1);
-		_progressLayout->addWidget(_progressBarLabel, 1,0);
-		_progressLayout->addWidget(_progressBar, 1,1);
-		_progressGroup->setLayout(_progressLayout);
+        m_progressLayout->addWidget(m_statusLabel, 0,0);
+        m_progressLayout->addWidget(m_statusValue, 0,1);
+        m_progressLayout->addWidget(m_progressBarLabel, 1,0);
+        m_progressLayout->addWidget(m_progressBar, 1,1);
+        m_progressGroup->setLayout(m_progressLayout);
 
-		_mainLayout = new QVBoxLayout;
+        m_mainLayout = new QVBoxLayout;
 		//_mainLayout->addWidget(_authGroup);
-		_mainLayout->addWidget(_syncGroup);
-		_mainLayout->addSpacing(12);
-		_mainLayout->addWidget(_progressGroup);
-		_mainLayout->addSpacing(12);
-		_mainLayout->addWidget(_buttonGroup);
-		_mainLayout->addStretch(1);
-		setLayout(_mainLayout);
+        m_mainLayout->addWidget(m_syncGroup);
+        m_mainLayout->addSpacing(12);
+        m_mainLayout->addWidget(m_progressGroup);
+        m_mainLayout->addSpacing(12);
+        m_mainLayout->addWidget(m_buttonGroup);
+        m_mainLayout->addStretch(1);
+        setLayout(m_mainLayout);
 
-		_pluginName = settings->pluginName;
-		_driver = Common::WebMounter::getPlugin(_pluginName);
+        m_pluginName = settings->m_pluginName;
+        m_driver = Common::WebMounter::getPlugin(m_pluginName);
 
-		connect(_oauthCheckBox, SIGNAL(stateChanged(int)), this, SLOT(oauthClicked(int)));
+        connect(m_oauthCheckBox, SIGNAL(stateChanged(int)), this, SLOT(oauthClicked(int)));
 
-		if(_driver)
+        if(m_driver)
 		{
-			_driverState = _driver->getState();
+            m_driverState = m_driver->getState();
 
 			//connect(_startSyncButton, SIGNAL(clicked (bool)), this, SLOT(startSyncClicked(bool)));
 			//connect(_stopSyncButton, SIGNAL(clicked (bool)), this, SLOT(stopSyncClicked(bool)));
-			connect(_startPluginButton, SIGNAL(clicked (bool)), this, SLOT(startPluginClicked(bool)));
-			connect(_stopPluginButton, SIGNAL(clicked (bool)), this, SLOT(stopPluginClicked(bool)));
+            connect(m_startPluginButton, SIGNAL(clicked (bool)), this, SLOT(startPluginClicked(bool)));
+            connect(m_stopPluginButton, SIGNAL(clicked (bool)), this, SLOT(stopPluginClicked(bool)));
 
-			connect(this, SIGNAL(connectPlugin(Data::PluginSettings&)), _driver, SLOT(startPlugin(Data::PluginSettings&)));
-			connect(this, SIGNAL(disconnectPlugin()), _driver, SLOT(stopPlugin()));
-			connect(this, SIGNAL(startSync()), _driver, SLOT(startSync()));
-			connect(this, SIGNAL(stopSync()), _driver, SLOT(stopSync()));
+            connect(this, SIGNAL(connectPlugin(Data::PluginSettings&)), m_driver, SLOT(startPlugin(Data::PluginSettings&)));
+            connect(this, SIGNAL(disconnectPlugin()), m_driver, SLOT(stopPlugin()));
+            connect(this, SIGNAL(startSync()), m_driver, SLOT(startSync()));
+            connect(this, SIGNAL(stopSync()), m_driver, SLOT(stopSync()));
 
-			connect(_driver, SIGNAL(updateView(int, int)), this, SLOT(updateView(int, int)));
+            connect(m_driver, SIGNAL(updateView(int, int)), this, SLOT(updateView(int, int)));
 
 		}
 		else
 		{
-			_driverState = RemoteDriver::eNotConnected;
+            m_driverState = RemoteDriver::eNotConnected;
 
 			//_urlEdit->setEnabled(false);
-			_nameEdit->setEnabled(false);
-			_passwordEdit->setEnabled(false);
+            m_nameEdit->setEnabled(false);
+            m_passwordEdit->setEnabled(false);
 
-			_startPluginButton->setEnabled(false);
-			_stopPluginButton->setEnabled(false);
+            m_startPluginButton->setEnabled(false);
+            m_stopPluginButton->setEnabled(false);
 
 			//_startSyncButton->setEnabled(false);
 			//_stopSyncButton->setEnabled(false);
 
-			_partSyncRadioButton->setEnabled(false);
-			_fullSyncRadioButton->setEnabled(false);
+            m_partSyncRadioButton->setEnabled(false);
+            m_fullSyncRadioButton->setEnabled(false);
 
-			_statusValue->setText(tr("<font color=\"red\">Plugin not available...</font>"));
+            m_statusValue->setText(tr("<font color=\"red\">Plugin not available...</font>"));
 		}
 	}
 
 	void PluginView::changeLang()
 	{
-		if(!_driver)
+        if(!m_driver)
 		{
-			_dummyLabel->setText(tr("<font size=\"5\" color=\"red\" align=\"right\">Not implemented yet</font>"));
+            m_dummyLabel->setText(tr("<font size=\"5\" color=\"red\" align=\"right\">Not implemented yet</font>"));
 			return;
 		}
-		_oauthCheckBox->setText(tr("Use OAuth"));
+        m_oauthCheckBox->setText(tr("Use OAuth"));
 		//_urlLabel->setText(tr("Server address:"));
-		_nameLabel->setText(tr("Login:"));
-		_passwordLabel->setText(tr("Password:"));
+        m_nameLabel->setText(tr("Login:"));
+        m_passwordLabel->setText(tr("Password:"));
 
-		_startPluginButton->setText(tr("Connect"));
-		_stopPluginButton->setText(tr("Disconnect"));
+        m_startPluginButton->setText(tr("Connect"));
+        m_stopPluginButton->setText(tr("Disconnect"));
 
-		_fullSyncRadioButton->setText(tr("Full sync (download all files)"));
-		_partSyncRadioButton->setText(tr("Partial sync (sync list of elements only)"));
+        m_fullSyncRadioButton->setText(tr("Full sync (download all files)"));
+        m_partSyncRadioButton->setText(tr("Partial sync (sync list of elements only)"));
 
 
 		//_startSyncButton->setText(tr("Start sync"));
@@ -240,50 +259,50 @@ namespace Ui
 
 		//_authGroup->setTitle(tr("Authorization"));
 
-		_syncGroup->setTitle(tr("Sync"));
-		_progressGroup->setTitle(tr("Status:"));
-		_statusLabel->setText(tr("Plugin status:"));
+        m_syncGroup->setTitle(tr("Sync"));
+        m_progressGroup->setTitle(tr("Status:"));
+        m_statusLabel->setText(tr("Plugin status:"));
 
-		if(!_driver)
+        if(!m_driver)
 		{
-			_statusValue->setText(tr("<font color=\"red\">Not available</font>"));
+            m_statusValue->setText(tr("<font color=\"red\">Not available</font>"));
 		}
 
-		switch(_driver->getState())
+        switch(m_driver->getState())
 		{
 		case RemoteDriver::eAuthInProgress:
 			{
-				_statusValue->setText(tr("<font color=\"green\">Authorization...</font>"));
+                m_statusValue->setText(tr("<font color=\"green\">Authorization...</font>"));
 				break;
 			}
 		case RemoteDriver::eAuthorized:
 			{
-				_statusValue->setText(tr("<font color=\"green\">Authorized</font>"));
+                m_statusValue->setText(tr("<font color=\"green\">Authorized</font>"));
 				break;
 			}
 		case RemoteDriver::eConnected:
 			{
-				_statusValue->setText(tr("<font color=\"green\">Connected</font>"));
+                m_statusValue->setText(tr("<font color=\"green\">Connected</font>"));
 				break;
 			}
 		case RemoteDriver::eNotConnected:
 			{
-				_statusValue->setText(tr("<font color=\"red\">Not Connected</font>"));
+                m_statusValue->setText(tr("<font color=\"red\">Not Connected</font>"));
 				break;
 			}
 		case RemoteDriver::eSyncStopping:
 			{
-				_statusValue->setText(tr("<font color=\"green\">Sync stopping...</font>"));
+                m_statusValue->setText(tr("<font color=\"green\">Sync stopping...</font>"));
 				break;
 			}
 		case RemoteDriver::eSync:
 			{
-				_statusValue->setText(tr("<font color=\"green\">Synchronization...</font>"));
+                m_statusValue->setText(tr("<font color=\"green\">Synchronization...</font>"));
 				break;
 			}
 		};
 
-		_progressBarLabel->setText(tr("Progress:"));
+        m_progressBarLabel->setText(tr("Progress:"));
 	}
 
 	void PluginView::changeEvent ( QEvent * event )
@@ -299,22 +318,22 @@ namespace Ui
 	{
 		if(state)
 		{
-			_nameEdit->setText("");
-			_passwordEdit->setText("");
+            m_nameEdit->setText("");
+            m_passwordEdit->setText("");
 		}
 
-		_nameEdit->setEnabled(!state);
-		_passwordEdit->setEnabled(!state);
+        m_nameEdit->setEnabled(!state);
+        m_passwordEdit->setEnabled(!state);
 	}
 
 	/*void PluginView::startSyncClicked(bool)
 	{
-		_startSyncButton->setEnabled(false);
-		_stopSyncButton->setEnabled(true);
+	_startSyncButton->setEnabled(false);
+	_stopSyncButton->setEnabled(true);
 
-		_statusValue->setText(tr("<font color=\"green\">Synchronization...</font>"));
+	_statusValue->setText(tr("<font color=\"green\">Synchronization...</font>"));
 
-		emit startSync();
+	emit startSync();
 	}*/
 
 	//void PluginView::stopSyncClicked(bool)
@@ -330,35 +349,35 @@ namespace Ui
 	void PluginView::startPluginClicked(bool)
 	{
 		Data::PluginSettings pluginSettings;
-		WebMounter::getSettingStorage()->getData(pluginSettings, _pluginName);
+        WebMounter::getSettingStorage()->getData(pluginSettings, m_pluginName);
 
-		pluginSettings.bAutoSync = true;
-		pluginSettings.bFullSync = _fullSyncRadioButton->isChecked();
-		pluginSettings.pluginName = _pluginName;
-		pluginSettings.serverUrl = _urlEdit->text();
-		pluginSettings.syncPeriod.setNum(300);
+        pluginSettings.m_autoSync = true;
+        pluginSettings.m_fullSync = m_fullSyncRadioButton->isChecked();
+        pluginSettings.m_pluginName = m_pluginName;
+        pluginSettings.m_serverUrl = m_urlEdit->text();
+        pluginSettings.m_syncPeriod.setNum(300);
 
-		if(_nameEdit->isEnabled())
+        if(m_nameEdit->isEnabled())
 		{
-			pluginSettings.userName = _nameEdit->text();
-			pluginSettings.userPassword = _passwordEdit->text();
+            pluginSettings.m_userName = m_nameEdit->text();
+            pluginSettings.m_userPassword = m_passwordEdit->text();
 		}
 
-		pluginSettings.isOAuthUsing = _oauthCheckBox->isChecked();
+        pluginSettings.m_isOAuthUsing = m_oauthCheckBox->isChecked();
 
-		if(pluginSettings.serverUrl == "")
+        if(pluginSettings.m_serverUrl == "")
 		{
 			QMessageBox::critical(0, tr("Error"),
 				tr("Enter server address"), QMessageBox::Ok);
 			return;
 		}
-		else if(pluginSettings.userName == "" && !pluginSettings.isOAuthUsing)
+        else if(pluginSettings.m_userName == "" && !pluginSettings.m_isOAuthUsing)
 		{
 			QMessageBox::critical(0, tr("Error"),
 				tr("Enter login"), QMessageBox::Ok);
 			return;
 		}
-		else if(_passwordEdit->text() == "" && !pluginSettings.isOAuthUsing)
+        else if(m_passwordEdit->text() == "" && !pluginSettings.m_isOAuthUsing)
 		{
 			QMessageBox::critical(0, tr("Error"),
 				tr("Enter password"), QMessageBox::Ok);
@@ -366,65 +385,65 @@ namespace Ui
 		}
 
 		//_urlEdit->setEnabled(false);
-		_nameEdit->setEnabled(false);
-		_passwordEdit->setEnabled(false);
+        m_nameEdit->setEnabled(false);
+        m_passwordEdit->setEnabled(false);
 
-		_startPluginButton->setEnabled(false);
-		_stopPluginButton->setEnabled(true);
+        m_startPluginButton->setEnabled(false);
+        m_stopPluginButton->setEnabled(true);
 
-//		_startSyncButton->setEnabled(false);
-//		_stopSyncButton->setEnabled(false);
+		//		_startSyncButton->setEnabled(false);
+		//		_stopSyncButton->setEnabled(false);
 
-		_partSyncRadioButton->setEnabled(false);
-		_fullSyncRadioButton->setEnabled(false);
+        m_partSyncRadioButton->setEnabled(false);
+        m_fullSyncRadioButton->setEnabled(false);
 
-		
-		_statusValue->setText(tr("<font color=\"green\">Connecting...</font>"));
+
+        m_statusValue->setText(tr("<font color=\"green\">Connecting...</font>"));
 
 		emit connectPlugin(pluginSettings);
 	}
 
 	void PluginView::stopPluginClicked(bool)
 	{
-		_stopPluginButton->setEnabled(false);
+        m_stopPluginButton->setEnabled(false);
 		//_statusValue->setText(tr("<font color=\"red\">Not Connected</font>"));
 		emit disconnectPlugin();
 	}
 
 	void PluginView::updateView(int progress, int state)
 	{
-		_progressBar->setValue(progress);
+        m_progressBar->setValue(progress);
 
 		switch(state)
 		{
 		case RemoteDriver::eAuthInProgress:
 			{
-				if(_driverState == RemoteDriver::eNotConnected)
+                if(m_driverState == RemoteDriver::eNotConnected)
 				{
-					_driverState = RemoteDriver::eAuthInProgress;
-					_statusValue->setText(tr("<font color=\"green\">Authorization...</font>"));
+                    m_driverState = RemoteDriver::eAuthInProgress;
+                    m_statusValue->setText(tr("<font color=\"green\">Authorization...</font>"));
 				}
 				break;
 			}
 		case RemoteDriver::eAuthorized:
 			{
-				if(_driverState == RemoteDriver::eAuthInProgress)
+                if(m_driverState == RemoteDriver::eAuthInProgress)
 				{
-					_driverState = RemoteDriver::eAuthorized;
-					_statusValue->setText(tr("<font color=\"green\">Authorized</font>"));
+                    m_driverState = RemoteDriver::eAuthorized;
+                    m_statusValue->setText(tr("<font color=\"green\">Authorized</font>"));
 				}
 				break;
 			}
 		case RemoteDriver::eConnected:
 			{
-				if(_driverState == RemoteDriver::eSync
-					|| _driverState == RemoteDriver::eSyncStopping)
+                if(m_driverState == RemoteDriver::eSync
+                    || m_driverState == RemoteDriver::eSyncStopping)
 				{
-					_driverState = RemoteDriver::eConnected;
+                    m_driverState = RemoteDriver::eConnected;
 
-//					_startSyncButton->setEnabled(true);
-//					_stopSyncButton->setEnabled(false);
-					_statusValue->setText(tr("<font color=\"green\">Connected</font>"));
+					//					_startSyncButton->setEnabled(true);
+					//					_stopSyncButton->setEnabled(false);
+                    m_statusValue->setText(tr("<font color=\"green\">Connected</font>"));
 
 					//_progressBar->setValue(0);
 				}
@@ -432,51 +451,50 @@ namespace Ui
 			}
 		case RemoteDriver::eNotConnected:
 			{
-
-				_driverState = RemoteDriver::eNotConnected;
+                m_driverState = RemoteDriver::eNotConnected;
 
 				//_urlEdit->setEnabled(true);
-				_nameEdit->setEnabled(!_oauthCheckBox->isChecked());
-				_passwordEdit->setEnabled(!_oauthCheckBox->isChecked());
+                m_nameEdit->setEnabled(!m_oauthCheckBox->isChecked());
+                m_passwordEdit->setEnabled(!m_oauthCheckBox->isChecked());
 
-				_startPluginButton->setEnabled(true);
-				_stopPluginButton->setEnabled(false);
+                m_startPluginButton->setEnabled(true);
+                m_stopPluginButton->setEnabled(false);
 
-//				_startSyncButton->setEnabled(false);
-//				_stopSyncButton->setEnabled(false);
+				//				_startSyncButton->setEnabled(false);
+				//				_stopSyncButton->setEnabled(false);
 
-				_partSyncRadioButton->setEnabled(true);
-				_fullSyncRadioButton->setEnabled(true);
+                m_partSyncRadioButton->setEnabled(true);
+                m_fullSyncRadioButton->setEnabled(true);
 
-				_statusValue->setText(tr("<font color=\"red\">Not Connected</font>"));
+                m_statusValue->setText(tr("<font color=\"red\">Not Connected</font>"));
 
-				_progressBar->setValue(0);
+                m_progressBar->setValue(0);
 
 				break;
 			}
 		case RemoteDriver::eSyncStopping:
 			{
-				if(_driverState == RemoteDriver::eConnected
-					|| _driverState == RemoteDriver::eSync 
-					|| _driverState == RemoteDriver::eSyncStopping)
+                if(m_driverState == RemoteDriver::eConnected
+                    || m_driverState == RemoteDriver::eSync
+                    || m_driverState == RemoteDriver::eSyncStopping)
 				{
-					_driverState = RemoteDriver::eSyncStopping;
+                    m_driverState = RemoteDriver::eSyncStopping;
 
-					_statusValue->setText(tr("<font color=\"green\">Sync stopping...</font>"));
+                    m_statusValue->setText(tr("<font color=\"green\">Sync stopping...</font>"));
 				}
 
 				break;
 			}
 		case RemoteDriver::eSync:
 			{
-				if(_driverState == RemoteDriver::eAuthorized
-					|| _driverState == RemoteDriver::eConnected)
+                if(m_driverState == RemoteDriver::eAuthorized
+                    || m_driverState == RemoteDriver::eConnected)
 				{
-					_driverState = RemoteDriver::eSync;
-//					_startSyncButton->setEnabled(false);
-//					_stopSyncButton->setEnabled(true);
+                    m_driverState = RemoteDriver::eSync;
+					//					_startSyncButton->setEnabled(false);
+					//					_stopSyncButton->setEnabled(true);
 
-					_statusValue->setText(tr("<font color=\"green\">Synchronization...</font>"));
+                    m_statusValue->setText(tr("<font color=\"green\">Synchronization...</font>"));
 				}
 				break;
 			}

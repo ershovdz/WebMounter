@@ -1,3 +1,22 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #include "file_proxy.h"
 #include "vfs_cache.h"
 #include "webmounter.h"
@@ -12,18 +31,18 @@ namespace Common
 {
 
 	//RVFSDriver* FileProxy::_pRVFSDriver = 0;
-	FileProxy* FileProxy::_pFileProxyInstance = 0;
-	QMutex FileProxy::_FileProxyMutex;
-	set<QString> FileProxy::_currentFiles;
+	FileProxy* FileProxy::m_fileProxyInstance = 0;
+	QMutex FileProxy::m_fileProxyMutex;
+	set<QString> FileProxy::m_currentFiles;
 
-	unsigned int FileProxy::uUploaded = 0;
-	unsigned int FileProxy::uNotUploaded = 0;
-	QList<QString> FileProxy::_uploadQueue;
+	unsigned int FileProxy::m_uploaded = 0;
+	unsigned int FileProxy::m_notUploaded = 0;
+	QList<QString> FileProxy::m_uploadQueue;
 	//JmmRVFSDriver rvfsDriver;
 
-	unsigned int FileProxy::_uNotDeleted = 0;
-	unsigned int FileProxy::_uDeleted = 0;
-	QList<QString> FileProxy::_deleteQueue;
+	unsigned int FileProxy::m_notDeleted = 0;
+	unsigned int FileProxy::m_deleted = 0;
+	QList<QString> FileProxy::m_deleteQueue;
 
 	FileProxy::FileProxy(void)
 	{
@@ -45,18 +64,18 @@ namespace Common
 
 	FileProxy* FileProxy::CreateFileProxy()
 	{
-		//QMutexLocker locker(&_FileProxyMutex);
-		if(_pFileProxyInstance)
+		//QMutexLocker locker(&m_fileProxyMutex);
+		if(m_fileProxyInstance)
 		{
-			delete _pFileProxyInstance;
+			delete m_fileProxyInstance;
 		}
-		_pFileProxyInstance = new FileProxy();
-		return _pFileProxyInstance;
+		m_fileProxyInstance = new FileProxy();
+		return m_fileProxyInstance;
 	}
 
 	RESULT FileProxy::CreateFileW(QString path)
 	{
-		QMutexLocker locker(&_FileProxyMutex);
+		QMutexLocker locker(&m_fileProxyMutex);
 
 		VFSCache* cache = WebMounter::getCache();
 		QFileInfo qFileInfo(path);
@@ -82,7 +101,7 @@ namespace Common
 		if(fInfo.size())
 		{
 			IncreaseNotUploadedCounter();
-			_uploadQueue.append(fInfo.absoluteFilePath());
+			m_uploadQueue.append(fInfo.absoluteFilePath());
 
 			if(file != cache->end())
 			{
@@ -106,7 +125,7 @@ namespace Common
 
 	unsigned int FileProxy::CheckFile(QString path)
 	{
-		//QMutexLocker locker(&_FileProxyMutex);  // probably it's useless locker ???
+		//QMutexLocker locker(&m_fileProxyMutex);  // probably it's useless locker ???
 		QFileInfo fInfo(path);
 		VFSCache* cache = WebMounter::getCache();
 		VFSCache::iterator iter = cache->find(fInfo.absoluteFilePath());
@@ -126,10 +145,10 @@ namespace Common
 
 	RESULT FileProxy::UnCheckFile(QString path)
 	{
-		QMutexLocker locker(&_FileProxyMutex);
+		QMutexLocker locker(&m_fileProxyMutex);
 		QFileInfo fInfo(path);
 
-		if(_currentFiles.find(fInfo.absoluteFilePath()) != _currentFiles.end()) 
+		if(m_currentFiles.find(fInfo.absoluteFilePath()) != m_currentFiles.end()) 
 		{
 			//_currentFiles.erase(_currentFiles.find(fInfo.absoluteFilePath()));
 			return eNO_ERROR;
@@ -143,7 +162,7 @@ namespace Common
 
 	RESULT FileProxy::ReadFile(QString path)
 	{
-		//QMutexLocker locker(&_FileProxyMutex);  // probably it's useless locker ???
+		//QMutexLocker locker(&m_fileProxyMutex);  // probably it's useless locker ???
 		QList <QString> urlList;
 		QList <QString> pathList;
 
@@ -232,7 +251,7 @@ namespace Common
 
 	RESULT FileProxy::MoveElement(QString from, QString to, bool bFirstRequest)
 	{
-		QMutexLocker locker(&_FileProxyMutex);
+		QMutexLocker locker(&m_fileProxyMutex);
 
 		VFSCache* cache = WebMounter::getCache();
 
@@ -285,7 +304,7 @@ namespace Common
 				&& it_file_to != cache->end())
 			{
 				IncreaseNotUploadedCounter();
-				_uploadQueue.append(fInfoFrom.absoluteFilePath());
+				m_uploadQueue.append(fInfoFrom.absoluteFilePath());
 
 				QtConcurrent::run(boost::bind(&RemoteDriver::RVFSDriver::uploadFile, _1, _2, _3, _4, _5)
 					, driver
@@ -343,7 +362,7 @@ namespace Common
 
 			QFileInfo fInfo(path);
 			increaseNotDeletedCounter();
-			_deleteQueue.append(fInfo.absoluteFilePath());
+			m_deleteQueue.append(fInfo.absoluteFilePath());
 
 			QFile::Permissions permissions = QFile::permissions(fInfo.absoluteFilePath());
 			permissions |= (QFile::WriteGroup|QFile::WriteOwner|QFile::WriteUser|QFile::WriteOther);
@@ -420,19 +439,19 @@ namespace Common
 	void FileProxy::fileUploaded(QString filePath, RESULT result)
 	{
 		QList<QString>::iterator iter;
-		for(iter = _uploadQueue.begin(); iter != _uploadQueue.end(); iter++)
+		for(iter = m_uploadQueue.begin(); iter != m_uploadQueue.end(); iter++)
 		{
 			if(*iter == filePath)
 			{
-				_uploadQueue.erase(iter);
+				m_uploadQueue.erase(iter);
 				break;
 			}
 		}
 
-		if(_uploadQueue.empty())
+		if(m_uploadQueue.empty())
 		{
-			uUploaded = 0;
-			uNotUploaded = 0;
+			m_uploaded = 0;
+			m_notUploaded = 0;
 
 			RVFSDriver* driver = extractPlugin(filePath);
 			if(driver != NULL && driver->getState() == RemoteDriver::eConnected)
@@ -467,11 +486,11 @@ namespace Common
 	void FileProxy::fileDeleted(const QString& filePath, RESULT result)
 	{
 		QList<QString>::iterator iter;
-		for(iter = _deleteQueue.begin(); iter != _deleteQueue.end(); iter++)
+		for(iter = m_deleteQueue.begin(); iter != m_deleteQueue.end(); iter++)
 		{
 			if(*iter == filePath)
 			{
-				_deleteQueue.erase(iter);
+				m_deleteQueue.erase(iter);
 				// 				if(result == eNO_ERROR)
 				// 				{
 				// 					VFSCache* cache = WebMounter::getCache();
@@ -483,10 +502,10 @@ namespace Common
 			}
 		}
 
-		if(_deleteQueue.empty())
+		if(m_deleteQueue.empty())
 		{
-			_uDeleted = 0;
-			_uNotDeleted = 0;
+			m_deleted = 0;
+			m_notDeleted = 0;
 
 			if(result == eNO_ERROR)
 			{

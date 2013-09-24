@@ -1,3 +1,22 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #include "webmounter.h"
 #include "../driver/vk_driver.h"
 #include "reg_exp.h"
@@ -9,14 +28,14 @@ namespace RemoteDriver
 
 	VkRVFSDriver::VkRVFSDriver(const QString& pluginName)
 	{
-		_state = RemoteDriver::eNotConnected;
-		_httpConnector = new VkHTTPConnector();
-		_pluginName = pluginName;
+        m_state = RemoteDriver::eNotConnected;
+        m_httpConnector = new VkHTTPConnector();
+        m_pluginName = pluginName;
 
 		RESULT res = WebMounter::getCache()->restoreCache();
 		if(res == eNO_ERROR)
 		{
-			QString rootPath = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator()) + _pluginName;
+            QString rootPath = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator()) + m_pluginName;
 			QFileInfo fInfo(rootPath);
 			//syncCacheWithFileSystem(fInfo.absoluteFilePath());
 		}
@@ -24,7 +43,7 @@ namespace RemoteDriver
 
 	VkRVFSDriver::~VkRVFSDriver(void)
 	{
-		delete _httpConnector;
+        delete m_httpConnector;
 	}
 
 	RESULT VkRVFSDriver::downloadFiles(QList <QString>& urlList, QList <QString>& pathList)
@@ -69,13 +88,13 @@ namespace RemoteDriver
 			}
 		}
 
-		RESULT res = _httpConnector->downloadFiles(urlList, pathList);
+        RESULT res = m_httpConnector->downloadFiles(urlList, pathList);
 		if(res != eNO_ERROR)
 		{
 			unsigned int retryDownloadCounter = 0;
 			while(res != eNO_ERROR && retryDownloadCounter < MAX_DOWNLOAD_RETRY)
 			{
-				res = _httpConnector->downloadFiles(urlList, pathList);
+                res = m_httpConnector->downloadFiles(urlList, pathList);
 				retryDownloadCounter++;
 			}
 		}
@@ -153,7 +172,7 @@ namespace RemoteDriver
 		VFSCache::iterator iter = WebMounter::getCache()->begin();
 		for(iter; iter != WebMounter::getCache()->end(); ++iter)
 		{
-			if((iter->getPluginName() == _pluginName)
+            if((iter->getPluginName() == m_pluginName)
 				&&(iter->getFlags()&VFSElement::eFl_SelfMade)
 				&&(iter->getType() == VFSElement::FILE)
 				&&(iter->getParentId() == parentId)
@@ -167,10 +186,10 @@ namespace RemoteDriver
 		QString xmlResp;
 		unsigned int retryUploadCounter = 0;
 
-		err = _httpConnector->uploadFile(path, title, parentId, xmlResp);
+        err = m_httpConnector->uploadFile(path, title, parentId, xmlResp);
 		while(err != eNO_ERROR && retryUploadCounter < MAX_UPLOAD_RETRY)
 		{
-			err = _httpConnector->uploadFile(path, title, parentId, xmlResp);
+            err = m_httpConnector->uploadFile(path, title, parentId, xmlResp);
 			retryUploadCounter++;
 		}
 
@@ -235,7 +254,7 @@ namespace RemoteDriver
 				return res; // Renaming of photos is not supported by Vkontakte
 			}
 
-			res = _httpConnector->renameAlbum(elem->getId(), newTitle);
+            res = m_httpConnector->renameAlbum(elem->getId(), newTitle);
 			if(res == eNO_ERROR)
 			{
 				qInfo = qInfo.dir().absolutePath() + QString(QDir::separator()) + newTitle;
@@ -272,7 +291,7 @@ namespace RemoteDriver
 		VFSCache::iterator elem = cache->find(qDirFrom.absolutePath());
 		if(elem != cache->end() && elem->getType() == VFSElement::DIRECTORY)
 		{
-			res = _httpConnector->deleteAlbum(elem->getId());
+            res = m_httpConnector->deleteAlbum(elem->getId());
 			if(res == eNO_ERROR)
 			{
 				cache->erase(elem);
@@ -291,7 +310,7 @@ namespace RemoteDriver
 		if(elem != cache->end())
 		{
 			QString response;
-			res = res = _httpConnector->deleteFile(elem->getId());
+            res = res = m_httpConnector->deleteFile(elem->getId());
 			if(res == eNO_ERROR)
 			{
 				WebMounter::getProxy()->fileDeleted(elem->getPath(), res);
@@ -316,7 +335,7 @@ namespace RemoteDriver
 				return res; // Moving of albums is not supported
 			}
 
-			res = _httpConnector->moveFile(elem->getId(), elem->getParentId(), newParentId);
+            res = m_httpConnector->moveFile(elem->getId(), elem->getParentId(), newParentId);
 			if(res == eNO_ERROR)
 			{
 				VFSElement newElem(elem->getType()
@@ -356,7 +375,7 @@ namespace RemoteDriver
 		VFSCache::iterator iter = WebMounter::getCache()->begin();
 		for(iter; iter != WebMounter::getCache()->end(); ++iter)
 		{
-			if((iter->getPluginName() == _pluginName)
+            if((iter->getPluginName() == m_pluginName)
 				&&(iter->getFlags()&VFSElement::eFl_SelfMade)
 				&&(iter->getType() == VFSElement::DIRECTORY))
 			{
@@ -370,7 +389,7 @@ namespace RemoteDriver
 		}
 
 		QString xmlResp;
-		res = _httpConnector->createDirectory(title, xmlResp);
+        res = m_httpConnector->createDirectory(title, xmlResp);
 		if(!res)
 		{
 			VFSCache* vfsCache = WebMounter::getCache();
@@ -378,7 +397,7 @@ namespace RemoteDriver
 			parseAlbumEntry(xmlResp, elem);
 			elem.setParentId(ROOT_ID);
 
-			QString pluginStoragePath = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator()) + _pluginName;
+            QString pluginStoragePath = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator()) + m_pluginName;
 			QString path = pluginStoragePath + QString(QDir::separator()) + elem.getName();
 			QFileInfo fInfo(path);
 			elem.setPath(fInfo.absoluteFilePath());
@@ -393,23 +412,23 @@ namespace RemoteDriver
 
 	RESULT VkRVFSDriver::getAlbums(QList<VFSElement>& elements, int& errorCode)
 	{
-		double albumsMaxProgress = _progressData._currProgress + (_progressData._maxValue - _progressData._currProgress)/3;
+        double albumsMaxProgress = m_progressData.m_currProgress + (m_progressData.m_maxValue - m_progressData.m_currProgress)/3;
 
 		QString xmlResp;
-		RESULT err = _httpConnector->getAlbums(xmlResp, errorCode);
+        RESULT err = m_httpConnector->getAlbums(xmlResp, errorCode);
 		if(!err)
 		{
-      {
-        QMutexLocker locker(&_driverMutex);
-        if(_state == eSyncStopping)
-        {
-          notifyUser(Ui::Notification::eINFO, tr("Info"), tr("Syncing is stopped !\n"));
-          return eERROR_CANCEL;
-        }
-      }
+			{
+                QMutexLocker locker(&m_driverMutex);
+                if(m_state == eSyncStopping)
+				{
+					notifyUser(Ui::Notification::eINFO, tr("Info"), tr("Syncing is stopped !\n"));
+					return eERROR_CANCEL;
+				}
+			}
 
-			_progressData._currProgress += 5;
-			updateSyncStatus(_progressData._currProgress);
+            m_progressData.m_currProgress += 5;
+            updateSyncStatus(m_progressData.m_currProgress);
 
 			QString pattern = QString::fromAscii("<album>(.*)</album>");
 			QRegExp rx(pattern);
@@ -428,7 +447,7 @@ namespace RemoteDriver
 				elem.setDownloaded(false);
 				elem.setParentId(ROOT_ID);
 
-				QString pluginStoragePath = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator()) + _pluginName;
+                QString pluginStoragePath = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator()) + m_pluginName;
 				QString path = pluginStoragePath + QString(QDir::separator()) + elem.getName();
 				QFileInfo fInfo(path);
 				elem.setPath(fInfo.absoluteFilePath());
@@ -437,8 +456,8 @@ namespace RemoteDriver
 
 				pos += rx.matchedLength();
 
-				_progressData._currProgress += 1;
-				updateSyncStatus(_progressData._currProgress);
+                m_progressData.m_currProgress += 1;
+                updateSyncStatus(m_progressData.m_currProgress);
 			}
 		}
 
@@ -446,7 +465,7 @@ namespace RemoteDriver
 		{
 			handleNameDuplicates(elements);
 
-			_progressData._currProgress = albumsMaxProgress;
+            m_progressData.m_currProgress = albumsMaxProgress;
 			updateSyncStatus(albumsMaxProgress);
 		}
 
@@ -474,22 +493,22 @@ namespace RemoteDriver
 		int offset = 0;
 		forever
 		{
-      {
-        QMutexLocker locker(&_driverMutex);
-        if(_state == eSyncStopping)
-        {
-          notifyUser(Ui::Notification::eINFO, tr("Info"), tr("Syncing is stopped !\n"));
-          return eERROR_CANCEL;
-        }
-      }
+			{
+                QMutexLocker locker(&m_driverMutex);
+                if(m_state == eSyncStopping)
+				{
+					notifyUser(Ui::Notification::eINFO, tr("Info"), tr("Syncing is stopped !\n"));
+					return eERROR_CANCEL;
+				}
+			}
 
 			int count = 0; 
 			QString xmlResp = "";
-			err = _httpConnector->getPhotos(offset, xmlResp);
+            err = m_httpConnector->getPhotos(offset, xmlResp);
 			if(!err)
 			{
 				count = RegExp::getByPattern("<count>(.*)</count>", xmlResp).toInt();
-				double progressPortion = (count == 0) ? 0 : (_progressData._maxValue - _progressData._currProgress)/count;
+                double progressPortion = (count == 0) ? 0 : (m_progressData.m_maxValue - m_progressData.m_currProgress)/count;
 
 				QString pattern = QString::fromAscii("<photo>(.*)</photo>");
 				QRegExp rx(pattern);
@@ -511,7 +530,7 @@ namespace RemoteDriver
 					if(i < 0)
 					{
 						elem.setParentId(ROOT_ID);
-						QString pluginStoragePath = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator()) + _pluginName;
+                        QString pluginStoragePath = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator()) + m_pluginName;
 						path = pluginStoragePath + QString(QDir::separator()) + elem.getName();
 					}
 					else 
@@ -526,8 +545,8 @@ namespace RemoteDriver
 
 					pos += rx.matchedLength();
 
-					_progressData._currProgress += progressPortion;
-					updateSyncStatus(_progressData._currProgress);
+                    m_progressData.m_currProgress += progressPortion;
+                    updateSyncStatus(m_progressData.m_currProgress);
 				}
 			}
 
@@ -540,7 +559,7 @@ namespace RemoteDriver
 		{
 			handleNameDuplicates(elements);
 		}
-		
+
 		return err;
 	}
 
@@ -559,7 +578,7 @@ namespace RemoteDriver
 	void VkRVFSDriver::parseAlbumEntry(QString& xmlEntry, VFSElement& elem)
 	{
 		elem.setType(VFSElement::DIRECTORY);
-		elem.setPluginName(_pluginName);
+        elem.setPluginName(m_pluginName);
 
 		QString title = QString::fromAscii("<title>(.*)</title>");
 		QRegExp rx(title);
@@ -587,7 +606,7 @@ namespace RemoteDriver
 	void VkRVFSDriver::parsePhotoEntry(QString& xmlEntry, VFSElement& elem)
 	{
 		elem.setType(VFSElement::FILE);
-		elem.setPluginName(_pluginName);
+        elem.setPluginName(m_pluginName);
 
 		QString pid = QString::fromAscii("<pid>(.*)</pid>");
 		QRegExp rx(pid);
@@ -650,50 +669,50 @@ namespace RemoteDriver
 	{
 		if(!downloadResult)
 		{			
-      {
-        QMutexLocker locker(&_driverMutex);
+			{
+                QMutexLocker locker(&m_driverMutex);
 
-        if(_state != eSyncStopping)
-        {
-          updateState((int)(((float)uDownloaded/uNotDownloaded)*50) + 50, RemoteDriver::eSync);
-        }
-      }
+                if(m_state != eSyncStopping)
+				{
+					updateState((int)(((float)uDownloaded/uNotDownloaded)*50) + 50, RemoteDriver::eSync);
+				}
+			}
 		}
 		else
 		{
 			notifyUser(Ui::Notification::eCRITICAL, tr("Error"), tr("Downloading failed  !\n"));
-			
-      {
-        QMutexLocker locker(&_driverMutex);
-        if(_state != eSyncStopping)
-        {
-          updateState(100, RemoteDriver::eNotConnected);
-        }
-      }
-    }
+
+			{
+                QMutexLocker locker(&m_driverMutex);
+                if(m_state != eSyncStopping)
+				{
+					updateState(100, RemoteDriver::eNotConnected);
+				}
+			}
+		}
 	}
 
 	void VkRVFSDriver::connectHandler(PluginSettings& pluginSettings)
 	{
-		QMutexLocker locker(&_driverMutex);
+        QMutexLocker locker(&m_driverMutex);
 
-		if(_state == RemoteDriver::eNotConnected)
+        if(m_state == RemoteDriver::eNotConnected)
 		{
 			GeneralSettings generalSettings; 
 
 			WebMounter::getSettingStorage()->getData(generalSettings);
 			WebMounter::getSettingStorage()->addSettings(pluginSettings);
 
-			_httpConnector->setSettings(
-				pluginSettings.userName
-				, pluginSettings.userPassword
-				, generalSettings.proxyAddress
-				, generalSettings.proxyLogin + ":" + generalSettings.proxyPassword
-				, pluginSettings.isOAuthUsing
-				, pluginSettings.oAuthToken
+            m_httpConnector->setSettings(
+                pluginSettings.m_userName
+                , pluginSettings.m_userPassword
+                , generalSettings.m_proxyAddress
+                , generalSettings.m_proxyLogin + ":" + generalSettings.m_proxyPassword
+                , pluginSettings.m_isOAuthUsing
+                , pluginSettings.m_oAuthToken
 				);
 
-			if(_state != eSyncStopping)
+            if(m_state != eSyncStopping)
 			{
 				updateState(0, eAuthInProgress);
 			}
@@ -713,22 +732,23 @@ namespace RemoteDriver
 
 	void VkRVFSDriver::connectHandlerStage2(RESULT error, PluginSettings pluginSettings)
 	{
-		if(error == eNO_ERROR && _state == eAuthInProgress)
+        if(error == eNO_ERROR && m_state == eAuthInProgress)
 		{
 			GeneralSettings generalSettings; 
 
 			WebMounter::getSettingStorage()->getData(generalSettings);
 			WebMounter::getSettingStorage()->addSettings(pluginSettings);
 
-			_httpConnector->setSettings(
-				pluginSettings.userName
-				, pluginSettings.userPassword
-				, generalSettings.proxyAddress
-				, generalSettings.proxyLogin + ":" + generalSettings.proxyPassword
-				, pluginSettings.isOAuthUsing
-				, pluginSettings.oAuthToken
+            m_httpConnector->setSettings(
+                pluginSettings.m_userName
+                , pluginSettings.m_userPassword
+                , generalSettings.m_proxyAddress
+                , generalSettings.m_proxyLogin + ":" + generalSettings.m_proxyPassword
+                , pluginSettings.m_isOAuthUsing
+                , pluginSettings.m_oAuthToken
 				);
-			if(_state != eSyncStopping)
+
+            if(m_state != eSyncStopping)
 			{
 				updateState(100, eAuthorized);
 			}
@@ -745,14 +765,14 @@ namespace RemoteDriver
 
 	void VkRVFSDriver::disconnectHandler()
 	{
-		_driverMutex.lock();
+        m_driverMutex.lock();
 
 		if(isRunning()) //if sync thread is running 
 		{
 			updateState(40, eSyncStopping);
-			_driverMutex.unlock();
+            m_driverMutex.unlock();
 
-			_forceSync.wakeAll(); // we have to wake up the sync thread for safely termination
+            m_forceSync.wakeAll(); // we have to wake up the sync thread for safely termination
 
 			while(isRunning()) // wait thread termination 
 			{
@@ -763,7 +783,7 @@ namespace RemoteDriver
 		}
 		else
 		{
-			_driverMutex.unlock();	
+            m_driverMutex.unlock();
 		}
 
 		updateState(100, eNotConnected);
@@ -771,11 +791,11 @@ namespace RemoteDriver
 
 	void VkRVFSDriver::syncHandler()
 	{
-		QMutexLocker locker(&_driverMutex);
+        QMutexLocker locker(&m_driverMutex);
 
-		if(_state == eConnected)
+        if(m_state == eConnected)
 		{
-			_forceSync.wakeAll();
+            m_forceSync.wakeAll();
 		}
 	}
 
@@ -784,11 +804,11 @@ namespace RemoteDriver
 		if(isRunning()) //if sync thread is running 
 		{
 			PluginSettings pluginSettings;
-			WebMounter::getSettingStorage()->getData(pluginSettings, _pluginName);
+            WebMounter::getSettingStorage()->getData(pluginSettings, m_pluginName);
 
-			updateState(_progressData._currProgress, eSyncStopping);
+            updateState(m_progressData.m_currProgress, eSyncStopping);
 
-			_forceSync.wakeAll();
+            m_forceSync.wakeAll();
 
 			while(isRunning())
 			{

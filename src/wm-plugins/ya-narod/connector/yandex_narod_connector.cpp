@@ -1,3 +1,21 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
 
 #include <curl/curl.h>
 #include <QFile>
@@ -28,13 +46,13 @@ namespace Connector
 	{
 		//QMutexLocker locker(&_connectorMutex); 		
 		if(path)
- 		{
- 			QFile file(*(QString*)path);
- 			file.open(QIODevice::WriteOnly | QIODevice::Append);
- 			size_t result = file.write((char*)ptr, size*count);
+		{
+			QFile file(*(QString*)path);
+			file.open(QIODevice::WriteOnly | QIODevice::Append);
+			size_t result = file.write((char*)ptr, size*count);
 			file.flush();
- 			return result;
- 		}
+			return result;
+		}
 		return -1;
 	}
 
@@ -51,65 +69,65 @@ namespace Connector
 		, const QString& proxy
 		, const QString& proxyLoginPwd)
 	{
-		_login = login.left(login.lastIndexOf("@"));
-		_password = password;
-		_proxy = proxy;
-		_proxy_login_pwd = proxyLoginPwd;
+        m_login = login.left(login.lastIndexOf("@"));
+        m_password = password;
+        m_proxy = proxy;
+        m_proxyLoginPwd = proxyLoginPwd;
 	}
 
 	int YandexNarodHTTPConnector::execQuery(const QString &url, const QString &header, const QString& postFields, QString* response)
 	{
 		int res = 0;
- 		CURL* p_curl = curl_easy_init();
- 		if(p_curl)
- 		{
- 			if((_proxy != "") && (_proxy != ":"))
- 			{
- 				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
- 				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
- 			}
- 
- 			curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(url));
- 			curl_easy_setopt(p_curl, CURLOPT_VERBOSE, 1L);
- 
- 			struct curl_slist *chunk = NULL;
- 			chunk = curl_slist_append(chunk, "Cache-Control: no-store, no-cache, must-revalidate");
- 
- 			if(header.length())
- 			{
- 				chunk = curl_slist_append(chunk, qPrintable(header));
- 			}
- 
- 			curl_easy_setopt(p_curl, CURLOPT_HTTPHEADER, chunk); 
- 
- 			QByteArray postArray = postFields.toUtf8();
- 			if(postFields.length())
- 			{
- 				curl_easy_setopt(p_curl, CURLOPT_POSTFIELDS, postArray.constData());
- 				curl_easy_setopt(p_curl, CURLOPT_POST, 1L);
- 			}
- 
- 			curl_easy_setopt(p_curl, CURLOPT_WRITEHEADER, writeStr);
- 			curl_easy_setopt(p_curl, CURLOPT_HEADERDATA, response);
- 			curl_easy_setopt(p_curl, CURLOPT_WRITEFUNCTION, writeStr);
- 			curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, response);
- 
- 			CURLcode error = curl_easy_perform(p_curl);
- 			long code;
- 			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
- 			res = (error == CURLE_OK) ? code : error;
- 			curl_easy_cleanup(p_curl);
- 			curl_slist_free_all(chunk);
- 		}
+		CURL* p_curl = curl_easy_init();
+		if(p_curl)
+		{
+            if((m_proxy != "") && (m_proxy != ":"))
+			{
+                curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
+			}
+
+			curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(url));
+			curl_easy_setopt(p_curl, CURLOPT_VERBOSE, 1L);
+
+			struct curl_slist *chunk = NULL;
+			chunk = curl_slist_append(chunk, "Cache-Control: no-store, no-cache, must-revalidate");
+
+			if(header.length())
+			{
+				chunk = curl_slist_append(chunk, qPrintable(header));
+			}
+
+			curl_easy_setopt(p_curl, CURLOPT_HTTPHEADER, chunk); 
+
+			QByteArray postArray = postFields.toUtf8();
+			if(postFields.length())
+			{
+				curl_easy_setopt(p_curl, CURLOPT_POSTFIELDS, postArray.constData());
+				curl_easy_setopt(p_curl, CURLOPT_POST, 1L);
+			}
+
+			curl_easy_setopt(p_curl, CURLOPT_WRITEHEADER, writeStr);
+			curl_easy_setopt(p_curl, CURLOPT_HEADERDATA, response);
+			curl_easy_setopt(p_curl, CURLOPT_WRITEFUNCTION, writeStr);
+			curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, response);
+
+			CURLcode error = curl_easy_perform(p_curl);
+			long code;
+			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
+			res = (error == CURLE_OK) ? code : error;
+			curl_easy_cleanup(p_curl);
+			curl_slist_free_all(chunk);
+		}
 		return res;
 	}
 
 	RESULT YandexNarodHTTPConnector::auth()
 	{
 		bool isConnected = false;
-		cookies.clear();
+        m_cookies.clear();
 		QString header = "";
-		QString post = QString::fromAscii("login=") + _login + QString::fromAscii("&passwd=") + _password;
+        QString post = QString::fromAscii("login=") + m_login + QString::fromAscii("&passwd=") + m_password;
 		QString response;
 		int err = execQuery("http://passport.yandex.ru/passport?mode=auth", header, post, &response);
 		if(err == 302)
@@ -123,11 +141,11 @@ namespace Connector
 			int pos = 0;
 			while((pos = rx.indexIn(response, pos)) != -1)
 			{
-				cookies.append(rx.cap(1));
+                m_cookies.append(rx.cap(1));
 				pos += rx.matchedLength();
 			}
 
-			isConnected = err && (cookies.count() > 0);
+            isConnected = err && (m_cookies.count() > 0);
 		}
 
 		return !isConnected ? eERROR_GENERAL: eNO_ERROR;
@@ -136,9 +154,9 @@ namespace Connector
 	RESULT YandexNarodHTTPConnector::getFiles(QString& response)
 	{
 		QString header = "Cookie: ";
-		for(int i=0; i<cookies.count(); i++)
+        for(int i=0; i<m_cookies.count(); i++)
 		{
-			header += cookies.at(i) + "; ";
+            header += m_cookies.at(i) + "; ";
 		}
 		QString post = "";
 		int err = execQuery("http://narod.yandex.ru/disk/all/page1/?sort=cdate%20desc", header, post, &response);
@@ -164,9 +182,9 @@ namespace Connector
 	{
 		RESULT res = eERROR_GENERAL;
 		QString header = "Cookie: ";
-		for(int i=0; i<cookies.count(); i++)
+        for(int i=0; i<m_cookies.count(); i++)
 		{
-			header += cookies.at(i) + "; ";
+            header += m_cookies.at(i) + "; ";
 		}
 		QString post = QString::fromAscii("action=delete&fid=%1&token-%2=%3").arg(id).arg(id).arg(token);
 		QString response;
@@ -181,10 +199,10 @@ namespace Connector
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
-			if((_proxy != "") && (_proxy != ":"))
+            if((m_proxy != "") && (m_proxy != ":"))
 			{
-				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
-				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
+                curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
 			}
 
 			curl_easy_setopt(p_curl, CURLOPT_URL, "http://narod.yandex.ru/disk/getstorage/");
@@ -219,9 +237,9 @@ namespace Connector
 	{
 		RESULT res = eERROR_GENERAL;
 		QString header = "Cookie: ";
-		for(int i=0; i<cookies.count(); i++)
+        for(int i=0; i<m_cookies.count(); i++)
 		{
-			header += cookies.at(i) + "; ";
+            header += m_cookies.at(i) + "; ";
 		}
 
 		CURL* p_curl = curl_easy_init();
@@ -230,10 +248,10 @@ namespace Connector
 			struct curl_httppost *post = NULL;
 			struct curl_httppost *last = NULL;
 
-			if((_proxy != "") && (_proxy != ":"))
+            if((m_proxy != "") && (m_proxy != ":"))
 			{
-				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
-				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
+                curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
 			}
 
 			struct curl_slist *chunk = NULL;
@@ -266,18 +284,18 @@ namespace Connector
 		RESULT res = eERROR_GENERAL;
 
 		QString header = "Cookie: ";
-		for(int i=0; i<cookies.count(); i++)
+        for(int i=0; i<m_cookies.count(); i++)
 		{
-			header += cookies.at(i) + "; ";
+            header += m_cookies.at(i) + "; ";
 		}
 
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
-			if((_proxy != "") && (_proxy != ":"))
+            if((m_proxy != "") && (m_proxy != ":"))
 			{
-				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
-				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
+                curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
 			}
 
 			struct curl_slist *chunk = NULL;
@@ -305,18 +323,18 @@ namespace Connector
 		RESULT res = eERROR_GENERAL;
 
 		QString header = "Cookie: ";
-		for(int i=0; i<cookies.count(); i++)
+        for(int i=0; i<m_cookies.count(); i++)
 		{
-			header += cookies.at(i) + "; ";
+            header += m_cookies.at(i) + "; ";
 		}
 
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
-			if((_proxy != "") && (_proxy != ":"))
+            if((m_proxy != "") && (m_proxy != ":"))
 			{
-				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
-				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
+                curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
 			}
 
 			struct curl_slist *chunk = NULL;
@@ -343,7 +361,7 @@ namespace Connector
 	{
 		RESULT res = eERROR_GENERAL;
 		QString progressLink;
- 		QString uploadLink;
+		QString uploadLink;
 		getUploadLink(progressLink, uploadLink);
 
 		res = doUpload(path, title, uploadLink, response);
@@ -370,10 +388,10 @@ namespace Connector
 		CURL* p_curl = curl_easy_init();
 		if(p_curl)
 		{
-			if((_proxy != "") && (_proxy != ":"))
+            if((m_proxy != "") && (m_proxy != ":"))
 			{
-				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
-				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
+                curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
 			}
 
 			curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(url));
@@ -402,39 +420,39 @@ namespace Connector
 	RESULT YandexNarodHTTPConnector::downloadFile(const QString& url, const QString& path)
 	{
 		//QMutexLocker locker(&_connectorMutex);
-		
+
 		RESULT res = eERROR_GENERAL;
 
- 		CURL* p_curl = curl_easy_init();
- 		if(p_curl)
- 		{
- 			if((_proxy != "") && (_proxy != ":"))
- 			{
- 				curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(_proxy));
- 				curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(_proxy_login_pwd));
- 			}
- 
- 			curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(url));
- 
- 			curl_easy_setopt(p_curl, CURLOPT_VERBOSE, 1L);
+		CURL* p_curl = curl_easy_init();
+		if(p_curl)
+		{
+            if((m_proxy != "") && (m_proxy != ":"))
+			{
+                curl_easy_setopt(p_curl, CURLOPT_PROXY, qPrintable(m_proxy));
+                curl_easy_setopt(p_curl, CURLOPT_PROXYUSERPWD, qPrintable(m_proxyLoginPwd));
+			}
+
+			curl_easy_setopt(p_curl, CURLOPT_URL, qPrintable(url));
+
+			curl_easy_setopt(p_curl, CURLOPT_VERBOSE, 1L);
 			curl_easy_setopt(p_curl, CURLOPT_FOLLOWLOCATION, 1L);
- 			curl_easy_setopt(p_curl, CURLOPT_WRITEFUNCTION, fwrite_b);
- 			curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, &path);
- 
- 			CURLcode _error = curl_easy_perform(p_curl);
- 			long code;
- 			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
- 			res = (_error == CURLE_OK && code == 200) ? eNO_ERROR : eERROR_GENERAL;
- 			curl_easy_cleanup(p_curl);
- 		}
+			curl_easy_setopt(p_curl, CURLOPT_WRITEFUNCTION, fwrite_b);
+			curl_easy_setopt(p_curl, CURLOPT_WRITEDATA, &path);
+
+			CURLcode _error = curl_easy_perform(p_curl);
+			long code;
+			curl_easy_getinfo(p_curl, CURLINFO_RESPONSE_CODE, &code);
+			res = (_error == CURLE_OK && code == 200) ? eNO_ERROR : eERROR_GENERAL;
+			curl_easy_cleanup(p_curl);
+		}
 
 		return res;
 	}
 
 	RESULT YandexNarodHTTPConnector::downloadFiles(const QList <QString>& urlList, const QList <QString>& pathList)
 	{
-		QMutexLocker locker(&_connectorMutex);
-		
+        QMutexLocker locker(&m_connectorMutex);
+
 		RESULT res = eNO_ERROR;
 		QList <CURL*> curls;
 

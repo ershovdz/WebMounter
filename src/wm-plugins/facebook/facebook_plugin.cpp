@@ -1,3 +1,21 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
 
 #include "facebook_plugin.h"
 #include "./driver/facebook_driver.h"
@@ -5,7 +23,7 @@
 #include "../../wm-base/data.h"
 #include "webmounter.h"
 
-FacebookPlugin::FacebookPlugin() : _driver(NULL), _view(NULL), _icon(NULL)
+    FacebookPlugin::FacebookPlugin() : m_driver(NULL), m_view(NULL), m_icon(NULL)
 {
 }
 
@@ -21,23 +39,23 @@ QString FacebookPlugin::name()
 
 void* FacebookPlugin::getRVFSDriver()
 {
-	if(!_driver)
-		_driver = new RemoteDriver::FacebookRVFSDriver(name());
-	return (void*)(_driver);
+    if(!m_driver)
+        m_driver = new RemoteDriver::FacebookRVFSDriver(name());
+    return (void*)(m_driver);
 }
 
 void* FacebookPlugin::getView()
 {
-	if(!_view)
+    if(!m_view)
 	{
 		Data::PluginSettings settings;
-		settings.pluginName = name();
+        settings.m_pluginName = name();
 		Common::WebMounter::getSettingStorage()->getData(settings, name());
 
-		_view = new Ui::FacebookView(&settings, name());
+        m_view = new Ui::FacebookView(&settings, name());
 	}
 
-	return (void*)(_view);
+    return (void*)(m_view);
 }
 
 void* FacebookPlugin::getSettings()
@@ -47,12 +65,12 @@ void* FacebookPlugin::getSettings()
 
 QIcon* FacebookPlugin::getIcon()
 {
-	if(!_icon)
+    if(!m_icon)
 	{
-		_icon = new QIcon(":/icons/facebook.png");
+        m_icon = new QIcon(":/icons/facebook.png");
 	}
 
-	return _icon;
+    return m_icon;
 }
 
 QString FacebookPlugin::getTranslationFile(const QString& locale)

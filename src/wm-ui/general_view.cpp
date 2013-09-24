@@ -1,3 +1,22 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #include <QtGui>
 
 #include "general_view.h"
@@ -14,39 +33,38 @@ namespace Ui
 		: QWidget(parent)
 	{
 		QString sss =  translationDir();
-		bool result = _translator.load(QString("wmui_" + settings.appLang), translationDir());
+        bool result = m_translator.load(QString("wmui_" + settings.m_appLang), translationDir());
 		if(result)
 		{
-			QApplication::installTranslator(&_translator);
+            QApplication::installTranslator(&m_translator);
 		}	
 
-		_state = 0;
-		_parent = parent;
+        m_state = 0;
+        m_parent = parent;
 
-		_diskStatusGroup = new QGroupBox(tr("Disk"));
-		_diskStatusLayout = new QGridLayout;
-		_statusLabel = new QLabel(tr("Disk status:"));
-		_statusValue = new QLabel(tr("<font color=\"red\"><b>Unmounted</b></font>"));
-		_statusValue->setTextFormat(Qt::RichText);
+        m_diskStatusGroup = new QGroupBox(tr("Disk"));
+        m_diskStatusLayout = new QGridLayout;
+        m_statusLabel = new QLabel(tr("Disk status:"));
+        m_statusValue = new QLabel(tr("<font color=\"red\"><b>Unmounted</b></font>"));
+        m_statusValue->setTextFormat(Qt::RichText);
 
-		_diskStatusLayout->addWidget(_statusLabel, 0,0);
-		_diskStatusLayout->addWidget(_statusValue, 0,1);
-		_diskStatusGroup->setLayout(_diskStatusLayout);
+        m_diskStatusLayout->addWidget(m_statusLabel, 0,0);
+        m_diskStatusLayout->addWidget(m_statusValue, 0,1);
+        m_diskStatusGroup->setLayout(m_diskStatusLayout);
 
+        m_mountButton = createButton(tr("Mount Disk"), SLOT(mountClicked()));
+        m_unmountButton = createButton(tr("Unmount Disk"), SLOT(unmountClicked()));
 
-		_mountButton = createButton(tr("Mount Disk"), SLOT(mountClicked()));
-		_unmountButton = createButton(tr("Unmount Disk"), SLOT(unmountClicked()));
+        m_diskStatusLayout->addWidget(m_mountButton, 1, 0);
+        m_diskStatusLayout->addWidget(m_unmountButton, 1, 1);
 
-		_diskStatusLayout->addWidget(_mountButton, 1, 0);
-		_diskStatusLayout->addWidget(_unmountButton, 1, 1);
+        m_unmountButton->setEnabled(false);
 
-		_unmountButton->setEnabled(false);
-
-		_mainLayout = new QVBoxLayout;
-		_mainLayout->addWidget(_diskStatusGroup);
-		_mainLayout->addSpacing(12);
-		_mainLayout->addStretch(1);
-		setLayout(_mainLayout);
+        m_mainLayout = new QVBoxLayout;
+        m_mainLayout->addWidget(m_diskStatusGroup);
+        m_mainLayout->addSpacing(12);
+        m_mainLayout->addStretch(1);
+        setLayout(m_mainLayout);
 
 	}
 
@@ -59,49 +77,42 @@ namespace Ui
 
 	void GeneralView::mountClicked()
 	{
-		_mountButton->setEnabled(false);
-		_unmountButton->setEnabled(true);
+        m_mountButton->setEnabled(false);
+        m_unmountButton->setEnabled(true);
 
 		emit mount();
 	}
 
 	void GeneralView::unmountClicked()
 	{
-		_unmountButton->setEnabled(false);
+        m_unmountButton->setEnabled(false);
 		emit unmount();
 	}
 
 	void GeneralView::mounted()
 	{
-		_mountButton->setEnabled(false);
-		_unmountButton->setEnabled(true);
+        m_mountButton->setEnabled(false);
+        m_unmountButton->setEnabled(true);
 
-		_statusValue->setText(tr("<font color=\"green\"><b>Mounted</b></font>"));
-		_state = 1;
+        m_statusValue->setText(tr("<font color=\"green\"><b>Mounted</b></font>"));
+        m_state = 1;
 	}
 
 	void GeneralView::unmounted()
 	{
-		_statusValue->setText(tr("<font color=\"red\"><b>Unmounted</b></font>"));
+        m_statusValue->setText(tr("<font color=\"red\"><b>Unmounted</b></font>"));
 
-		_mountButton->setEnabled(true);
-		_unmountButton->setEnabled(false);
+        m_mountButton->setEnabled(true);
+        m_unmountButton->setEnabled(false);
 
-		_state = 0;
+        m_state = 0;
 	}
 
 	QString GeneralView::translationDir()
 	{
 		QDir appDir(qApp->applicationDirPath());
-
-		QString ddd = qApp->applicationDirPath();
-		printf("appDir = %s\n", qApp->applicationDirPath().toAscii().data());
 		appDir.cd("..");
-		QString ddd11 = appDir.absolutePath();
-		printf("appDir = %s\n", appDir.absolutePath().toAscii().data());
 		appDir.cd("share/webmounter");
-		QString ddd1331 = appDir.absolutePath();
-		printf("pluginsdir = %s\n", appDir.absolutePath().toAscii().data());
 		return appDir.absolutePath();
 	}
 }

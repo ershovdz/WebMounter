@@ -1,4 +1,22 @@
-//#include "StdAfx.h"
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #include "vfs_cache.h"
 #include <QtCore/qfile.h>
 
@@ -14,10 +32,10 @@ namespace Data
 {
 	using namespace Common;
 
-	QSqlDatabase VFSCache::_DB;
-	VFSCache* VFSCache::_VFSCacheInstance = 0;
-	QMutex VFSCache::_VFSCacheMutex;
-	QString VFSCache::_localDBPath;
+	QSqlDatabase VFSCache::m_db;
+	VFSCache* VFSCache::m_vfsCacheInstance = 0;
+	QMutex VFSCache::m_vfsCacheMutex;
+	QString VFSCache::m_localDBPath;
 
 	VFSCache::VFSCache(void)
 	{
@@ -25,33 +43,33 @@ namespace Data
 
 	VFSCache::VFSCache(const QString& localDBPath)
 	{
-		_localDBPath = localDBPath;
+		m_localDBPath = localDBPath;
 
-		_DB = QSqlDatabase::addDatabase("QSQLITE", "webmounter");
-		_DB.setDatabaseName(localDBPath + QDir::separator() + "webmounter.db");
+		m_db = QSqlDatabase::addDatabase("QSQLITE", "webmounter");
+		m_db.setDatabaseName(localDBPath + QDir::separator() + "webmounter.db");
 
 		if(!QFile::exists(localDBPath + QDir::separator() + "webmounter.db")) // Database does not exist yet
 		{
-			_DB.open(); // Open db and create db file.
+			m_db.open(); // Open db and create db file.
 			initDB(); // Populate database with plugin tables
 		}
 		else // Database exists. Just open it
 		{
-			_DB.open(); 
+			m_db.open(); 
 		}
 	}
 
 	VFSCache::~VFSCache(void)
 	{
-		_DB.close();
-		_DB.removeDatabase("webmounter");
+		m_db.close();
+		m_db.removeDatabase("webmounter");
 	}
 
 	RESULT VFSCache::initDB()
 	{
-		QSqlQuery query(_DB);
+		QSqlQuery query(m_db);
 
-		if(_DB.isOpen())
+		if(m_db.isOpen())
 		{
 			query.exec("PRAGMA synchronous=OFF");
 
@@ -81,46 +99,46 @@ namespace Data
 
 	VFSCache* VFSCache::getCache(const QString& localDBPath)
 	{
-		if(_VFSCacheInstance)
+		if(m_vfsCacheInstance)
 		{
-			if(_DB.isOpen())
+			if(m_db.isOpen())
 			{
-				return _VFSCacheInstance;
+				return m_vfsCacheInstance;
 			}
 			else
 			{
-				bool isOk = _DB.open();
+				bool isOk = m_db.open();
 				if(isOk)
 				{
-					return _VFSCacheInstance;
+					return m_vfsCacheInstance;
 				}
 				else
 				{
-					delete _VFSCacheInstance;
-					_VFSCacheInstance = 0;
+					delete m_vfsCacheInstance;
+					m_vfsCacheInstance = 0;
 					return 0;
 				}
 			}
 		}
 		else
 		{
-			_VFSCacheInstance = new VFSCache(localDBPath);
-			if(_DB.isOpen())
+			m_vfsCacheInstance = new VFSCache(localDBPath);
+			if(m_db.isOpen())
 			{
-				if(_VFSCacheInstance->restoreCache() == eNO_ERROR)
+				if(m_vfsCacheInstance->restoreCache() == eNO_ERROR)
 				{
-					return _VFSCacheInstance;
+					return m_vfsCacheInstance;
 				}
 				else
 				{
-					_VFSCacheInstance->initDB();
-					return _VFSCacheInstance;
+					m_vfsCacheInstance->initDB();
+					return m_vfsCacheInstance;
 				}
 			}
 			else
 			{
-				delete _VFSCacheInstance;
-				_VFSCacheInstance = 0;
+				delete m_vfsCacheInstance;
+				m_vfsCacheInstance = 0;
 				return 0;
 			}
 		}
@@ -128,9 +146,9 @@ namespace Data
 
 	void VFSCache::insert(VFSElement& elem, bool dirty, bool updatedb)
 	{
-		VFSCache::iterator iter = _FileList.find(elem.getPath());
+		VFSCache::iterator iter = m_fileList.find(elem.getPath());
 
-		if(iter != _FileList.end()) // element exists
+		if(iter != m_fileList.end()) // element exists
 		{
 			if(iter != elem ) // element not equal to existing one
 			{
@@ -173,7 +191,7 @@ namespace Data
 
 					VFSElementPtr elemPtr (new VFSElement(elem)); 
 
-					_FileList.insert(VFSFileList_Pair(elem.getPath(), elemPtr));
+                    m_fileList.insert(VFSFileList_Pair(elem.getPath(), elemPtr));
 
 					if(updatedb)
 					{
@@ -196,7 +214,7 @@ namespace Data
 
 					VFSElementPtr elemPtr (new VFSElement(elem)); 
 
-					_FileList.insert(VFSFileList_Pair(elem.getPath(), elemPtr));
+					m_fileList.insert(VFSFileList_Pair(elem.getPath(), elemPtr));
 
 					if(updatedb)
 					{
@@ -211,11 +229,11 @@ namespace Data
 
 			VFSElementPtr elemPtr (new VFSElement(elem)); 
 
-			_FileList.insert(VFSFileList_Pair(elem.getPath(), elemPtr));
+			m_fileList.insert(VFSFileList_Pair(elem.getPath(), elemPtr));
 
 			//if(updatedb)
 			//{
-			QSqlQuery query(_DB);
+			QSqlQuery query(m_db);
 
 			query.prepare("INSERT INTO Elements(path, elemid, parentid, name, type, flags, modified, editMetaUrl, editMetaUrl, srcUrl, pluginName) "
 				"VALUES(:path_elem, :elemid,"
@@ -256,21 +274,21 @@ namespace Data
 
 	RESULT VFSCache::erasePlugin(const QString& pluginName)
 	{
-		for(VFSCache::iterator iter = _FileList.begin(); 
-			iter != _FileList.end() && iter->getPluginName() == pluginName;
+		for(VFSCache::iterator iter = m_fileList.begin(); 
+			iter != m_fileList.end() && iter->getPluginName() == pluginName;
 			)
 		{
-                    VFSCache::iterator iter1 = iter++;
-                        erase(iter1);
+			VFSCache::iterator iter1 = iter++;
+			erase(iter1);
 		}
 		return eNO_ERROR;
 	}
 
 	RESULT VFSCache::erase(iterator& iter)
 	{
-		QSqlQuery query(_DB);
+		QSqlQuery query(m_db);
 
-		if(iter != _FileList.end())
+		if(iter != m_fileList.end())
 		{
 			query.prepare("DELETE FROM Elements WHERE elemid=:id");
 			query.bindValue(":id", iter->getId());
@@ -280,18 +298,18 @@ namespace Data
 				return eERROR_GENERAL;
 			}
 
-			_FileList.erase(iter);
+			m_fileList.erase(iter);
 			return eNO_ERROR;
 		}
 		return eNO_ERROR;
 	}
 
-  RESULT VFSCache::clean()
-  {
-    initDB();
-    _FileList.clear();
-    return eNO_ERROR;
-  }
+	RESULT VFSCache::clean()
+	{
+		initDB();
+		m_fileList.clear();
+		return eNO_ERROR;
+	}
 
 	RESULT VFSCache::restoreCache()
 	{
@@ -299,9 +317,9 @@ namespace Data
 
 		try
 		{
-			_FileList.clear();
+			m_fileList.clear();
 
-			QSqlQuery query(_DB);
+			QSqlQuery query(m_db);
 
 			bool isOk = query.exec("SELECT path, elemid, parentid, name, type, editMetaUrl, editMediaUrl, srcUrl, flags, modified, pluginName FROM Elements WHERE 1");
 
@@ -339,7 +357,7 @@ namespace Data
 
 				VFSElementPtr elemPtr (new VFSElement(elem)); 
 
-				_FileList.insert(VFSFileList_Pair(elem.getPath(), elemPtr));
+				m_fileList.insert(VFSFileList_Pair(elem.getPath(), elemPtr));
 			}
 			return eNO_ERROR;
 		}
@@ -352,9 +370,9 @@ namespace Data
 	RESULT VFSCache::flush()
 	{
 		//QMutexLocker locker(&_VFSCacheMutex);
-		QSqlQuery query(_DB);
+		QSqlQuery query(m_db);
 
-		for(iterator iter = _FileList.begin(); iter != _FileList.end(); iter++)
+		for(iterator iter = m_fileList.begin(); iter != m_fileList.end(); iter++)
 		{
 			if(iter->isDirty())
 			{

@@ -1,5 +1,30 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #ifndef LVFSDRIVER_H
 #define LVFSDRIVER_H
+
+#define _WIN32_WINNT 0x5100
+
+//QT headers
+#include <QThread>
+#include <QMutex>
 
 //Windows specific headers
 #include <windows.h>
@@ -7,10 +32,6 @@
 
 //Dokan driver header
 #include <dokan.h>
-
-//QT headers
-#include <QThread>
-#include <QMutex>
 
 //WebMounter headers
 #include "lvfs_driver.h"
@@ -207,17 +228,17 @@ namespace LocalDriver
 			LPCWSTR FileName);
 
 	private:
-		static FileProxy* _pFileProxy;
+		static FileProxy* m_fileProxy;
 		//static NotificationDevice* _pNotificationDevice;
 
-		static LVFSDriver* _pDriverInstance;
+		static LVFSDriver* m_driverInstance;
 
-		static PDOKAN_OPERATIONS _pDriverOperations;
-		static PDOKAN_OPTIONS _pDriverOptions;
-		static QMutex _DriverMutex;
+		static PDOKAN_OPERATIONS m_driverOperations;
+		static PDOKAN_OPTIONS m_driverOptions;
+		static QMutex m_driverMutex;
 
-		static QString _rootDirectory;
-		static QString _mountPoint;
+		static QString m_rootDirectory;
+		static QString m_mountPoint;
 
 	public:
 		static LVFSDriver* createDriver(FileProxy*);

@@ -1,3 +1,22 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #ifndef VFS_CACHE_H
 #define VFS_CACHE_H
 
@@ -39,33 +58,33 @@ namespace Data
 	public:
 		VFSCache_Iter operator++(int) // postfix form
 		{
-			VFSCache_Iter iter = _Iter;
-			_Iter++;
+			VFSCache_Iter iter = m_iter;
+			m_iter++;
 			return iter;
 		}
 
 		VFSCache_Iter operator--(int) // postfix form
 		{
-			VFSCache_Iter iter = _Iter;
-			_Iter--;
+			VFSCache_Iter iter = m_iter;
+			m_iter--;
 			return iter;
 		}
 
 		VFSCache_Iter& operator++() // prefix form
 		{
-			_Iter++;
+			m_iter++;
 			return *this;
 		}
 
 		VFSCache_Iter& operator--() // prefix form
 		{
-			_Iter--;
+			m_iter--;
 			return *this;
 		}
 
 		operator VFSFileList::iterator()
 		{
-			return _Iter;
+			return m_iter;
 		}
 
 		VFSCache_Iter& operator*()
@@ -75,46 +94,46 @@ namespace Data
 
 		bool operator!=(VFSFileList::iterator iter)
 		{
-			return (_Iter != iter);
+			return (m_iter != iter);
 		}
 
 		bool operator==(VFSFileList::iterator iter)
 		{
-			return (_Iter == iter);
+			return (m_iter == iter);
 		}
 
 		bool operator!=(VFSElement& elem)
 		{
-			return (*(_Iter->second.get()) != elem);
+			return (*(m_iter->second.get()) != elem);
 		}
 
 		bool operator==(VFSElement& elem)
 		{
-			return (*(_Iter->second.get()) == elem);
+			return (*(m_iter->second.get()) == elem);
 		}
 
 		const VFSElement* operator->()
 		{
-			return _Iter->second.get();
+			return m_iter->second.get();
 		}
 
 	protected:
 
 		VFSCache_Iter& operator=(VFSFileList::iterator iter)
 		{
-			_Iter = iter;
+			m_iter = iter;
 			return *this;
 		}
 
 		VFSCache_Iter& operator=(VFSElement elem)
 		{
-			*(_Iter->second.get()) = elem;
+			*(m_iter->second.get()) = elem;
 			return *this;
 		}
 
 		VFSCache_Iter(VFSFileList::iterator iter)
 		{
-			_Iter = iter;
+			m_iter = iter;
 		}
 		VFSCache_Iter()
 		{	
@@ -123,11 +142,11 @@ namespace Data
 	protected:
 		VFSFileList::iterator getNatureIter()
 		{
-			return _Iter;
+			return m_iter;
 		}
 
 	private:
-		VFSFileList::iterator _Iter;
+		VFSFileList::iterator m_iter;
 	};
 
 	class WEBMOUNTER_EXPORT VFSCache
@@ -143,25 +162,25 @@ namespace Data
 		typedef VFSCache_Iter iterator;
 
 		static VFSCache* getCache(const QString& localDBPath = "");
-    RESULT clean();
+		RESULT clean();
 		RESULT restoreCache();
 		void insert(VFSElement& elem, bool dirty = false, bool db = true);
 		RESULT erase(iterator& elem);
 		RESULT erasePlugin(const QString& pluginName);
 		RESULT flush();
 
-    iterator find(const QString& key)
+		iterator find(const QString& key)
 		{
-			return _FileList.find(key);
+			return m_fileList.find(key);
 		}
 
 		iterator begin()
 		{
-			return _FileList.begin();
+			return m_fileList.begin();
 		}
 		iterator end()
 		{
-			return _FileList.end();
+			return m_fileList.end();
 		}
 
 		void setFlag(iterator& iter, uint set, uint unset = VFSElement::eFl_None, bool updateDB = true);
@@ -169,11 +188,11 @@ namespace Data
 	private:
 		RESULT initDB();
 	private:
-		VFSFileList _FileList;
-		static QSqlDatabase _DB;
-		static VFSCache* _VFSCacheInstance;
-		static QMutex _VFSCacheMutex;
-		static QString _localDBPath;
+		VFSFileList m_fileList;
+		static QSqlDatabase m_db;
+		static VFSCache* m_vfsCacheInstance;
+		static QMutex m_vfsCacheMutex;
+		static QString m_localDBPath;
 	};
 }
 

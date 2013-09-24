@@ -1,3 +1,22 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #include <QRegExp>
 #include <QtXml>
 
@@ -8,17 +27,17 @@ namespace RemoteDriver
 {
 	using namespace Common;
 	using namespace Connector;
-	
+
 	YaDiskRVFSDriver::YaDiskRVFSDriver(const QString& pluginName)
 	{
-		_state = RemoteDriver::eNotConnected;
-		_httpConnector = new YaDiskHTTPConnector;
-		_pluginName = pluginName;
+        m_state = RemoteDriver::eNotConnected;
+        m_httpConnector = new YaDiskHTTPConnector;
+        m_pluginName = pluginName;
 
 		RESULT res = WebMounter::getCache()->restoreCache();
 		if(res == eNO_ERROR)
 		{
-			QString rootPath = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator()) + _pluginName;
+            QString rootPath = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator()) + m_pluginName;
 			QFileInfo fInfo(rootPath);
 			//syncCacheWithFileSystem(fInfo.absoluteFilePath());
 		}
@@ -26,7 +45,7 @@ namespace RemoteDriver
 
 	YaDiskRVFSDriver::~YaDiskRVFSDriver(void)
 	{
-		delete _httpConnector;
+        delete m_httpConnector;
 	}
 
 	RESULT YaDiskRVFSDriver::getElements() 
@@ -38,56 +57,56 @@ namespace RemoteDriver
 	{
 		VFSCache* vfsCache = WebMounter::getCache();
 		int initialListSize = urlList.size();
-		
-		{ 	LOCK(_driverMutex)
-		
+
+        { 	LOCK(m_driverMutex)
+
 			VFSCache::iterator iter = vfsCache->end();
-			for(int i = 0; i < pathList.size(); ++i)
-			{
-				iter = vfsCache->find(pathList.at(i));
-				if(iter != vfsCache->end()
-					&& !(iter->getFlags() & VFSElement::eFl_Downloading)
-					&& !(iter->getFlags() & VFSElement::eFl_Downloaded))
-				{	
-					vfsCache->setFlag(iter, VFSElement::eFl_Downloading, VFSElement::eFl_None);
-					QFile::remove(pathList.at(i));
-				}
-				else
-				{
-					urlList.removeAt(i);
-					pathList.removeAt(i);
-					i = 0;
-				}
+		for(int i = 0; i < pathList.size(); ++i)
+		{
+			iter = vfsCache->find(pathList.at(i));
+			if(iter != vfsCache->end()
+				&& !(iter->getFlags() & VFSElement::eFl_Downloading)
+				&& !(iter->getFlags() & VFSElement::eFl_Downloaded))
+			{	
+				vfsCache->setFlag(iter, VFSElement::eFl_Downloading, VFSElement::eFl_None);
+				QFile::remove(pathList.at(i));
 			}
-			
-			if(urlList.size() == 0) // there is nothing to download
+			else
 			{
-				if(initialListSize == 1
-					&& iter != vfsCache->end() 
-					&& iter->getFlags() & VFSElement::eFl_Downloaded) // download request has been recieved for one file, but file is already downloaded
-				{	
-					return eNO_ERROR;
-				}
-				else
-				{
-					return eERROR_GENERAL;
-				}
+				urlList.removeAt(i);
+				pathList.removeAt(i);
+				i = 0;
 			}
 		}
-		
-		RESULT res = _httpConnector->downloadFiles(urlList, pathList);
+
+		if(urlList.size() == 0) // there is nothing to download
+		{
+			if(initialListSize == 1
+				&& iter != vfsCache->end() 
+				&& iter->getFlags() & VFSElement::eFl_Downloaded) // download request has been recieved for one file, but file is already downloaded
+			{	
+				return eNO_ERROR;
+			}
+			else
+			{
+				return eERROR_GENERAL;
+			}
+		}
+		}
+
+        RESULT res = m_httpConnector->downloadFiles(urlList, pathList);
 		if(res != eNO_ERROR)
 		{
 			unsigned int retryDownloadCounter = 0;
 			while(res != eNO_ERROR && retryDownloadCounter < MAX_DOWNLOAD_RETRY)
 			{
-				res = _httpConnector->downloadFiles(urlList, pathList);
+                res = m_httpConnector->downloadFiles(urlList, pathList);
 				retryDownloadCounter++;
 			}
 		}
-		
-		{ 	LOCK(_driverMutex)
-		
+
+        { 	LOCK(m_driverMutex)
+
 			for(int i = 0; i < pathList.size(); i++)
 			{
 				QFileInfo fInfo(pathList.at(i));
@@ -121,16 +140,16 @@ namespace RemoteDriver
 		{
 			return eNO_ERROR;
 		}
-		
-		RESULT err = _httpConnector->uploadFile(path, title, parentId, xmlResp);
-                unsigned int retryUploadCounter = 0;
+
+        RESULT err = m_httpConnector->uploadFile(path, title, parentId, xmlResp);
+		unsigned int retryUploadCounter = 0;
 
 		while(err != eNO_ERROR && retryUploadCounter < MAX_UPLOAD_RETRY)
 		{
-			err = _httpConnector->uploadFile(path, title, parentId, xmlResp);
+            err = m_httpConnector->uploadFile(path, title, parentId, xmlResp);
 			retryUploadCounter++;
 		}
-		
+
 		VFSElement elem;
 		if(!err)
 		{
@@ -147,7 +166,7 @@ namespace RemoteDriver
 				, id
 				, parentId
 				, ""
-				, _pluginName);
+                , m_pluginName);
 
 			vfsCache->insert(elem);
 
@@ -181,7 +200,7 @@ namespace RemoteDriver
 		if(elem != cache->end())
 		{
 			QString response;
-			res = _httpConnector->renameElement(elem->getId(), elem->getType(), newTitle, response);
+            res = m_httpConnector->renameElement(elem->getId(), elem->getType(), newTitle, response);
 			if(res == eNO_ERROR)
 			{
 				qInfo = qInfo.dir().absolutePath() + QString(QDir::separator()) + newTitle;
@@ -218,12 +237,12 @@ namespace RemoteDriver
 
 		if(elem != cache->end() && elem->getType() == VFSElement::DIRECTORY)
 		{
-			QString response;
-			res = _httpConnector->deleteFile("album/" + elem->getId() + "/", response);
-			if(res == eNO_ERROR)
-			{
-				cache->erase(elem);
-			}
+		QString response;
+        res = m_httpConnector->deleteFile("album/" + elem->getId() + "/", response);
+		if(res == eNO_ERROR)
+		{
+		cache->erase(elem);
+		}
 		}*/
 
 
@@ -240,14 +259,14 @@ namespace RemoteDriver
 		if(elem != cache->end())
 		{
 			QString response;
-			res = _httpConnector->deleteFile(elem->getId(), response);
+            res = m_httpConnector->deleteFile(elem->getId(), response);
 			if(res == eNO_ERROR)
 			{
 				WebMounter::getProxy()->fileDeleted(elem->getPath(), res);
 				cache->erase(elem);
 			}
 		}
-	
+
 		return res;
 	}
 
@@ -261,7 +280,7 @@ namespace RemoteDriver
 		if(elem != cache->end())
 		{
 			QString response;
-			res = _httpConnector->moveElement(elem->getId(), elem->getParentId(), newParentId, elem->getType(), response);
+            res = m_httpConnector->moveElement(elem->getId(), elem->getParentId(), newParentId, elem->getType(), response);
 			if(res == eNO_ERROR)
 			{
 				VFSElement newElem(elem->getType()
@@ -297,12 +316,12 @@ namespace RemoteDriver
 	RESULT YaDiskRVFSDriver::createDirectory(const QString& path, const QString& parentId, const QString& title)
 	{
 		QString xmlResp;
-		RESULT err = _httpConnector->createDirectory(title, parentId, xmlResp);
+        RESULT err = m_httpConnector->createDirectory(title, parentId, xmlResp);
 		if(!err)
 		{
 			VFSElement elem;
 			elem.setType(VFSElement::DIRECTORY);
-			elem.setPluginName(_pluginName);
+            elem.setPluginName(m_pluginName);
 
 			elem.setName(title);
 
@@ -311,9 +330,9 @@ namespace RemoteDriver
 			elem.setModified(QDateTime::currentDateTime().toString());
 
 			elem.setSrcUrl(title);
-			
+
 			elem.setPath(path);
-			
+
 			WebMounter::getCache()->insert(elem);
 		}
 
@@ -324,9 +343,9 @@ namespace RemoteDriver
 	{
 		QString parentId = element.getParentId();
 		QString rootPath = QFileInfo(Common::WebMounter::getSettingStorage()->getAppStoragePath() 
-							+ QDir::separator() 
-							+ _pluginName).absoluteFilePath(); 
-		
+			+ QDir::separator() 
+            + m_pluginName).absoluteFilePath();
+
 		if(ROOT_ID == element.getId())
 		{
 			return element.getPath();
@@ -346,7 +365,7 @@ namespace RemoteDriver
 						.absoluteFilePath();		
 				}
 			}
-			
+
 		}
 		return "";
 	}
@@ -358,7 +377,7 @@ namespace RemoteDriver
 		{
 			QString xmlResp = "";
 			QString path = elements[i].getSrcUrl();
-			err = _httpConnector->getTreeElements(path, xmlResp);
+            err = m_httpConnector->getTreeElements(path, xmlResp);
 			if(err || xmlResp.length() == 0)
 			{
 				continue;
@@ -384,7 +403,7 @@ namespace RemoteDriver
 					elem.setDownloaded(false);
 					elements.append(elem);
 				}
-				
+
 				responseElement = responseElement.nextSibling(); //next element
 			}
 		}
@@ -432,7 +451,7 @@ namespace RemoteDriver
 			elem.setType(VFSElement::FILE);
 		}
 
-		elem.setPluginName(_pluginName);
+        elem.setPluginName(m_pluginName);
 
 		elem.setName(xmlEntry.toElement().elementsByTagName("d:displayname").item(0).toElement().text());
 
@@ -458,31 +477,31 @@ namespace RemoteDriver
 	{
 		RESULT res = eERROR_GENERAL;
 		SettingStorage* settings = WebMounter::getSettingStorage();
-		QString pluginStoragePath = settings->getAppStoragePath() + QString(QDir::separator()) + _pluginName;
+        QString pluginStoragePath = settings->getAppStoragePath() + QString(QDir::separator()) + m_pluginName;
 		QFileInfo fInfo(pluginStoragePath);
-                unsigned int uNotDownloaded = 0;
+		unsigned int uNotDownloaded = 0;
 		PluginSettings plSettings;
-		settings->getData(plSettings, _pluginName);
+        settings->getData(plSettings, m_pluginName);
 
-		_driverMutex.lock();
-		if(_state != eSyncStopping)
+        m_driverMutex.lock();
+        if(m_state != eSyncStopping)
 		{
 			updateState(0, RemoteDriver::eSync);
 		}
-		_driverMutex.unlock();
+        m_driverMutex.unlock();
 
 		QList<VFSElement> elements;
 
 		VFSElement elem = VFSElement(VFSElement::DIRECTORY
-										, fInfo.absoluteFilePath()
-										, "ROOT"
-										, ""
-										, ""
-										, ""
-										, ROOT_ID
-										, ROOT_ID
-										, ""
-										, _pluginName);
+			, fInfo.absoluteFilePath()
+			, "ROOT"
+			, ""
+			, ""
+			, ""
+			, ROOT_ID
+			, ROOT_ID
+			, ""
+            , m_pluginName);
 
 		elements.append(elem);
 
@@ -498,7 +517,7 @@ namespace RemoteDriver
 			VFSCache::iterator iter = vfsCache->begin();
 			for(iter; iter != vfsCache->end(); ++iter)
 			{
-				if(iter->getPluginName() == _pluginName)
+                if(iter->getPluginName() == m_pluginName)
 				{
 					bool found = false;
 					int count = elements.count();
@@ -531,8 +550,8 @@ namespace RemoteDriver
 				}
 			}
 
-			{ 	LOCK(_driverMutex);
-			if(_state != eSyncStopping)
+            { 	LOCK(m_driverMutex);
+            if(m_state != eSyncStopping)
 			{
 				updateState(30, RemoteDriver::eSync);
 			}
@@ -544,25 +563,25 @@ namespace RemoteDriver
 				vfsCache->insert(elements[i]);
 			}
 
-			{ 	LOCK(_driverMutex);
-			if(_state != eSyncStopping)
+            { 	LOCK(m_driverMutex);
+            if(m_state != eSyncStopping)
 			{
 				updateState(40, RemoteDriver::eSync);
 			}
 			}
 
-			QString rootPath = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator()) + _pluginName;
+            QString rootPath = WebMounter::getSettingStorage()->getAppStoragePath() + QString(QDir::separator()) + m_pluginName;
 			QFileInfo fInfo(rootPath);
 			syncCacheWithFileSystem(fInfo.absoluteFilePath());
 
-			{ 	LOCK(_driverMutex);
-			if(_state != eSyncStopping)
+            { 	LOCK(m_driverMutex);
+            if(m_state != eSyncStopping)
 			{
 				updateState(50, RemoteDriver::eSync);
 			}
 			}
 
-			if(plSettings.bFullSync)
+            if(plSettings.m_fullSync)
 			{
 				res = downloadFiles();
 			}
@@ -576,12 +595,12 @@ namespace RemoteDriver
 		}
 		else
 		{
-			_driverMutex.lock();
-			if(_state != eSyncStopping)
+            m_driverMutex.lock();
+            if(m_state != eSyncStopping)
 			{
 				updateState(100, eConnected);
 			}
-			_driverMutex.unlock();
+            m_driverMutex.unlock();
 		}
 
 		return res;
@@ -591,38 +610,38 @@ namespace RemoteDriver
 	{
 		PluginSettings pluginSettings;
 
-		WebMounter::getSettingStorage()->getData(pluginSettings, _pluginName);
+        WebMounter::getSettingStorage()->getData(pluginSettings, m_pluginName);
 
-		int sync_period = pluginSettings.syncPeriod.toInt();
+        int sync_period = pluginSettings.m_syncPeriod.toInt();
 
 		forever
 		{
-			if(_state == eSyncStopping || _state == eNotConnected)
+            if(m_state == eSyncStopping || m_state == eNotConnected)
 			{
 				return;
 			}
 
-			if(_state == eAuthorized)
+            if(m_state == eAuthorized)
 			{
 				sync();
-				if(_state == eSyncStopping)
+                if(m_state == eSyncStopping)
 				{
 					return;
 				}
 			}
 
-			_syncMutex.lock();
+            m_syncMutex.lock();
 
-			_forceSync.wait(&_syncMutex, sync_period * 1000);
+            m_forceSync.wait(&m_syncMutex, sync_period * 1000);
 
-			_syncMutex.unlock();
+            m_syncMutex.unlock();
 
-			if(_state == eConnected)
+            if(m_state == eConnected)
 			{
 				sync();
 			}
-			
-			if(_state == eSyncStopping)
+
+            if(m_state == eSyncStopping)
 			{
 				return;
 			}
@@ -631,60 +650,60 @@ namespace RemoteDriver
 
 	void YaDiskRVFSDriver::connectHandler(PluginSettings& pluginSettings)
 	{
-		QMutexLocker locker(&_driverMutex);
+        QMutexLocker locker(&m_driverMutex);
 
-		if(_state == RemoteDriver::eNotConnected)
+        if(m_state == RemoteDriver::eNotConnected)
 		{
 			GeneralSettings generalSettings; 
 
 			WebMounter::getSettingStorage()->getData(generalSettings);
 			WebMounter::getSettingStorage()->addSettings(pluginSettings);
 
- 			_httpConnector->setSettings(
- 				pluginSettings.userName
- 				, pluginSettings.userPassword
- 				, generalSettings.proxyAddress
- 				, generalSettings.proxyLogin + ":" + generalSettings.proxyPassword
- 				, pluginSettings.isOAuthUsing
-				, pluginSettings.oAuthToken
- 				);
+            m_httpConnector->setSettings(
+                pluginSettings.m_userName
+                , pluginSettings.m_userPassword
+                , generalSettings.m_proxyAddress
+                , generalSettings.m_proxyLogin + ":" + generalSettings.m_proxyPassword
+                , pluginSettings.m_isOAuthUsing
+                , pluginSettings.m_oAuthToken
+				);
 
-			if(_state != eSyncStopping)
+            if(m_state != eSyncStopping)
 			{
 				updateState(0, eAuthInProgress);
 			}
 
 			/*if(pluginSettings.isOAuthUsing && pluginSettings.oAuthToken != "")
 			{
-				updateState(100, eAuthorized);
+			updateState(100, eAuthorized);
 
-				start(); // run sync thread				
+			start(); // run sync thread				
 			}
 			else
 			{
-				updateState(0, eAuthInProgress);
+			updateState(0, eAuthInProgress);
 			}*/
 		}
 	}
 
 	void YaDiskRVFSDriver::connectHandlerStage2(RESULT error, PluginSettings pluginSettings)
 	{
-		if(error == eNO_ERROR && _state == eAuthInProgress)
+        if(error == eNO_ERROR && m_state == eAuthInProgress)
 		{
 			GeneralSettings generalSettings; 
 
 			WebMounter::getSettingStorage()->getData(generalSettings);
 			WebMounter::getSettingStorage()->addSettings(pluginSettings);
 
- 			_httpConnector->setSettings(
- 				pluginSettings.userName
- 				, pluginSettings.userPassword
- 				, generalSettings.proxyAddress
- 				, generalSettings.proxyLogin + ":" + generalSettings.proxyPassword
- 				, pluginSettings.isOAuthUsing
-				, pluginSettings.oAuthToken
- 				);
-			if(_state != eSyncStopping)
+            m_httpConnector->setSettings(
+                pluginSettings.m_userName
+                , pluginSettings.m_userPassword
+                , generalSettings.m_proxyAddress
+                , generalSettings.m_proxyLogin + ":" + generalSettings.m_proxyPassword
+                , pluginSettings.m_isOAuthUsing
+                , pluginSettings.m_oAuthToken
+				);
+            if(m_state != eSyncStopping)
 			{
 				updateState(100, eAuthorized);
 			}
@@ -702,14 +721,14 @@ namespace RemoteDriver
 
 	void YaDiskRVFSDriver::disconnectHandler()
 	{
-		_driverMutex.lock();
+        m_driverMutex.lock();
 
 		if(isRunning()) //if sync thread is running 
 		{
 			updateState(40, eSyncStopping);
-			_driverMutex.unlock();
+            m_driverMutex.unlock();
 
-			_forceSync.wakeAll(); // we have to wake up the sync thread for safely termination
+            m_forceSync.wakeAll(); // we have to wake up the sync thread for safely termination
 
 			while(isRunning()) // wait thread termination 
 			{
@@ -720,19 +739,19 @@ namespace RemoteDriver
 		}
 		else
 		{
-			_driverMutex.unlock();	
+            m_driverMutex.unlock();
 		}
-		
+
 		updateState(100, eNotConnected);
 	}
 
 	void YaDiskRVFSDriver::syncHandler()
 	{
-		QMutexLocker locker(&_driverMutex);
+        QMutexLocker locker(&m_driverMutex);
 
-		if(_state == eConnected)
+        if(m_state == eConnected)
 		{
-			_forceSync.wakeAll();
+            m_forceSync.wakeAll();
 		}
 	}
 
@@ -741,11 +760,11 @@ namespace RemoteDriver
 		if(isRunning()) //if sync thread is running 
 		{
 			PluginSettings pluginSettings;
-			WebMounter::getSettingStorage()->getData(pluginSettings, _pluginName);
+            WebMounter::getSettingStorage()->getData(pluginSettings, m_pluginName);
 
 			updateState(40, eSyncStopping);
 
-			_forceSync.wakeAll();
+            m_forceSync.wakeAll();
 
 			while(isRunning())
 			{
@@ -832,6 +851,6 @@ namespace RemoteDriver
 
 	bool YaDiskRVFSDriver::areFileAttributesValid(const QString& /*path*/, unsigned long /*attributes*/)
 	{
-                return true;///////////(attributes & FILE_ATTRIBUTE_READONLY);
+		return true;///////////(attributes & FILE_ATTRIBUTE_READONLY);
 	}
 }

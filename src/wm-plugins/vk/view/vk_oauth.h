@@ -1,5 +1,24 @@
-#ifndef __VK_OAUTH_H__
-#define __VK_OAUTH_H__
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
+#ifndef VK_OAUTH_H
+#define VK_OAUTH_H
 
 #include <QtGui>
 #include <QNetworkReply>
@@ -18,8 +37,8 @@ namespace Ui
 		Q_OBJECT
 	protected:
 		void closeEvent(QCloseEvent *event);
-		Q_SIGNALS:
-			void finished(RESULT error);
+Q_SIGNALS:
+		void finished(RESULT error);
 	};
 
 	class VkOAuth : public QObject
@@ -29,21 +48,21 @@ namespace Ui
 		VkOAuth();
 		~VkOAuth();
 		void authenticate();
-	Q_SIGNALS:
+Q_SIGNALS:
 		void authFinished(RESULT error, const QString& login, const QString& token);
-	public slots:
-		void ignoreSSL( QNetworkReply *, const QList<QSslError> & );
-		void finished(QNetworkReply *reply);
-		void finished(RESULT error);
-	private slots:
-		void slotOAuthTimeout();
+		public slots:
+			void ignoreSSL( QNetworkReply *, const QList<QSslError> & );
+			void finished(QNetworkReply *reply);
+			void finished(RESULT error);
+			private slots:
+				void slotOAuthTimeout();
 	private:
 		void initializeWebView();
 	private:
-		QString _token;
-		WebView *_view;
-		QTimer *_oAuthTimer;
+		QString m_token;
+		WebView* m_view;
+		QTimer* m_oAuthTimer;
 	};
 }
 
-#endif // __VK_OAUTH_H__
+#endif // VK_OAUTH_H

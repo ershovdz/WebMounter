@@ -1,3 +1,22 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #ifndef YAF_CONNECTION_H
 #define YAF_CONNECTION_H
 
@@ -41,21 +60,20 @@ namespace Connector
 	private:
 		struct sPutData
 		{
-			const char *data;
-			size_t len;
+			const char* m_data;
+			size_t m_len;
 		};
 	private:
-		CURL* _curl;
-		QString _login;
-		QString _password;
-		QString _proxy;
-		QString _proxy_login_pwd;
-		bool _isOAuth;
+		QString m_login;
+		QString m_password;
+		QString m_proxy;
+		QString m_proxyLoginPwd;
+		bool m_isOAuth;
 
-		QString _token;
-		QString _requestId;
-		QString _key;
-		QMutex _connectorMutex;
+		QString m_token;
+		QString m_requestId;
+		QString m_key;
+		QMutex m_connectorMutex;
 	};
 }
 

@@ -1,3 +1,22 @@
+/* Copyright (c) 2013, Alexander Ershov
+ *
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * Contact e-mail: Alexander Ershov <ershav@yandex.ru>
+ */
+
 #ifndef YANDEX_DISK_DRIVER_H
 #define YANDEX_DISK_DRIVER_H
 
@@ -17,12 +36,12 @@ namespace RemoteDriver
 		public RVFSDriver
 	{
 		Q_OBJECT
-	
+
 	public:
 		YaDiskRVFSDriver(const QString& pluginName);
 		virtual ~YaDiskRVFSDriver(void);
 		void connectHandlerStage2(RESULT error, PluginSettings pluginSettings);
-	
+
 	public:
 		virtual RESULT downloadFiles() {return RVFSDriver::downloadFiles();};
 		virtual RESULT downloadFiles(QList <QString>& urlList, QList <QString>& pathList);
@@ -36,7 +55,7 @@ namespace RemoteDriver
 		virtual RESULT getElements();
 		virtual RESULT sync();
 		virtual bool areFileAttributesValid(const QString& path, unsigned long attributes);
-	
+
 	private:
 		RESULT getElements(QList<VFSElement>& elements);
 		RESULT getPhotos(QList<VFSElement>& elements);
@@ -56,12 +75,11 @@ namespace RemoteDriver
 		void markNameDuplicates(QList<VFSElement>& elemList);
 		void handleNameDuplicates(QList<VFSElement>& elemList);
 		QString addPathSuffix(ElementType type, const QString& path, const QString& suffix);
-	
+
 	private:
-		Connector::YaDiskHTTPConnector* _httpConnector;
-		//const QString _pluginName;
-		QWaitCondition _forceSync;
-		QMutex _syncMutex;
+		Connector::YaDiskHTTPConnector* m_httpConnector;
+		QWaitCondition m_forceSync;
+		QMutex m_syncMutex;
 	};
 }
 
